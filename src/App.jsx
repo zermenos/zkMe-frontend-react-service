@@ -5,6 +5,7 @@ import { ZkMeWidget } from '@zkmelabs/widget';
 import '@zkmelabs/widget/dist/style.css';
 import Header from './components/Header';
 
+
 const App = () => {
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
