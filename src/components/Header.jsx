@@ -13,11 +13,15 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
   };
 
   return (
-    <header className="bg-[#F1F0F0]">
+    <header className="bg-white">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3">
-            <img src="logo.PNG" alt="Everi Logo" className="h-12 w-auto" />
+            <img
+              src="https://cdn.vectorstock.com/i/500p/11/96/badge-design-with-kyc-know-your-customer-vector-49941196.avif"
+              alt="KYC Logo"
+              className="h-12 w-auto"
+            />
             <h1 className="text-xl font-bold text-gray-800"></h1>
           </div>
 
@@ -51,7 +55,7 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
                         className="w-full flex items-center space-x-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg"
                       >
                         <LogOut className="w-4 h-4" />
-                        <span>Desconectar</span>
+                        <span>Disconnect</span>
                       </button>
                     </div>
                   )}
@@ -61,10 +65,10 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
               <button
                 onClick={onConnect}
                 disabled={loading}
-                className="flex items-center space-x-2 bg-[#F1F0F0] hover:bg-[#E2E1E1] border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200"
+                className="flex items-center space-x-2 bg-white hover:bg-gray-50 text-gray-800 border border-gray-300 px-4 py-2 rounded-lg transition-colors duration-200"
               >
-                <Wallet className="text-[#282828] w-5 h-5" />
-                <span className="span text-sm">
+                <Wallet className="w-5 h-5" />
+                <span className="text-sm font-medium">
                   {loading ? "Connecting..." : "Connect Wallet"}
                 </span>
               </button>
