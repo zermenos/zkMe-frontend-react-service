@@ -66,7 +66,7 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
               >
                 <Wallet className="text-[#282828] w-5 h-5" />
                 <span className="span text-sm">
-                  {loading ? "Conectando..." : "Conectar Cartera"}
+                  {loading ? "Connecting..." : "Connect Wallet"}
                 </span>
               </button>
             )}
