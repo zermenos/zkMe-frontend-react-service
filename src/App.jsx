@@ -62,7 +62,7 @@ const App = () => {
       if (isMobile) {
         // Use production URL for MetaMask deep link
         // Use Universal Links format for better cross-platform support
-        const dappUrl = "zk-me.vercel.app";
+        const dappUrl = "https://zk-me.vercel.app";
         // For Android, we need to use a different format
         if (/android/i.test(navigator.userAgent)) {
           window.location.href = `intent://zk-me.vercel.app#Intent;scheme=https;package=io.metamask;end`;
