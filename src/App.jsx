@@ -118,7 +118,7 @@ const App = () => {
   const provider = {
     async getAccessToken() {
       const res = await fetch(
-        "https://backend.everimx.com/api"
+        "https://backend.everimx.com/api/zkme/token"
         //https://technosolx.com/initio/public/api/zkme/token"
       );
       const json = await res.json();
