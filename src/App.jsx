@@ -62,10 +62,10 @@ const App = () => {
       if (isMobile) {
         // Use production URL for MetaMask deep link
         // Use Universal Links format for better cross-platform support
-        const dappUrl = "app.everimx.com";
+        const dappUrl = "zk-me.vercel.app";
         // For Android, we need to use a different format
         if (/android/i.test(navigator.userAgent)) {
-          window.location.href = `intent://app.everimx.com#Intent;scheme=https;package=io.metamask;end`;
+          window.location.href = `intent://zk-me.vercel.app#Intent;scheme=https;package=io.metamask;end`;
         } else {
           // For iOS and other platforms
           window.location.href = `https://metamask.app.link/dapp/${dappUrl}`;
@@ -267,7 +267,7 @@ const App = () => {
         <div className="flex space-x-3">
           {isMobile ? (
             <a
-              href="https://metamask.app.link/dapp/app.everimx.com"
+              href="https://metamask.app.link/dapp/zk-me.vercel.app"
               className="flex-1 bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg transition-colors text-center"
             >
               Open in MetaMask
