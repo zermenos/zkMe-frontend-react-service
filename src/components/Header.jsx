@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Wallet, ChevronDown, LogOut } from "lucide-react";
-import "../index.css";
 
 const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
