@@ -1,1 +1,40 @@
 @import "tailwindcss";
+
+/** {
+  background-color: #f1f0f0;
+}*/
+
+h1 {
+  font-family: "Host Grotesk", sans-serif;
+  color: #282828;
+}
+
+h2 {
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 500;
+  color: #282828;
+}
+
+p {
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 500;
+  color: #757073;
+}
+
+span {
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 700;
+  color: #282828;
+}
+
+button {
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 700;
+  color: white;
+}
+
+div {
+  font-family: "Host Grotesk", sans-serif;
+  font-weight: 400;
+  color: #282828;
+}

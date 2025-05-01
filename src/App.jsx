@@ -1,49 +1,57 @@
-import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
-import { Wallet, AlertCircle, RefreshCw, LogOut } from 'lucide-react';
-import { ZkMeWidget } from '@zkmelabs/widget';
-import '@zkmelabs/widget/dist/style.css';
-import Header from './components/Header';
-
+import React, { useState, useEffect } from "react";
+import { ethers } from "ethers";
+import { Wallet, AlertCircle, RefreshCw, LogOut } from "lucide-react";
+import { ZkMeWidget } from "@zkmelabs/widget";
+import "@zkmelabs/widget/dist/style.css";
+import Header from "./components/Header";
+import "./index.css";
 
 const App = () => {
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
   const [showMetaMaskDialog, setShowMetaMaskDialog] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState('https://metamask.io/download/');
+  const [downloadUrl, setDownloadUrl] = useState(
+    "https://metamask.io/download/"
+  );
   const [isMobile, setIsMobile] = useState(false);
   const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
-  const [verificationLevel, setVerificationLevel] = useState('');
+  const [verificationLevel, setVerificationLevel] = useState("");
 
   useEffect(() => {
     // Detect if user is on mobile
     const checkMobile = () => {
       const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice = /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(userAgent);
+      const isMobileDevice =
+        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+          userAgent
+        );
       setIsMobile(isMobileDevice);
-      
+
       // Check if we're in MetaMask's browser
-      const isMetaMask = userAgent.includes('metamask');
+      const isMetaMask = userAgent.includes("metamask");
       setIsMetaMaskBrowser(isMetaMask);
     };
     checkMobile();
 
     // Detect browser and set appropriate download URL
     const userAgent = navigator.userAgent.toLowerCase();
-    let url = 'https://metamask.io/download/';
+    let url = "https://metamask.io/download/";
 
-    if (userAgent.includes('chrome')) {
-      url = 'https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn';
-    } else if (userAgent.includes('firefox')) {
-      url = 'https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/';
-    } else if (userAgent.includes('edge')) {
-      url = 'https://microsoftedge.microsoft.com/addons/detail/metamask/ejbalbakoplchlghecdalmeeeajnimhm';
-    } else if (userAgent.includes('safari')) {
-      url = 'https://apps.apple.com/us/app/metamask-blockchain-wallet/id1438144202';
+    if (userAgent.includes("chrome")) {
+      url =
+        "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn";
+    } else if (userAgent.includes("firefox")) {
+      url = "https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/";
+    } else if (userAgent.includes("edge")) {
+      url =
+        "https://microsoftedge.microsoft.com/addons/detail/metamask/ejbalbakoplchlghecdalmeeeajnimhm";
+    } else if (userAgent.includes("safari")) {
+      url =
+        "https://apps.apple.com/us/app/metamask-blockchain-wallet/id1438144202";
     }
 
     setDownloadUrl(url);
@@ -54,16 +62,16 @@ const App = () => {
       if (isMobile) {
         // Use production URL for MetaMask deep link
         // Use Universal Links format for better cross-platform support
-        const dappUrl = 'https://zk-me.vercel.app';
+        const dappUrl = "app.everimx.com";
         // For Android, we need to use a different format
         if (/android/i.test(navigator.userAgent)) {
-          window.location.href = `intent://zk-me.vercel.app#Intent;scheme=https;package=io.metamask;end`;
+          window.location.href = `intent://app.everimx.com#Intent;scheme=https;package=io.metamask;end`;
         } else {
           // For iOS and other platforms
           window.location.href = `https://metamask.app.link/dapp/${dappUrl}`;
         }
         // Redirect to MetaMask app browser
-        
+
         return;
       }
       setShowMetaMaskDialog(true);
@@ -71,11 +79,14 @@ const App = () => {
     }
 
     setLoading(true);
-    setError('');
+    setError("");
 
     try {
       const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+      await window.ethereum.request({
+        method: "wallet_requestPermissions",
+        params: [{ eth_accounts: {} }],
+      });
       const signer = provider.getSigner();
       const address = await signer.getAddress();
 
@@ -83,7 +94,7 @@ const App = () => {
       setBalance(ethers.utils.formatEther(balance));
 
       setWalletData({ provider, signer, address });
-      localStorage.setItem('walletAddress', address);
+      localStorage.setItem("walletAddress", address);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -95,25 +106,28 @@ const App = () => {
     setWalletData(null);
     setBalance(null);
     setKycStatus(null);
-    localStorage.removeItem('walletAddress');
-    localStorage.removeItem('kycVerified');
-  
+    localStorage.removeItem("walletAddress");
+    localStorage.removeItem("kycVerified");
+
     // Force "reconnection" by reloading the page and clearing provider cache
     if (window.ethereum && window.ethereum._metamask) {
       // This just disables auto reloading on chain changes temporarily
       window.ethereum.autoRefreshOnNetworkChange = false;
     }
   };
-  
 
   const provider = {
     async getAccessToken() {
-      const res = await fetch("https://technosolx.com/initio/public/api/zkme/token");
+      const res = await fetch(
+        "https://technosolx.com/initio/public/api/zkme/token"
+      );
       const json = await res.json();
       return json.data.accessToken;
     },
     async getUserAccounts() {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+      const accounts = await window.ethereum.request({
+        method: "eth_requestAccounts",
+      });
       return accounts;
     },
     async delegateTransaction(tx) {
@@ -124,14 +138,12 @@ const App = () => {
     },
   };
 
- 
-
   const handleLevel1Verification = async () => {
     if (!walletData) {
       await handleConnect();
     }
     if (walletData) {
-      launchKYCWidget('MeID'); // 🔥 pass it here
+      launchKYCWidget("MeID"); // 🔥 pass it here
     }
   };
 
@@ -140,38 +152,40 @@ const App = () => {
       await handleConnect();
     }
     if (walletData) {
-      launchKYCWidget('zkKYC'); // 🔥 pass it here
+      launchKYCWidget("zkKYC"); // 🔥 pass it here
     }
   };
 
   const launchKYCWidget = (level) => {
     const dynamicWidget = new ZkMeWidget(
-      'M2025012255531684563023546877743',
-      'zKMe KYC',
-      '137', // Polygon Mainnet
+      "M2025012255531684563023546877743",
+      "zKMe KYC",
+      "137", // Polygon Mainnet
       provider,
       {
         lv: level, // 🔥 directly use passed value instead of waiting for setState
-        programNo: '202504070001',
-        theme: 'dark',
-        locale: 'en',
+        programNo: "202504070001",
+        theme: "dark",
+        locale: "en",
       }
     );
-  
-    dynamicWidget.on('kycFinished', (result) => {
+
+    dynamicWidget.on("kycFinished", (result) => {
       const { isGrant, associatedAccount } = result;
-      if (isGrant && associatedAccount.toLowerCase() === walletData?.address.toLowerCase()) {
-        setKycStatus('success');
-        localStorage.setItem('kycVerified', 'true');
+      if (
+        isGrant &&
+        associatedAccount.toLowerCase() === walletData?.address.toLowerCase()
+      ) {
+        setKycStatus("success");
+        localStorage.setItem("kycVerified", "true");
       } else {
-        setKycStatus('fail');
-        localStorage.removeItem('kycVerified');
+        setKycStatus("fail");
+        localStorage.removeItem("kycVerified");
       }
     });
-  
+
     dynamicWidget.launch();
   };
-  
 
   const handleVerification = async () => {
     if (!walletData) {
@@ -185,15 +199,15 @@ const App = () => {
   };
 
   useEffect(() => {
-    const isVerified = localStorage.getItem('kycVerified');
-    if (isVerified === 'true') {
-      setKycStatus('success');
+    const isVerified = localStorage.getItem("kycVerified");
+    if (isVerified === "true") {
+      setKycStatus("success");
     }
   }, []);
   useEffect(() => {
-    const savedAddress = localStorage.getItem('walletAddress');
-    const isVerified = localStorage.getItem('kycVerified') === 'true';
-    if (isVerified) setKycStatus('success');
+    const savedAddress = localStorage.getItem("walletAddress");
+    const isVerified = localStorage.getItem("kycVerified") === "true";
+    if (isVerified) setKycStatus("success");
 
     if (savedAddress && window.ethereum) {
       const autoConnect = async () => {
@@ -207,10 +221,10 @@ const App = () => {
             setBalance(ethers.utils.formatEther(balance));
             setWalletData({ provider, signer, address: currentAddress });
           } else {
-            localStorage.removeItem('walletAddress');
+            localStorage.removeItem("walletAddress");
           }
         } catch {
-          localStorage.removeItem('walletAddress');
+          localStorage.removeItem("walletAddress");
         }
         setInitialLoading(false);
       };
@@ -223,14 +237,14 @@ const App = () => {
 
   useEffect(() => {
     if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts) => {
+      window.ethereum.on("accountsChanged", (accounts) => {
         if (accounts.length === 0) {
           handleDisconnect();
         } else {
           handleConnect();
         }
       });
-      window.ethereum.on('chainChanged', () => {
+      window.ethereum.on("chainChanged", () => {
         window.location.reload();
       });
     }
@@ -241,17 +255,19 @@ const App = () => {
       <div className="bg-[#edffee] rounded-xl shadow-lg p-6 max-w-md w-full mx-4 border-2 border-green-500">
         <div className="flex items-center space-x-3 mb-4">
           <Wallet className="w-6 h-6 text-[#8fef56]" />
-          <h3 className="text-lg font-semibold text-gray-800">MetaMask Not Found</h3>
+          <h3 className="text-lg font-semibold text-gray-800">
+            MetaMask Not Found
+          </h3>
         </div>
         <p className="text-gray-600 mb-6">
-          {isMobile 
+          {isMobile
             ? "To use this application, please open it in MetaMask's in-app browser."
             : "To use this application, you need to install MetaMask, a cryptocurrency wallet for your browser."}
         </p>
         <div className="flex space-x-3">
           {isMobile ? (
             <a
-              href="https://metamask.app.link/dapp/zk-me.vercel.app"
+              href="https://metamask.app.link/dapp/app.everimx.com"
               className="flex-1 bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg transition-colors text-center"
             >
               Open in MetaMask
@@ -278,9 +294,9 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[oklch(0.99_0.02_150)] text-black">
+    <div className="min-h-screen bg-[#F1F0F0]">
       {showMetaMaskDialog && <MetaMaskDialog />}
-      <Header 
+      <Header
         walletData={walletData}
         balance={balance}
         onConnect={handleConnect}
@@ -290,9 +306,11 @@ const App = () => {
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
           <div className="space-y-4 mt-8">
-            <h2 className="text-5xl font-normal text-gray-800">Unlock your exclusive early adopters rewards while outsmarting bots!</h2>
-            <p className="text-gray-600 text-lg mt-8">
-              Prove that you are a unique human in two steps, by passing this multi-level credentialing system that ensures only unique humans can attain Level 2, effectively distinguishing themselves from bots and preventing Sybil attacks.
+            <h2 className="h2 text-5xl font-normal text-gray-800">
+              Verifica tu identidad para continuar
+            </h2>
+            <p className="p text-gray-600 text-lg mt-8">
+              Elige la verificación deseada y da click en Verificar
             </p>
             {/* <p className="text-gray-600 text-lg mt-8">
               Passing both verifications is necessary to anchor your Proof of Uniqueness credential to the Verax attestation registry, making you eligible to participate in the LXP drop.
@@ -300,113 +318,133 @@ const App = () => {
           </div>
 
           {!walletData && !initialLoading && (
-                <div className="flex flex-col items-center space-y-2">
-                  <p className="text-sm text-gray-600">Please connect your wallet to verify your identity.</p>
-                </div>
-              )}
-              {walletData && (
-                <div className="flex flex-col items-center space-y-2">
-                  <p className="text-sm text-gray-600">Your Wallet is connected. Click on the verify button to start verification</p>
-                </div>
-              )}
-              <div className="flex flex-col items-center space-y-2">
-                  <p className="text-sm text-gray-600">Welcome to Identity Verification</p>
-                </div>
-              
+            <div className="flex flex-col items-center space-y-2">
+              <p className="p text-sm text-gray-600">
+                Sigue los pasos indicados a continuación
+              </p>
+            </div>
+          )}
+          {walletData && (
+            <div className="flex flex-col items-center space-y-2">
+              <p className="p text-sm text-gray-600">
+                Cartera conectada. Da click en Verificar para iniciar el proceso
+              </p>
+            </div>
+          )}
+          <div className="flex flex-col items-center space-y-2">
+            <p className="p text-sm text-gray-600">
+              Es necesario tener una cuenta en Metamask
+            </p>
+          </div>
 
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1 bg-[#edffee] rounded-xl shadow-lg p-6 space-y-6 border-2 border-green-500">
+            <div className="flex-1 bg-[#F1F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#188F5E]">
               {error && (
                 <div className="bg-red-100 border border-red-600 rounded-lg p-4 text-red-800 flex items-start space-x-2">
                   <AlertCircle className="w-5 h-5 mt-0.5" />
                   <span className="text-sm">{error}</span>
                 </div>
               )}
-              <h1>Level 1</h1>
+              <h1 className="h1">Nivel 1</h1>
 
               {initialLoading && (
                 <div className="flex flex-col items-center space-y-2">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                  <p className="text-sm text-gray-600">Connecting to wallet...</p>
+                  <p className="p text-sm text-gray-600">
+                    Conectando cartera...
+                  </p>
                 </div>
               )}
 
               <div className="bg-white border border-gray-300 rounded-lg p-4 space-y-2">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium">MeID Verification</span>
+                  <div className="w-3 h-3 bg-[#F1ED76] rounded-full animate-pulse" />
+                  <span className="span text-sm font-medium">
+                    Verificación de individualidad
+                  </span>
                 </div>
-                <p className="text-xs text-gray-400">Proof of Uniqueness</p>
+                <p className="p text-xs text-gray-400">Escaneo facial</p>
               </div>
 
               <div className="space-y-4">
-                <p className="text-sm text-gray-600">A decentralized identity solution that proves user uniqueness and humanness without revealing personal data.</p>
-                {kycStatus !== 'success' && (
+                <p className="p text-sm text-gray-600">
+                  Una solución de identidad que prueba que eres humano sin
+                  revelar información privada.
+                </p>
+                {kycStatus !== "success" && (
                   <button
                     onClick={handleLevel1Verification}
                     disabled={loading}
-                    className="bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg"
+                    className="button bg-[#188F5E] hover:bg-[#168658] py-3 px-4 rounded-lg"
                   >
-                    Verify now
+                    Verificar
                   </button>
                 )}
 
-                {kycStatus === 'success' && (
-                  <div className="bg-green-100 border border-green-600 text-green-800 rounded p-3 text-center">
-                    ✅ KYC Verification complete!
+                {kycStatus === "success" && (
+                  <div className="div bg-green-100 border border-green-600 text-green-800 rounded p-3 text-center">
+                    ✅ Verificación completada
                   </div>
                 )}
-                {kycStatus === 'fail' && (
-                  <div className="bg-red-100 border border-red-600 text-red-800 rounded p-3 text-center">
-                    ❌ KYC Verification failed. Please try again.
+                {kycStatus === "fail" && (
+                  <div className="div bg-red-100 border border-red-600 text-red-800 rounded p-3 text-center">
+                    ❌ Verificación fallida. Intenta de nuevo
                   </div>
                 )}
               </div>
             </div>
-            <div className="flex-1 bg-[#edffee] rounded-xl shadow-lg p-6 space-y-6 border-2 border-green-500">
+            <div className="flex-1 bg-[#F1F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#188F5E]">
               {error && (
                 <div className="bg-red-100 border border-red-600 rounded-lg p-4 text-red-800 flex items-start space-x-2">
                   <AlertCircle className="w-5 h-5 mt-0.5" />
                   <span className="text-sm">{error}</span>
                 </div>
               )}
-              <h1>Level 2</h1>
+              <h1 className="h1">Nivel 2</h1>
 
               {initialLoading && (
                 <div className="flex flex-col items-center space-y-2">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
-                  <p className="text-sm text-gray-600">Connecting to wallet...</p>
+                  <p className="p text-sm text-gray-600">
+                    Conectando cartera...
+                  </p>
                 </div>
               )}
 
               <div className="bg-white border border-gray-300 rounded-lg p-4 space-y-2">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse" />
-                  <span className="text-sm font-medium">SBT Verification</span>
+                  <div className="w-3 h-3 bg-[#F1ED76] rounded-full animate-pulse" />
+                  <span className="span text-sm font-medium">
+                    Verificación de identidad
+                  </span>
                 </div>
-                <p className="text-xs text-gray-400">Immutable identity proof on-chain</p>
+                <p className="p text-xs text-gray-400">Escaneo de ID</p>
               </div>
 
               <div className="space-y-4">
-                <p className="text-sm text-gray-600">A non-transferable token issued after verified KYC, proving specific attributes like age or nationality with zero-knowledge proofs</p>
-                {kycStatus !== 'success' && (
+                <p className="p text-sm text-gray-600">
+                  Un token intransferible emitido al realizar una verificación
+                  KYC, prueba atributos como edad o nacionalidad sin revelar
+                  información privada.
+                </p>
+                {kycStatus !== "success" && (
                   <button
                     onClick={handleLevel2Verification}
                     disabled={loading}
-                    className="bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg"
+                    className="bg-[#188F5E] hover:bg-[#168658]  py-3 px-4 rounded-lg"
                   >
-                    Verify now
+                    Verificar
                   </button>
                 )}
 
-                {kycStatus === 'success' && (
-                  <div className="bg-green-100 border border-green-600 text-green-800 rounded p-3 text-center">
-                    ✅ KYC Verification complete!
+                {kycStatus === "success" && (
+                  <div className="div bg-green-100 border border-green-600 text-green-800 rounded p-3 text-center">
+                    ✅ Verificación completada
                   </div>
                 )}
-                {kycStatus === 'fail' && (
-                  <div className="bg-red-100 border border-red-600 text-red-800 rounded p-3 text-center">
-                    ❌ KYC Verification failed. Please try again.
+                {kycStatus === "fail" && (
+                  <div className="div bg-red-100 border border-red-600 text-red-800 rounded p-3 text-center">
+                    ❌ Verificación fallida. Intenta de nuevo
                   </div>
                 )}
               </div>
