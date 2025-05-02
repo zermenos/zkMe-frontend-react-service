@@ -123,7 +123,7 @@ const App = () => {
         //https://technosolx.com/initio/public/api/zkme/token"
       );
       const json = await res.json();
-      return json.data.accessToken;
+      return fetchNewToken(); //json.data.accessToken;
     },
     async getUserAccounts() {
       const accounts = await window.ethereum.request({
