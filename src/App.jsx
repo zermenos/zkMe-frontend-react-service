@@ -117,14 +117,36 @@ const App = () => {
 
   const provider = {
     async getAccessToken() {
+      try {
+        const res = await fetch("https://backend.everimx.com/api/zkme/token");
+
+        if (!res.ok) {
+          throw new Error(`Server responded with ${res.status}`);
+        }
+
+        const json = await res.json();
+
+        if (!json?.data?.accessToken) {
+          throw new Error("Access token not found in response");
+        }
+
+        return json.data.accessToken;
+      } catch (error) {
+        console.error("Failed to fetch access token:", error);
+        return null;
+      }
+    },
+
+    /*
+    async getAccessToken() {
       const res = await fetch(
-        "https://backend.everimx.com/public/api/zkme/token"
+        "https://backend.everimx.com/api/zkme/token"
         //https://backend.everimx.com/api/coinpayments/"
         //https://technosolx.com/initio/public/api/zkme/token"
       );
       const json = await res.json();
       return json.data.accessToken; //fetchNewToken(); //
-    },
+    },*/
     async getUserAccounts() {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
