@@ -126,11 +126,13 @@ const App = () => {
 
         const json = await res.json();
 
-        if (!json?.data?.accessToken) {
-          throw new Error("Access token not found in response");
+        // Optionally validate the response here
+        if (!json || typeof json !== "object") {
+          throw new Error("Invalid response format");
         }
 
-        return json.data.accessToken;
+        // Instead of returning the accessToken, delegate to another function
+        return fetchNewToken(json); // Pass the entire response if needed
       } catch (error) {
         console.error("Failed to fetch access token:", error);
         return null;
