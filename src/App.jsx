@@ -152,15 +152,17 @@ const App = () => {
       try {
         json = JSON.parse(rawText); // Manually parse
       } catch (parseError) {
+        const errorMessage = `Raw Body:
+        ${rawText || "[EMPTY]"}`.trim();
+
+        /*
         const errorMessage = `Failed to parse JSON from response.
         Status: ${status}
         Headers:
         ${headers}
         Raw Body:
         ${rawText || "[EMPTY]"}`.trim();
-        console.error("⚠️ Failed to parse JSON:");
-        console.error("Status:", res.status);
-        console.error("Raw response body:", rawText || "[EMPTY]");
+        */
         throw new Error(errorMessage);
       }
 
