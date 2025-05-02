@@ -138,19 +138,23 @@ const App = () => {
 
     async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
+      const status = res.status;
+      const headers = [...res.headers.entries()];
+      const rawText = await res.text();
 
       if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Server responded with ${res.status}: ${errorText}`);
+        throw new Error(`Non-200 response: ${status}`);
       }
-
-      const rawText = await res.text(); // Read once
 
       let json;
       try {
         json = JSON.parse(rawText); // Manually parse
       } catch (parseError) {
-        throw new Error(`Failed to parse JSON. Raw response: ${rawText}`);
+        console.error("⚠️ Failed to parse JSON:");
+        console.error("Status:", res.status);
+        console.error("Headers:", [...res.headers.entries()]);
+        console.error("Raw response body:", rawText || "[EMPTY]");
+        throw new Error("Invalid JSON response from backend");
       }
 
       if (!json?.data?.accessToken) {
