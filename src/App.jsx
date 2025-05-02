@@ -137,7 +137,7 @@ const App = () => {
     },*/
 
     async getAccessToken() {
-      const res = await fetch("https://backend.everimx.com/api/zkme/token");
+      const res = await fetch("https://backend.everimx.com/zkme/token");
       const status = res.status;
       const headers = [...res.headers.entries()]
         .map(([key, value]) => `${key}: ${value}`)
