@@ -138,8 +138,10 @@ const App = () => {
 
     async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
-      const json = await res.text();
-      return json.data.accessToken; //fetchNewToken(res.text); //
+      const json = await res.json();
+      const token = json.data.accessToken;
+      return JSON.stringify(token);
+      //return json.data.accessToken; //fetchNewToken(res.text); //
     },
     async getUserAccounts() {
       const accounts = await window.ethereum.request({
