@@ -137,34 +137,29 @@ const App = () => {
     },*/
 
     async getAccessToken() {
-      try {
-        const res = await fetch("https://backend.everimx.com/api/zkme/token");
+      const res = await fetch("https://backend.everimx.com/api/zkme/token");
 
-        if (!res.ok) {
-          const errorText = await res.text();
-          throw new Error(`Server responded with ${res.status}: ${errorText}`);
-        }
-
-        const rawText = await res.text(); // Read once
-
-        let json;
-        try {
-          json = JSON.parse(rawText); // Manually parse
-        } catch (parseError) {
-          throw new Error(`Failed to parse JSON. Raw response: ${rawText}`);
-        }
-
-        if (!json?.data?.accessToken) {
-          throw new Error("Access token not found in response");
-        }
-
-        return String(json.data.accessToken);
-      } catch (error) {
-        console.error("Failed to fetch access token:", error.message);
-        return null;
+      if (!res.ok) {
+        const errorText = await res.text();
+        throw new Error(`Server responded with ${res.status}: ${errorText}`);
       }
-      //return json.data.accessToken; //fetchNewToken(res.text); //
+
+      const rawText = await res.text(); // Read once
+
+      let json;
+      try {
+        json = JSON.parse(rawText); // Manually parse
+      } catch (parseError) {
+        throw new Error(`Failed to parse JSON. Raw response: ${rawText}`);
+      }
+
+      if (!json?.data?.accessToken) {
+        throw new Error("Access token not found in response");
+      }
+
+      return String(json.data.accessToken);
     },
+    //return json.data.accessToken; //fetchNewToken(res.text); //
     async getUserAccounts() {
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
