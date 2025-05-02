@@ -118,12 +118,12 @@ const App = () => {
   const provider = {
     async getAccessToken() {
       const res = await fetch(
-        "https://backend.everimx.com/api/zkme/token"
+        "https://backend.everimx.com/public/api/zkme/token"
         //https://backend.everimx.com/api/coinpayments/"
         //https://technosolx.com/initio/public/api/zkme/token"
       );
       const json = await res.json();
-      return fetchNewToken(); //json.data.accessToken;
+      return json.data.accessToken; //fetchNewToken(); //
     },
     async getUserAccounts() {
       const accounts = await window.ethereum.request({
