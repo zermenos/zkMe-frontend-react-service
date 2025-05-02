@@ -137,20 +137,32 @@ const App = () => {
     },*/
 
     async getAccessToken() {
-      const res = await fetch("https://backend.everimx.com/api/zkme/token");
-      if (!res.ok) {
-        const errorText = await res.text();
-        throw new Error(`Server responded with ${res.status}: ${errorText}`);
-      }
       try {
-        json = await res.json(); // this might fail
-      } catch (parseError) {
-        const raw = await res.text(); // get raw body for logging
-        throw new Error(`Failed to parse JSON. Raw response: ${raw}`);
+        const res = await fetch("https://backend.everimx.com/api/zkme/token");
+
+        if (!res.ok) {
+          const errorText = await res.text();
+          throw new Error(`Server responded with ${res.status}: ${errorText}`);
+        }
+
+        const rawText = await res.text(); // Read once
+
+        let json;
+        try {
+          json = JSON.parse(rawText); // Manually parse
+        } catch (parseError) {
+          throw new Error(`Failed to parse JSON. Raw response: ${rawText}`);
+        }
+
+        if (!json?.data?.accessToken) {
+          throw new Error("Access token not found in response");
+        }
+
+        return String(json.data.accessToken);
+      } catch (error) {
+        console.error("Failed to fetch access token:", error.message);
+        return null;
       }
-      const json = await res.json();
-      const token = String(json.data.accessToken);
-      return token;
       //return json.data.accessToken; //fetchNewToken(res.text); //
     },
     async getUserAccounts() {
