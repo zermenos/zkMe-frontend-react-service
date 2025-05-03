@@ -118,6 +118,13 @@ const App = () => {
   const provider = {
     async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
+      const json = await res.json();
+      const token = json.data?.accessToken; // <-- this should work based on your sample
+      return token;
+    },
+
+    /*
+      const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const rawText = await res.text();
       const headers = [...res.headers.entries()]
         .map(([key, value]) => `${key}: ${value}`)
@@ -138,7 +145,7 @@ const App = () => {
 
       // Convert access token to a string explicitly
       return String(parsedJson.data.accessToken);
-    },
+    },*/
 
     /*
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
