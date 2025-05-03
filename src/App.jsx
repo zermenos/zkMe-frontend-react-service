@@ -116,31 +116,40 @@ const App = () => {
   };
 
   const provider = {
-    /*
     async getAccessToken() {
+      const res = await fetch("https://backend.everimx.com/api/zkme/token");
+      const rawText = await res.text(); // read once
+      let json;
       try {
-        const res = await fetch("https://backend.everimx.com/api/zkme/token");
-        if (!res.ok) {
-          throw new Error(`Server responded with ${res.status}`);
-        }
-        const json = await res.json();
-        // Optionally validate the response here
-        if (!json || typeof json !== "object") {
-          throw new Error("Invalid response format");
-        }
-        // Instead of returning the accessToken, delegate to another function
-        return fetchNewToken(json.data.accessToken); // Pass the entire response if needed
-      } catch (error) {
-        console.error("Failed to fetch access token:", error);
-        return null;
-      }
-    },*/
+        json = JSON.parse(rawText);
+      } catch (parseError) {
+        const status = res.status;
+        const headers = [...res.headers.entries()]
+          .map(([key, value]) => `${key}: ${value}`)
+          .join("\n");
 
+        const errorMessage = `Failed to parse JSON from response.
+        Status: ${status}
+        Headers:${headers}
+        Raw Body:${rawText || "[EMPTY]"}`.trim();
+        throw new Error(errorMessage);
+      }
+      if (!res.ok) {
+        throw new Error(`Non-200 response: ${res.status}`);
+      }
+
+      if (!json?.data?.accessToken) {
+        throw new Error("Access token not found in parsed JSON.");
+      }
+
+      return String(json.data.accessToken);
+    },
+    /*
     async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const json = await res.json();
       return json.data.accessToken;
-    },
+    },*/
     //return json.data.accessToken; //fetchNewToken(res.text); //
     async getUserAccounts() {
       const accounts = await window.ethereum.request({
