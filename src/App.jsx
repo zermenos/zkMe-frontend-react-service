@@ -124,7 +124,7 @@ const App = () => {
       const jsonMatch = rawText.match(/{.*}/s); // Matches first JSON-like block
 
       if (!jsonMatch) {
-        throw new Error("No JSON found in HTML response");
+        throw new Error(rawText);
       }
 
       const json = JSON.parse(jsonMatch[0]);
