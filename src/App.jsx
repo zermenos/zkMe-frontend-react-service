@@ -117,13 +117,14 @@ const App = () => {
 
   const provider = {
     async getAccessToken() {
+      /*
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const json = await res.json();
       const token = json.data?.accessToken; // <-- this should work based on your sample
       return token;
-    },
+    },*/
 
-    /*
+      /*
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const rawText = await res.text();
       const headers = [...res.headers.entries()]
@@ -147,7 +148,7 @@ const App = () => {
       return String(parsedJson.data.accessToken);
     },*/
 
-    /*
+      /*
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const rawText = await res.text(); // read once
       const status = res.status;
@@ -174,12 +175,10 @@ const App = () => {
 
       return String(json.data.accessToken);
     },*/
-    /*
-    async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const json = await res.json();
       return json.data.accessToken;
-    },*/
+    },
     //return json.data.accessToken; //fetchNewToken(res.text); //
     async getUserAccounts() {
       const accounts = await window.ethereum.request({
