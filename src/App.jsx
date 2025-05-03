@@ -119,19 +119,18 @@ const App = () => {
     async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const rawText = await res.text(); // read once
+      const status = res.status;
+      const headers = [...res.headers.entries()]
+        .map(([key, value]) => `${key}: ${value}`)
+        .join("\n");
+      const errorMessage = `Failed to parse JSON from response.
+      Status: ${status}
+      Headers:${headers}
+      Raw Body:${rawText || "[EMPTY]"}`.trim();
       let json;
       try {
         json = JSON.parse(rawText);
       } catch (parseError) {
-        const status = res.status;
-        const headers = [...res.headers.entries()]
-          .map(([key, value]) => `${key}: ${value}`)
-          .join("\n");
-
-        const errorMessage = `Failed to parse JSON from response.
-        Status: ${status}
-        Headers:${headers}
-        Raw Body:${rawText || "[EMPTY]"}`.trim();
         throw new Error(errorMessage);
       }
       if (!res.ok) {
@@ -139,7 +138,7 @@ const App = () => {
       }
 
       if (!json?.data?.accessToken) {
-        throw new Error("Access token not found in parsed JSON.");
+        throw new Error(errorMessage);
       }
 
       return String(json.data.accessToken);
