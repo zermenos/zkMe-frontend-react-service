@@ -138,39 +138,8 @@ const App = () => {
 
     async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
-      const status = res.status;
-      const headers = [...res.headers.entries()]
-        .map(([key, value]) => `${key}: ${value}`)
-        .join("\n");
-      const rawText = await res.text();
-
-      if (!res.ok) {
-        throw new Error(`Non-200 response: ${status}`);
-      }
-
-      let json;
-      try {
-        json = JSON.parse(rawText); // Manually parse
-      } catch (parseError) {
-        const errorMessage = `Raw Body:
-        ${rawText || "[EMPTY]"}`.trim();
-
-        /*
-        const errorMessage = `Failed to parse JSON from response.
-        Status: ${status}
-        Headers:
-        ${headers}
-        Raw Body:
-        ${rawText || "[EMPTY]"}`.trim();
-        */
-        throw new Error(errorMessage);
-      }
-
-      if (!json?.data?.accessToken) {
-        throw new Error("Access token not found in response");
-      }
-
-      return String(json.data.accessToken);
+      const json = await res.json();
+      return json.data.accessToken;
     },
     //return json.data.accessToken; //fetchNewToken(res.text); //
     async getUserAccounts() {
