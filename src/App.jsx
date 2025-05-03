@@ -117,28 +117,22 @@ const App = () => {
 
   const provider = {
     async getAccessToken() {
-      try {
-        const res = await fetch("https://backend.everimx.com/api/zkme/token");
-        const rawText = await res.text();
+      const res = await fetch("https://backend.everimx.com/api/zkme/token");
+      const rawText = await res.text();
 
-        // Try to extract JSON from within the HTML response
-        const jsonMatch = rawText.match(/{.*}/s); // Matches first JSON-like block
+      // Try to extract JSON from within the HTML response
+      const jsonMatch = rawText.match(/{.*}/s); // Matches first JSON-like block
 
-        if (!jsonMatch) {
-          throw new Error("No JSON found in HTML response");
-        }
-
-        const json = JSON.parse(jsonMatch[0]);
-
-        if (!json?.data?.accessToken) {
-          throw new Error("Access token not found in parsed JSON.");
-        }
-
-        return String(json.data.accessToken);
-      } catch (error) {
-        console.error("getAccessToken error:", error.message);
-        return null;
+      if (!jsonMatch) {
+        throw new Error("No JSON found in HTML response");
       }
+
+      const json = JSON.parse(jsonMatch[0]);
+
+      if (!json?.data?.accessToken) {
+        throw new Error("Access token not found in parsed JSON.");
+      }
+      return String(json.data.accessToken);
     },
 
     /*
