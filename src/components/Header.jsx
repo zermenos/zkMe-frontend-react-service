@@ -25,8 +25,8 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
             {walletData ? (
               <>
                 <div className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors duration-200">
+                  <Wallet className="w-4 h-4 text-blue-500" />
                   {/*
-                    <Wallet className="w-4 h-4 text-blue-500" />
                     <span className="text-sm font-medium">
                       {parseFloat(balance).toFixed(4)} tBNB
                     </span>
