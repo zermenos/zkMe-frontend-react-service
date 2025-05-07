@@ -37,7 +37,7 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
                 <div className="relative">
                   <button
                     onClick={toggleDropdown}
-                    className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors duration-200"
+                    className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 border border-gray-200 px-4 py-2 rounded-lg transition-colors duration-200"
                   >
                     <span className="text-sm font-medium">
                       {formatAddress(walletData.address)}
