@@ -319,7 +319,8 @@ const App = () => {
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">
                 Es necesario tener una cuenta en Metamask, si aún no la tienes
-                descarga la aplicación haciendo click en Verificar
+                descarga la aplicación haciendo click en Verificar o en Conectar
+                Cartera. Al terminar el registro vuelve a presionar el botón.
                 <br></br>
               </p>
             </div>
@@ -343,7 +344,7 @@ const App = () => {
                   <span className="text-sm">{error}</span>
                 </div>
               )}
-              <h1 className="h1">Reclama una credencial</h1>
+              <h1 className="h1">Reclama esta credencial</h1>
 
               {initialLoading && (
                 <div className="flex flex-col items-center space-y-2">
@@ -450,6 +451,16 @@ const App = () => {
               </div>
             </div>*/}
           </div>
+          <p className="p text-gray-600 text-lg mt-8">
+            Ayúdanos a mejorar contestando una breve encuesta
+            <a
+              href="https://qualtricsxm2tmvtgt97.qualtrics.com/jfe/form/SV_0W0zPJT91WeybBk"
+              className="p text-blue-600"
+            >
+              {" "}
+              aquí
+            </a>
+          </p>
         </div>
       </div>
     </div>
