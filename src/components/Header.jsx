@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Wallet, ChevronDown, LogOut } from "lucide-react";
-import "../index.css";
 
 const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -18,23 +17,27 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3">
-            <img src="logo.PNG" alt="Everi Logo" className="h-12 w-auto" />
+            <img src="logo.PNG" alt="Everi Logo" className="h-8 w-auto" />
             <h1 className="text-xl font-bold text-gray-800"></h1>
           </div>
 
           <div className="flex items-center space-x-4">
             {walletData ? (
               <>
+                {/*
                 <div className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors duration-200">
-                  <Wallet className="w-4 h-4 text-blue-500" />
-                  <span className="text-sm font-medium">
-                    {parseFloat(balance).toFixed(4)} tBNB
-                  </span>
+                  
+                    <Wallet className="w-4 h-4 text-blue-500" />
+                    <span className="text-sm font-medium">
+                      {parseFloat(balance).toFixed(4)} tBNB
+                    </span>
+                    
                 </div>
+                */}
                 <div className="relative">
                   <button
                     onClick={toggleDropdown}
-                    className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors duration-200"
+                    className="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200"
                   >
                     <span className="text-sm font-medium">
                       {formatAddress(walletData.address)}

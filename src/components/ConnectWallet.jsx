@@ -1,5 +1,4 @@
 import React from "react";
-import "./index.css";
 
 const ConnectWallet = ({ onConnect, isConnected, isLoading, address }) => {
   return (

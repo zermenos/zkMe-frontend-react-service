@@ -62,7 +62,7 @@ const App = () => {
       if (isMobile) {
         // Use production URL for MetaMask deep link
         // Use Universal Links format for better cross-platform support
-        const dappUrl = "app.everimx.com";
+        const dappUrl = "https://app.everimx.com";
         // For Android, we need to use a different format
         if (/android/i.test(navigator.userAgent)) {
           window.location.href = `intent://app.everimx.com#Intent;scheme=https;package=io.metamask;end`;
@@ -118,9 +118,7 @@ const App = () => {
 
   const provider = {
     async getAccessToken() {
-      const res = await fetch(
-        "https://technosolx.com/initio/public/api/zkme/token"
-      );
+      const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const json = await res.json();
       return json.data.accessToken;
     },
@@ -165,7 +163,7 @@ const App = () => {
       {
         lv: level, // 🔥 directly use passed value instead of waiting for setState
         programNo: "202504070001",
-        theme: "dark",
+        theme: "light",
         locale: "en",
       }
     );
@@ -267,7 +265,7 @@ const App = () => {
         <div className="flex space-x-3">
           {isMobile ? (
             <a
-              href="https://metamask.app.link/dapp/app.everimx.com"
+              href="https://metamask.app.link/dapp/zk-me.vercel.app"
               className="flex-1 bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg transition-colors text-center"
             >
               Open in MetaMask
@@ -306,11 +304,11 @@ const App = () => {
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
           <div className="space-y-4 mt-8">
-            <h2 className="h2 text-5xl font-normal text-gray-800">
+            <h2 className="h2 text-4xl font-normal text-gray-800">
               Verifica tu identidad para continuar
             </h2>
             <p className="p text-gray-600 text-lg mt-8">
-              Elige la verificación deseada y da click en Verificar
+              Da click en Verificar y sigue los pasos indicados a continuación
             </p>
             {/* <p className="text-gray-600 text-lg mt-8">
               Passing both verifications is necessary to anchor your Proof of Uniqueness credential to the Verax attestation registry, making you eligible to participate in the LXP drop.
@@ -320,7 +318,10 @@ const App = () => {
           {!walletData && !initialLoading && (
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">
-                Sigue los pasos indicados a continuación
+                Es necesario tener una cuenta en Metamask, si aún no la tienes
+                descarga la aplicación haciendo click en Verificar o en Conectar
+                Cartera. Al terminar el registro vuelve a presionar el botón.
+                <br></br>
               </p>
             </div>
           )}
@@ -332,9 +333,7 @@ const App = () => {
             </div>
           )}
           <div className="flex flex-col items-center space-y-2">
-            <p className="p text-sm text-gray-600">
-              Es necesario tener una cuenta en Metamask
-            </p>
+            <p className="p text-sm text-gray-600"></p>
           </div>
 
           <div className="flex flex-col md:flex-row gap-6">
@@ -345,7 +344,7 @@ const App = () => {
                   <span className="text-sm">{error}</span>
                 </div>
               )}
-              <h1 className="h1">Nivel 1</h1>
+              <h1 className="h1">Reclama esta credencial</h1>
 
               {initialLoading && (
                 <div className="flex flex-col items-center space-y-2">
@@ -360,7 +359,7 @@ const App = () => {
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-[#F1ED76] rounded-full animate-pulse" />
                   <span className="span text-sm font-medium">
-                    Verificación de individualidad
+                    Prueba de individualidad
                   </span>
                 </div>
                 <p className="p text-xs text-gray-400">Escaneo facial</p>
@@ -393,6 +392,7 @@ const App = () => {
                 )}
               </div>
             </div>
+            {/*
             <div className="flex-1 bg-[#F1F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#188F5E]">
               {error && (
                 <div className="bg-red-100 border border-red-600 rounded-lg p-4 text-red-800 flex items-start space-x-2">
@@ -400,6 +400,7 @@ const App = () => {
                   <span className="text-sm">{error}</span>
                 </div>
               )}
+
               <h1 className="h1">Nivel 2</h1>
 
               {initialLoading && (
@@ -448,8 +449,18 @@ const App = () => {
                   </div>
                 )}
               </div>
-            </div>
+            </div>*/}
           </div>
+          <p className="p text-gray-600 text-lg mt-8">
+            Ayúdanos a mejorar contestando una breve encuesta
+            <a
+              href="https://qualtricsxm2tmvtgt97.qualtrics.com/jfe/form/SV_0W0zPJT91WeybBk"
+              className="p text-blue-600"
+            >
+              {" "}
+              aquí
+            </a>
+          </p>
         </div>
       </div>
     </div>
