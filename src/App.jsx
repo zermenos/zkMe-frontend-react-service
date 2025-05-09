@@ -318,7 +318,7 @@ const App = () => {
           {!walletData && !initialLoading && (
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">
-                Es necesario tener una cuenta en Metamask, si aún no la tienes
+                Es necesario tener una cuenta en MetaMask, si aún no la tienes
                 descarga la aplicación haciendo click en Verificar o en Conectar
                 Cartera. Al terminar el registro vuelve a presionar el botón.
                 <br></br>
@@ -335,7 +335,20 @@ const App = () => {
           <div className="flex flex-col items-center space-y-2">
             <p className="p text-sm text-gray-600"></p>
           </div>
+          <div className="flex-1 bg-[#e2e1e1] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#b3b2b2]">
+            {error && (
+              <div className="bg-red-100 border border-red-600 rounded-lg p-4 text-red-800 flex items-start space-x-2">
+                <AlertCircle className="w-5 h-5 mt-0.5" />
+                <span className="text-sm">{error}</span>
+              </div>
+            )}
 
+            <p className="p text-white text-sm">
+              {String.fromCodePoint(0x24d8)} NOTA<br></br>MetaMask es una
+              cartera de criptomonedas que te permite interactuar con
+              aplicaciones Web3 y certificados blockchain como tokens o NFTs{" "}
+            </p>
+          </div>
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1 bg-[#F1F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#188F5E]">
               {error && (
