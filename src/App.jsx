@@ -357,9 +357,8 @@ const App = () => {
                   <span className="text-sm">{error}</span>
                 </div>
               )}
-              {/*
-              <h1 className="h1">Reclama esta credencial</h1>
-              */}
+
+              <h1 className="h1">Conecta tu cartera</h1>
 
               {initialLoading && (
                 <div className="flex flex-col items-center space-y-2">
