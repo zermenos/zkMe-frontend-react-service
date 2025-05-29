@@ -162,7 +162,7 @@ const App = () => {
       provider,
       {
         lv: level, // 🔥 directly use passed value instead of waiting for setState
-        programNo: "202504070001",
+        programNo: "202505220002",
         theme: "light",
         locale: "en",
       }
@@ -292,7 +292,7 @@ const App = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#F1F0F0]">
+    <div className="min-h-screen bg-[#F0F0F0]">
       {showMetaMaskDialog && <MetaMaskDialog />}
       <Header
         walletData={walletData}
@@ -346,18 +346,20 @@ const App = () => {
             <p className="p text-white text-sm">
               {String.fromCodePoint(0x24d8)} NOTA<br></br>MetaMask es una
               cartera de criptomonedas que te permite interactuar con
-              aplicaciones Web3 y certificados blockchain como tokens o NFTs{" "}
+              aplicaciones Web3 y certificados blockchain como tokens o NFTs.
             </p>
           </div>
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1 bg-[#F1F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#188F5E]">
+            <div className="flex-1 bg-[#F0F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#168E5D]">
               {error && (
                 <div className="bg-red-100 border border-red-600 rounded-lg p-4 text-red-800 flex items-start space-x-2">
                   <AlertCircle className="w-5 h-5 mt-0.5" />
                   <span className="text-sm">{error}</span>
                 </div>
               )}
+              {/*
               <h1 className="h1">Reclama esta credencial</h1>
+              */}
 
               {initialLoading && (
                 <div className="flex flex-col items-center space-y-2">
@@ -370,7 +372,7 @@ const App = () => {
 
               <div className="bg-white border border-gray-300 rounded-lg p-4 space-y-2">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-[#F1ED76] rounded-full animate-pulse" />
+                  <div className="w-3 h-3 bg-[#F5F86E] rounded-full animate-pulse" />
                   <span className="span text-sm font-medium">
                     Prueba de individualidad
                   </span>
@@ -387,7 +389,7 @@ const App = () => {
                   <button
                     onClick={handleLevel1Verification}
                     disabled={loading}
-                    className="button bg-[#188F5E] hover:bg-[#168658] py-3 px-4 rounded-lg"
+                    className="button bg-[#168E5D] hover:bg-[#127b50] py-3 px-4 rounded-lg"
                   >
                     Verificar
                   </button>
