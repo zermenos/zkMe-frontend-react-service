@@ -373,7 +373,7 @@ const App = () => {
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-[#F5F86E] rounded-full animate-pulse" />
                   <span className="span text-sm font-medium">
-                    Prueba de individualidad
+                    Prueba que eres humano
                   </span>
                 </div>
                 <p className="p text-xs text-gray-400">Escaneo facial</p>
