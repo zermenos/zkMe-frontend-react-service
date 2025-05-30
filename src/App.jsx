@@ -357,9 +357,9 @@ const App = () => {
                   <span className="text-sm">{error}</span>
                 </div>
               )}
-
+              {/*
               <h1 className="h1">Conecta tu cartera</h1>
-
+*/}
               {initialLoading && (
                 <div className="flex flex-col items-center space-y-2">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
@@ -380,10 +380,11 @@ const App = () => {
               </div>
 
               <div className="space-y-4">
+                {/*
                 <p className="p text-sm text-gray-600">
                   Una solución de identidad que prueba que eres humano sin
                   revelar información privada.
-                </p>
+                </p>*/}
                 {kycStatus !== "success" && (
                   <button
                     onClick={handleLevel1Verification}
