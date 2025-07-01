@@ -149,6 +149,10 @@ const App = () => {
   };
 
   const launchKYCWidget = (level) => {
+    const widgetContainer = document.getElementById("zkme-widget-container");
+    if (widgetContainer) {
+      widgetContainer.innerHTML = ""; // Clear existing widget DOM
+    }
     const dynamicWidget = new ZkMeWidget(
       "M2025012255531684563023546877743",
       "zKMe KYC",
@@ -375,13 +379,16 @@ const App = () => {
                   revelar información privada.
                 </p>*/}
                 {kycStatus !== "success" && (
-                  <button
-                    onClick={handleLevel1Verification}
-                    disabled={loading}
-                    className="button bg-[#168E5D] hover:bg-[#127b50] py-3 px-4 rounded-lg"
-                  >
-                    Verificar
-                  </button>
+                  <>
+                    <button
+                      onClick={handleLevel1Verification}
+                      disabled={loading}
+                      className="button bg-[#168E5D] hover:bg-[#127b50] py-3 px-4 rounded-lg"
+                    >
+                      Verificar
+                    </button>
+                    <div id="zkme-widget-container" className="mt-4" />
+                  </>
                 )}
 
                 {kycStatus === "success" && (
