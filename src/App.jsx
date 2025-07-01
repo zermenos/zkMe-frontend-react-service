@@ -92,16 +92,17 @@ const App = () => {
         await web3auth.logout(); // ✅ Disconnects the session from Web3Auth
       }
 
+      // 2. Clear ZKMe-related storage
+      sessionStorage.clear(); // ZKMe often uses sessionStorage
+      localStorage.removeItem("walletAddress");
+      localStorage.removeItem("kycVerified");
+
       // Clear all wallet-related state
       setWalletData(null);
       setBalance(null);
       setKycStatus(null);
       setWeb3Provider(null);
       setError("");
-
-      // Clear localStorage entries
-      localStorage.removeItem("walletAddress");
-      localStorage.removeItem("kycVerified");
     } catch (err) {
       console.error("Error during disconnect:", err);
       setError("Error al desconectarse");
