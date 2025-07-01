@@ -5,6 +5,7 @@ import { ZkMeWidget } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
+import { Web3Auth, WEB3AUTH_NETWORK } from "@web3auth/modal";
 
 const App = () => {
   const [walletData, setWalletData] = useState(null);
@@ -20,6 +21,29 @@ const App = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
   const [verificationLevel, setVerificationLevel] = useState("");
+  const [web3Provider, setWeb3Provider] = useState(null); // You'll need this too
+  const [web3auth, setWeb3Auth] = useState(null);
+  const clientId =
+    "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
+
+  useEffect(() => {
+    const initWeb3Auth = async () => {
+      try {
+        const w3a = new Web3Auth({
+          clientId,
+          web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
+          walletServicesConfig: {}, // optional services config
+        });
+        await w3a.init();
+        setWeb3Auth(w3a);
+        if (w3a.provider) setWeb3Provider(w3a.provider);
+      } catch (err) {
+        console.error("Web3Auth init error:", err);
+      }
+    };
+
+    initWeb3Auth();
+  }, []);
 
   useEffect(() => {
     // Detect if user is on mobile
@@ -36,70 +60,27 @@ const App = () => {
       setIsMetaMaskBrowser(isMetaMask);
     };
     checkMobile();
-
-    // Detect browser and set appropriate download URL
-    const userAgent = navigator.userAgent.toLowerCase();
-    let url = "https://metamask.io/download/";
-
-    if (userAgent.includes("chrome")) {
-      url =
-        "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn";
-    } else if (userAgent.includes("firefox")) {
-      url = "https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/";
-    } else if (userAgent.includes("edge")) {
-      url =
-        "https://microsoftedge.microsoft.com/addons/detail/metamask/ejbalbakoplchlghecdalmeeeajnimhm";
-    } else if (userAgent.includes("safari")) {
-      url =
-        "https://apps.apple.com/us/app/metamask-blockchain-wallet/id1438144202";
-    }
-
-    setDownloadUrl(url);
   }, []);
 
   const handleConnect = async () => {
-    if (!window.ethereum) {
-      if (isMobile) {
-        // Use production URL for MetaMask deep link
-        // Use Universal Links format for better cross-platform support
-        const dappUrl = "https://app.everimx.com";
-        // For Android, we need to use a different format
-        if (/android/i.test(navigator.userAgent)) {
-          window.location.href = `intent://app.everimx.com#Intent;scheme=https;package=io.metamask;end`;
-        } else {
-          // For iOS and other platforms
-          window.location.href = `https://metamask.app.link/dapp/${dappUrl}`;
-        }
-        // Redirect to MetaMask app browser
-
-        return;
-      }
-      setShowMetaMaskDialog(true);
-      return;
-    }
-
-    setLoading(true);
-    setError("");
-
+    if (!web3auth) return;
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await window.ethereum.request({
-        method: "wallet_requestPermissions",
-        params: [{ eth_accounts: {} }],
-      });
-      const signer = provider.getSigner();
+      await web3auth.connect(); // shows login modal
+      const prov = web3auth.provider;
+      const ethersProvider = new ethers.providers.Web3Provider(prov);
+      const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
-
-      const balance = await provider.getBalance(address);
-      setBalance(ethers.utils.formatEther(balance));
-
-      setWalletData({ provider, signer, address });
+      const bal = await ethersProvider.getBalance(address);
+      setWalletData({ provider: ethersProvider, signer, address });
+      setBalance(ethers.utils.formatEther(bal));
       localStorage.setItem("walletAddress", address);
     } catch (err) {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
+  };
+
+  const handleShowWallet = () => {
+    if (web3auth) web3auth.showWalletUI();
   };
 
   const handleDisconnect = () => {
@@ -123,16 +104,14 @@ const App = () => {
       return json.data.accessToken;
     },
     async getUserAccounts() {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      return accounts;
+      const signer = web3Provider.getSigner(); // <-- using the renamed state
+      return [await signer.getAddress()];
     },
     async delegateTransaction(tx) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = web3Provider.getSigner();
-      const txResponse = await signer.sendTransaction(tx);
-      return txResponse.hash;
+      const ethersProvider = new ethers.providers.Web3Provider(web3Provider);
+      const sig = ethersProvider.getSigner();
+      const res = await sig.sendTransaction(tx);
+      return res.hash;
     },
   };
 
@@ -280,12 +259,7 @@ const App = () => {
               Install MetaMask
             </a>
           )}
-          <button
-            onClick={() => setShowMetaMaskDialog(false)}
-            className="flex-1 bg-white hover:bg-gray-100 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors border border-gray-300"
-          >
-            Cancel
-          </button>
+          <button onClick={handleShowWallet}>Show Wallet</button>
         </div>
       </div>
     </div>
