@@ -86,17 +86,25 @@ const App = () => {
     if (web3auth) web3auth.showWalletUI();
   };
 
-  const handleDisconnect = () => {
-    setWalletData(null);
-    setBalance(null);
-    setKycStatus(null);
-    localStorage.removeItem("walletAddress");
-    localStorage.removeItem("kycVerified");
+  const handleDisconnect = async () => {
+    try {
+      if (web3auth) {
+        await web3auth.logout(); // ✅ Disconnects the session from Web3Auth
+      }
 
-    // Force "reconnection" by reloading the page and clearing provider cache
-    if (window.ethereum && window.ethereum._metamask) {
-      // This just disables auto reloading on chain changes temporarily
-      window.ethereum.autoRefreshOnNetworkChange = false;
+      // Clear all wallet-related state
+      setWalletData(null);
+      setBalance(null);
+      setKycStatus(null);
+      setWeb3Provider(null);
+      setError("");
+
+      // Clear localStorage entries
+      localStorage.removeItem("walletAddress");
+      localStorage.removeItem("kycVerified");
+    } catch (err) {
+      console.error("Error during disconnect:", err);
+      setError("Error al desconectarse");
     }
   };
 
