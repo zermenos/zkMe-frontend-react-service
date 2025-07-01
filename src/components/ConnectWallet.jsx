@@ -1,3 +1,4 @@
+/*
 import React from "react";
 
 const ConnectWallet = ({ onConnect, isConnected, isLoading, address }) => {
@@ -17,3 +18,4 @@ const ConnectWallet = ({ onConnect, isConnected, isLoading, address }) => {
 };
 
 export default ConnectWallet;
+*/

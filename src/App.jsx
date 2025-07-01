@@ -21,7 +21,8 @@ const App = () => {
   const [isMobile, setIsMobile] = useState(false);
   const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
   const [verificationLevel, setVerificationLevel] = useState("");
-  const [web3Provider, setWeb3Provider] = useState(null); // You'll need this too
+  const [rawProvider, setRawProvider] = useState(null); // You'll need this too
+  const [web3Provider, setWeb3Provider] = useState(null);
   const [web3auth, setWeb3Auth] = useState(null);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
@@ -67,7 +68,9 @@ const App = () => {
     try {
       await web3auth.connect(); // shows login modal
       const prov = web3auth.provider;
+      setRawProvider(prov);
       const ethersProvider = new ethers.providers.Web3Provider(prov);
+      setWeb3Provider(ethersProvider);
       const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
       const bal = await ethersProvider.getBalance(address);
@@ -104,13 +107,16 @@ const App = () => {
       return json.data.accessToken;
     },
     async getUserAccounts() {
-      const signer = web3Provider.getSigner(); // <-- using the renamed state
+      if (!web3Provider) throw new Error("Web3 provider not initialized");
+
+      const signer = web3Provider.getSigner(); // ✅ Already wrapped
       return [await signer.getAddress()];
     },
     async delegateTransaction(tx) {
-      const ethersProvider = new ethers.providers.Web3Provider(web3Provider);
-      const sig = ethersProvider.getSigner();
-      const res = await sig.sendTransaction(tx);
+      if (!web3Provider) throw new Error("Web3 provider not initialized");
+
+      const signer = web3Provider.getSigner(); // ✅ Already wrapped
+      const res = await signer.sendTransaction(tx);
       return res.hash;
     },
   };
