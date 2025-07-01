@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
 import { Wallet, AlertCircle, RefreshCw, LogOut } from "lucide-react";
 import { ZkMeWidget } from "@zkmelabs/widget";
@@ -24,6 +24,7 @@ const App = () => {
   const [rawProvider, setRawProvider] = useState(null); // You'll need this too
   const [web3Provider, setWeb3Provider] = useState(null);
   const [web3auth, setWeb3Auth] = useState(null);
+  const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -87,25 +88,24 @@ const App = () => {
   };
 
   const handleDisconnect = async () => {
-    try {
-      if (web3auth) {
-        await web3auth.logout(); // ✅ Disconnects the session from Web3Auth
-      }
+    if (web3auth) {
+      await web3auth.logout(); // ✅ Disconnects the session from Web3Auth
+    }
 
-      // 2. Clear ZKMe-related storage
-      sessionStorage.clear(); // ZKMe often uses sessionStorage
-      localStorage.removeItem("walletAddress");
-      localStorage.removeItem("kycVerified");
+    // 2. Clear ZKMe-related storage
+    localStorage.removeItem("walletAddress");
+    localStorage.removeItem("kycVerified");
 
-      // Clear all wallet-related state
-      setWalletData(null);
-      setBalance(null);
-      setKycStatus(null);
-      setWeb3Provider(null);
-      setError("");
-    } catch (err) {
-      console.error("Error during disconnect:", err);
-      setError("Error al desconectarse");
+    // Clear all wallet-related state
+    setWalletData(null);
+    setBalance(null);
+    setKycStatus(null);
+    setWeb3Provider(null);
+    setError("");
+    // ✅ Destroy ZKMe widget
+    if (zkmeWidgetRef.current) {
+      zkmeWidgetRef.current.destroy();
+      zkmeWidgetRef.current = null;
     }
   };
 
@@ -149,9 +149,9 @@ const App = () => {
   };
 
   const launchKYCWidget = (level) => {
-    const widgetContainer = document.getElementById("zkme-widget-container");
-    if (widgetContainer) {
-      widgetContainer.innerHTML = ""; // Clear existing widget DOM
+    if (zkmeWidgetRef.current) {
+      zkmeWidgetRef.current.destroy(); // ✅ Clean up previous instance
+      zkmeWidgetRef.current = null;
     }
     const dynamicWidget = new ZkMeWidget(
       "M2025012255531684563023546877743",
@@ -181,6 +181,7 @@ const App = () => {
     });
 
     dynamicWidget.launch();
+    zkmeWidgetRef.current = newWidget;
   };
 
   const handleVerification = async () => {
@@ -379,16 +380,13 @@ const App = () => {
                   revelar información privada.
                 </p>*/}
                 {kycStatus !== "success" && (
-                  <>
-                    <button
-                      onClick={handleLevel1Verification}
-                      disabled={loading}
-                      className="button bg-[#168E5D] hover:bg-[#127b50] py-3 px-4 rounded-lg"
-                    >
-                      Verificar
-                    </button>
-                    <div id="zkme-widget-container" className="mt-4" />
-                  </>
+                  <button
+                    onClick={handleLevel1Verification}
+                    disabled={loading}
+                    className="button bg-[#168E5D] hover:bg-[#127b50] py-3 px-4 rounded-lg"
+                  >
+                    Verificar
+                  </button>
                 )}
 
                 {kycStatus === "success" && (
