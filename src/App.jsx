@@ -14,12 +14,12 @@ const App = () => {
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
-  const [showMetaMaskDialog, setShowMetaMaskDialog] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState(
+  //const [showMetaMaskDialog, setShowMetaMaskDialog] = useState(false);
+  /*const [downloadUrl, setDownloadUrl] = useState(
     "https://metamask.io/download/"
-  );
+  );*/
   const [isMobile, setIsMobile] = useState(false);
-  const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
+  //const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
   const [verificationLevel, setVerificationLevel] = useState("");
   const [rawProvider, setRawProvider] = useState(null); // You'll need this too
   const [web3Provider, setWeb3Provider] = useState(null);
@@ -56,10 +56,10 @@ const App = () => {
           userAgent
         );
       setIsMobile(isMobileDevice);
-
+      /*
       // Check if we're in MetaMask's browser
       const isMetaMask = userAgent.includes("metamask");
-      setIsMetaMaskBrowser(isMetaMask);
+      setIsMetaMaskBrowser(isMetaMask);*/
     };
     checkMobile();
   }, []);
