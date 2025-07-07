@@ -246,7 +246,7 @@ const App = () => {
       });
     }
   }, []);
-
+  /*
   const MetaMaskDialog = () => (
     <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
       <div className="bg-[#edffee] rounded-xl shadow-lg p-6 max-w-md w-full mx-4 border-2 border-green-500">
@@ -284,13 +284,13 @@ const App = () => {
       </div>
     </div>
   );
-
+*/
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
-      {showMetaMaskDialog && <MetaMaskDialog />}
+      {/*showMetaMaskDialog && <MetaMaskDialog />*/}
       <Header
         walletData={walletData}
-        balance={balance}
+        //balance={balance}
         onConnect={handleConnect}
         onDisconnect={handleDisconnect}
         loading={loading}
