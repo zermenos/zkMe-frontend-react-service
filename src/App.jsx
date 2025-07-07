@@ -229,6 +229,7 @@ const App = () => {
     setInitialLoading(false);
   }, []);
 
+  /*
   if (initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -239,7 +240,7 @@ const App = () => {
       </div>
     );
   }
-
+*/
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
       <Header
