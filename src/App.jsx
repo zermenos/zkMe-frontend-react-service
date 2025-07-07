@@ -62,11 +62,7 @@ const App = () => {
   const handleConnect = async () => {
     if (!web3auth) return;
     try {
-      if (!web3auth.provider) {
-        await web3auth.connect(); // shows login modal
-      }
-
-      const prov = web3auth.provider;
+      const prov = web3auth.provider || (await web3auth.connect());
       setRawProvider(prov);
       const ethersProvider = new ethers.providers.Web3Provider(prov);
       setWeb3Provider(ethersProvider);
