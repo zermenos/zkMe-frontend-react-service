@@ -7,10 +7,6 @@ import Header from "./components/Header";
 import "./index.css";
 import { Web3Auth, WEB3AUTH_NETWORK } from "@web3auth/modal";
 
-if (typeof window !== "undefined" && window.ethereum?.isMetaMask) {
-  delete window.ethereum;
-}
-
 const App = () => {
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -41,6 +37,9 @@ const App = () => {
         if (w3a.provider) setWeb3Provider(w3a.provider);
       } catch (err) {
         console.error("Web3Auth init error:", err);
+      } finally {
+        // ✅ Only now do we stop showing the loading state
+        setInitialLoading(false);
       }
     };
 
@@ -133,21 +132,31 @@ const App = () => {
   };
 
   const handleLevel1Verification = async () => {
+    if (!web3auth || !web3auth.provider) {
+      await handleConnect(); // wait until it's ready
+      return;
+    }
+
     if (!walletData) {
       await handleConnect();
+      return;
     }
-    if (walletData) {
-      launchKYCWidget("MeID"); // 🔥 pass it here
-    }
+
+    launchKYCWidget("MeID");
   };
 
   const handleLevel2Verification = async () => {
+    if (!web3auth || !web3auth.provider) {
+      await handleConnect(); // wait until it's ready
+      return;
+    }
+
     if (!walletData) {
       await handleConnect();
+      return;
     }
-    if (walletData) {
-      launchKYCWidget("zkKYC"); // 🔥 pass it here
-    }
+
+    launchKYCWidget("zkKYC");
   };
 
   const launchKYCWidget = (level) => {
@@ -198,17 +207,29 @@ const App = () => {
   };
 
   useEffect(() => {
+    if (!web3auth || !web3auth.provider) return;
     const isVerified = localStorage.getItem("kycVerified");
     if (isVerified === "true") {
       setKycStatus("success");
     }
-  }, []);
+  }, [web3auth]);
   useEffect(() => {
     const savedAddress = localStorage.getItem("walletAddress");
     const isVerified = localStorage.getItem("kycVerified") === "true";
     if (isVerified) setKycStatus("success");
     setInitialLoading(false);
   }, []);
+
+  if (initialLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600 mx-auto mb-4" />
+          <p className="text-lg font-medium">Cargando...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
