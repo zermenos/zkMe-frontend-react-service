@@ -7,6 +7,10 @@ import Header from "./components/Header";
 import "./index.css";
 import { Web3Auth, WEB3AUTH_NETWORK } from "@web3auth/modal";
 
+if (typeof window !== "undefined" && window.ethereum?.isMetaMask) {
+  delete window.ethereum;
+}
+
 const App = () => {
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
