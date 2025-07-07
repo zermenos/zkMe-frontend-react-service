@@ -197,33 +197,9 @@ const App = () => {
     const savedAddress = localStorage.getItem("walletAddress");
     const isVerified = localStorage.getItem("kycVerified") === "true";
     if (isVerified) setKycStatus("success");
-
-    if (savedAddress && window.ethereum) {
-      const autoConnect = async () => {
-        try {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
-          const currentAddress = await signer.getAddress();
-
-          if (currentAddress.toLowerCase() === savedAddress.toLowerCase()) {
-            const balance = await provider.getBalance(currentAddress);
-            setBalance(ethers.utils.formatEther(balance));
-            setWalletData({ provider, signer, address: currentAddress });
-          } else {
-            localStorage.removeItem("walletAddress");
-          }
-        } catch {
-          localStorage.removeItem("walletAddress");
-        }
-        setInitialLoading(false);
-      };
-
-      autoConnect();
-    } else {
-      setInitialLoading(false);
-    }
+    setInitialLoading(false);
   }, []);
-
+  /*
   useEffect(() => {
     if (window.ethereum) {
       window.ethereum.on("accountsChanged", (accounts) => {
@@ -237,7 +213,7 @@ const App = () => {
         window.location.reload();
       });
     }
-  }, []);
+  }, []);*/
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
