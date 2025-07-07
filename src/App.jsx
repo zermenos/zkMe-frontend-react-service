@@ -108,15 +108,21 @@ const App = () => {
       return json.data.accessToken;
     },
     async getUserAccounts() {
-      if (!web3Provider) throw new Error("Web3 provider not initialized");
-
-      const signer = web3Provider.getSigner(); // ✅ Already wrapped
+      if (!web3auth || !web3auth.provider)
+        throw new Error("Web3Auth not ready");
+      const ethersProvider = new ethers.providers.Web3Provider(
+        web3auth.provider
+      ); // ✅ not window.ethereum
+      const signer = ethersProvider.getSigner(); // ✅ Already wrapped
       return [await signer.getAddress()];
     },
     async delegateTransaction(tx) {
-      if (!web3Provider) throw new Error("Web3 provider not initialized");
-
-      const signer = web3Provider.getSigner(); // ✅ Already wrapped
+      if (!web3auth || !web3auth.provider)
+        throw new Error("Web3Auth not ready");
+      const ethersProvider = new ethers.providers.Web3Provider(
+        web3auth.provider
+      ); // ✅ same here
+      const signer = ethersProvider.getSigner(); // ✅ Already wrapped
       const res = await signer.sendTransaction(tx);
       return res.hash;
     },
