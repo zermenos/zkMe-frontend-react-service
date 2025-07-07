@@ -47,6 +47,13 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    if (web3auth?.provider) {
+      // Override MetaMask fallback by forcing our provider
+      window.ethereum = web3auth.provider;
+    }
+  }, [web3auth]);
+
+  useEffect(() => {
     // Detect if user is on mobile
     const checkMobile = () => {
       const userAgent = navigator.userAgent.toLowerCase();
