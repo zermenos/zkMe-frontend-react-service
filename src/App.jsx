@@ -47,13 +47,6 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (web3auth?.provider) {
-      // Override MetaMask fallback by forcing our provider
-      window.ethereum = web3auth.provider;
-    }
-  }, [web3auth]);
-
-  useEffect(() => {
     // Detect if user is on mobile
     const checkMobile = () => {
       const userAgent = navigator.userAgent.toLowerCase();
@@ -67,19 +60,21 @@ const App = () => {
   }, []);
 
   const handleConnect = async () => {
-    if (web3auth) {
-      await web3auth.logout(); // ✅ Disconnects the session from Web3Auth
-    }
     if (!web3auth) return;
     try {
-      await web3auth.connect(); // shows login modal
+      if (!web3auth.provider) {
+        await web3auth.connect(); // shows login modal
+      }
+
       const prov = web3auth.provider;
       setRawProvider(prov);
       const ethersProvider = new ethers.providers.Web3Provider(prov);
       setWeb3Provider(ethersProvider);
+
       const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
       const bal = await ethersProvider.getBalance(address);
+
       setWalletData({ provider: ethersProvider, signer, address });
       setBalance(ethers.utils.formatEther(bal));
       localStorage.setItem("walletAddress", address);
