@@ -63,7 +63,7 @@ const App = () => {
     if (!web3auth) return;
     try {
       const prov = await web3auth.connect(); // 🔥 always force login
-      if (!provider) throw new Error("No provider returned after connect");
+      if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const ethersProvider = new ethers.providers.Web3Provider(prov);
       setWeb3Provider(ethersProvider);
@@ -109,7 +109,7 @@ const App = () => {
     }
   };
 
-  const provider = {
+  const zkmeProvider = {
     async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const json = await res.json();
@@ -186,7 +186,7 @@ const App = () => {
       "M2025012255531684563023546877743",
       "zKMe KYC",
       "137", // Polygon Mainnet
-      provider,
+      zkmeProvider,
       {
         lv: level, // 🔥 directly use passed value instead of waiting for setState
         programNo: "202505220002",
