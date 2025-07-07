@@ -118,30 +118,34 @@ const App = () => {
     async getUserAccounts() {
       if (!web3auth || !web3auth.provider)
         throw new Error("Web3Auth not ready");
-      /*
+
       const ethersProvider = new ethers.providers.Web3Provider(
         web3auth.provider
       ); // ✅ not window.ethereum
       const signer = ethersProvider.getSigner(); // ✅ Already wrapped
       return [await signer.getAddress()];
-      */
+
+      /*
       const signer = web3Provider.getSigner(); // ✅ Already wrapped
       return [await signer.getAddress()];
+      */
     },
     async delegateTransaction(tx) {
       if (!web3auth || !web3auth.provider)
         throw new Error("Web3Auth not ready");
-      /*
+
       const ethersProvider = new ethers.providers.Web3Provider(
         web3auth.provider
       ); // ✅ same here
       const signer = ethersProvider.getSigner(); // ✅ Already wrapped
       const res = await signer.sendTransaction(tx);
       return res.hash;
-      */
+
+      /*
       const signer = web3Provider.getSigner(); // ✅ Already wrapped
       const res = await signer.sendTransaction(tx);
       return res.hash;
+      */
     },
   };
 
@@ -234,7 +238,6 @@ const App = () => {
     setInitialLoading(false);
   }, []);
 
-  /*
   if (initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -245,7 +248,7 @@ const App = () => {
       </div>
     );
   }
-*/
+
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
       <Header
