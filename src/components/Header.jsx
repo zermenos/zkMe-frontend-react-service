@@ -10,7 +10,9 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
   };
 
   const formatAddress = (address) => {
-    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+    return `${address.slice(0, 6).toLowerCase()}...${address
+      .slice(-4)
+      .toLowerCase()}`;
   };
 
   // Close dropdown when clicking outside

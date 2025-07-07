@@ -14,10 +14,6 @@ const App = () => {
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
-  //const [showMetaMaskDialog, setShowMetaMaskDialog] = useState(false);
-  /*const [downloadUrl, setDownloadUrl] = useState(
-    "https://metamask.io/download/"
-  );*/
   const [isMobile, setIsMobile] = useState(false);
   //const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
   const [verificationLevel, setVerificationLevel] = useState("");
@@ -56,10 +52,6 @@ const App = () => {
           userAgent
         );
       setIsMobile(isMobileDevice);
-      /*
-      // Check if we're in MetaMask's browser
-      const isMetaMask = userAgent.includes("metamask");
-      setIsMetaMaskBrowser(isMetaMask);*/
     };
     checkMobile();
   }, []);
@@ -246,48 +238,9 @@ const App = () => {
       });
     }
   }, []);
-  /*
-  const MetaMaskDialog = () => (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[#edffee] rounded-xl shadow-lg p-6 max-w-md w-full mx-4 border-2 border-green-500">
-        <div className="flex items-center space-x-3 mb-4">
-          <Wallet className="w-6 h-6 text-[#8fef56]" />
-          <h3 className="text-lg font-semibold text-gray-800">
-            MetaMask Not Found
-          </h3>
-        </div>
-        <p className="text-gray-600 mb-6">
-          {isMobile
-            ? "To use this application, please open it in MetaMask's in-app browser."
-            : "To use this application, you need to install MetaMask, a cryptocurrency wallet for your browser."}
-        </p>
-        <div className="flex space-x-3">
-          {isMobile ? (
-            <a
-              href="https://metamask.app.link/dapp/zk-me.vercel.app"
-              className="flex-1 bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg transition-colors text-center"
-            >
-              Open in MetaMask
-            </a>
-          ) : (
-            <a
-              href={downloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg transition-colors text-center"
-            >
-              Install MetaMask
-            </a>
-          )}
-          <button onClick={handleShowWallet}>Show Wallet</button>
-        </div>
-      </div>
-    </div>
-  );
-*/
+
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
-      {/*showMetaMaskDialog && <MetaMaskDialog />*/}
       <Header
         walletData={walletData}
         //balance={balance}
@@ -366,9 +319,7 @@ const App = () => {
               <div className="bg-white border border-gray-300 rounded-lg p-4 space-y-2">
                 <div className="flex items-center space-x-2">
                   <div className="w-3 h-3 bg-[#F5F86E] rounded-full animate-pulse" />
-                  <span className="span text-sm font-medium">
-                    Prueba que eres humano
-                  </span>
+                  <span className="span text-sm font-medium">Soy humano</span>
                 </div>
                 <p className="p text-xs text-gray-400">Escaneo facial</p>
               </div>
