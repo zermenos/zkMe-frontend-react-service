@@ -199,21 +199,6 @@ const App = () => {
     if (isVerified) setKycStatus("success");
     setInitialLoading(false);
   }, []);
-  /*
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", (accounts) => {
-        if (accounts.length === 0) {
-          handleDisconnect();
-        } else {
-          handleConnect();
-        }
-      });
-      window.ethereum.on("chainChanged", () => {
-        window.location.reload();
-      });
-    }
-  }, []);*/
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
