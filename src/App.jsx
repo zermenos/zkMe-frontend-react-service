@@ -113,19 +113,28 @@ const App = () => {
     async getUserAccounts() {
       if (!web3auth || !web3auth.provider)
         throw new Error("Web3Auth not ready");
+      /*
       const ethersProvider = new ethers.providers.Web3Provider(
         web3auth.provider
       ); // ✅ not window.ethereum
       const signer = ethersProvider.getSigner(); // ✅ Already wrapped
       return [await signer.getAddress()];
+      */
+      const signer = web3Provider.getSigner(); // ✅ Already wrapped
+      return [await signer.getAddress()];
     },
     async delegateTransaction(tx) {
       if (!web3auth || !web3auth.provider)
         throw new Error("Web3Auth not ready");
+      /*
       const ethersProvider = new ethers.providers.Web3Provider(
         web3auth.provider
       ); // ✅ same here
       const signer = ethersProvider.getSigner(); // ✅ Already wrapped
+      const res = await signer.sendTransaction(tx);
+      return res.hash;
+      */
+      const signer = web3Provider.getSigner(); // ✅ Already wrapped
       const res = await signer.sendTransaction(tx);
       return res.hash;
     },
