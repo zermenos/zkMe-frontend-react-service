@@ -62,7 +62,8 @@ const App = () => {
   const handleConnect = async () => {
     if (!web3auth) return;
     try {
-      const prov = web3auth.provider || (await web3auth.connect());
+      const prov = await web3auth.connect(); // 🔥 always force login
+      if (!provider) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const ethersProvider = new ethers.providers.Web3Provider(prov);
       setWeb3Provider(ethersProvider);
@@ -75,7 +76,10 @@ const App = () => {
       setBalance(ethers.utils.formatEther(bal));
       localStorage.setItem("walletAddress", address);
     } catch (err) {
-      setError(err.message);
+      console.error("handleConnect error:", err);
+      setError(err.message || "Wallet connection failed.");
+    } finally {
+      setLoading(false);
     }
   };
 
