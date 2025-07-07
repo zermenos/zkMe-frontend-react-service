@@ -67,6 +67,9 @@ const App = () => {
   }, []);
 
   const handleConnect = async () => {
+    if (web3auth) {
+      await web3auth.logout(); // ✅ Disconnects the session from Web3Auth
+    }
     if (!web3auth) return;
     try {
       await web3auth.connect(); // shows login modal
