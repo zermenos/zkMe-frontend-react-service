@@ -149,7 +149,28 @@ const App = () => {
         return;
       }
 
-      await safeLogout(); // This clears session and local state only when user explicitly clicks disconnect
+      await web3auth.logout();
+      await web3auth.clearCache();
+
+      // Optional: Wait a bit to ensure state is fully reset
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      // Optional but recommended: clear local storage
+      localStorage.removeItem("walletAddress");
+      localStorage.removeItem("kycVerified");
+
+      // Optional: reset any local app state here too
+      setWalletData(null);
+      setBalance(null);
+      setKycStatus(null);
+      setWeb3Provider(null);
+      setError("");
+
+      // Destroy ZKMe widget if active
+      if (zkmeWidgetRef.current) {
+        zkmeWidgetRef.current.destroy();
+        zkmeWidgetRef.current = null;
+      }
     } catch (err) {
       console.error("Error during disconnect:", err);
     }
