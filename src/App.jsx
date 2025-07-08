@@ -83,6 +83,7 @@ const App = () => {
     try {
       console.log("Initiating safeLogout");
       await web3auth.logout();
+      await web3auth.clearCachedAdapter();
 
       // Optional: Wait a bit to ensure state is fully reset
       await new Promise((resolve) => setTimeout(resolve, 300));
