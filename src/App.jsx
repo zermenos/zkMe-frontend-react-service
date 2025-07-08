@@ -34,11 +34,21 @@ const App = () => {
         });
         await w3a.init();
         setWeb3Auth(w3a);
-        if (w3a.provider) setWeb3Provider(w3a.provider);
+        if (w3a.provider) {
+          const ethersProvider = new ethers.providers.Web3Provider(
+            w3a.provider
+          );
+          const signer = ethersProvider.getSigner();
+          const address = await signer.getAddress();
+          const bal = await ethersProvider.getBalance(address);
+
+          setWeb3Provider(ethersProvider);
+          setWalletData({ provider: ethersProvider, signer, address });
+          setBalance(ethers.utils.formatEther(bal));
+        }
       } catch (err) {
         console.error("Web3Auth init error:", err);
       } finally {
-        // ✅ Only now do we stop showing the loading state
         setInitialLoading(false);
       }
     };
@@ -61,6 +71,9 @@ const App = () => {
 
   const handleConnect = async () => {
     if (!web3auth) return;
+    if (web3auth.provider) return; // Already connected
+
+    setLoading(true);
     try {
       const prov = await web3auth.connect(); // 🔥 always force login
       if (!prov) throw new Error("No provider returned after connect");
@@ -88,8 +101,12 @@ const App = () => {
   };
 
   const handleDisconnect = async () => {
-    if (web3auth) {
-      await web3auth.logout(); // ✅ Disconnects the session from Web3Auth
+    try {
+      if (web3auth) {
+        await web3auth.logout();
+      }
+    } catch (err) {
+      console.error("Error during logout:", err);
     }
 
     // 2. Clear ZKMe-related storage
