@@ -14,7 +14,7 @@ const App = () => {
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
-  //const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   //const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
   const [verificationLevel, setVerificationLevel] = useState("");
   const [rawProvider, setRawProvider] = useState(null); // You'll need this too
@@ -25,6 +25,11 @@ const App = () => {
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Prevent MetaMask popup on mobile by disabling it early
+      window.ethereum = undefined;
+    }
+
     const initWeb3Auth = async () => {
       try {
         const w3a = new Web3Auth({
