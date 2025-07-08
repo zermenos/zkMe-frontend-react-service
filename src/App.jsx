@@ -57,6 +57,13 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    if (web3auth?.provider) {
+      window.ethereum = web3auth.provider;
+      console.log("✅ window.ethereum is now Web3Auth provider");
+    }
+  }, [web3auth]);
+
+  useEffect(() => {
     // Detect if user is on mobile
     const checkMobile = () => {
       const userAgent = navigator.userAgent.toLowerCase();
@@ -79,8 +86,15 @@ const App = () => {
       setLoading(true);
 
       // 🔥 On mobile, always clear session to force account picker
-      if (isMobileDevice) {
-        await web3auth.logout();
+      if (isMobile) {
+        try {
+          const hasSession = !!web3auth?.provider;
+          if (hasSession) {
+            await web3auth.logout();
+          }
+        } catch (err) {
+          console.warn("Mobile session clear skipped:", err);
+        }
       }
 
       const prov = await web3auth.connect(); // 🔥 always force login
