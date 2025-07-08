@@ -25,6 +25,7 @@ const App = () => {
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
   useEffect(() => {
+    localStorage.removeItem("web3auth_cached_adapter");
     const initWeb3Auth = async () => {
       try {
         const w3a = new Web3Auth({
@@ -143,14 +144,8 @@ const App = () => {
   };
 
   const handleDisconnect = async () => {
-    try {
-      if (web3auth) {
-        await safeLogout();
-      }
-    } catch (err) {
-      console.error("Error during logout:", err);
-    }
-
+    await safeLogout();
+    /*
     // 2. Clear ZKMe-related storage
     localStorage.removeItem("walletAddress");
     localStorage.removeItem("kycVerified");
@@ -166,6 +161,7 @@ const App = () => {
       zkmeWidgetRef.current.destroy();
       zkmeWidgetRef.current = null;
     }
+      */
   };
 
   const zkmeProvider = {
