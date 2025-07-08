@@ -25,6 +25,11 @@ const App = () => {
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
   useEffect(() => {
+    if (typeof window !== "undefined") {
+      // Prevent MetaMask popup on mobile by disabling it early
+      window.ethereum = undefined;
+    }
+
     const initWeb3Auth = async () => {
       try {
         const w3a = new Web3Auth({
@@ -69,6 +74,40 @@ const App = () => {
     checkMobile();
   }, []);
 
+  const safeLogout = async () => {
+    if (!web3auth) {
+      console.warn("Web3Auth not initialized, cannot logout");
+      return;
+    }
+
+    try {
+      console.log("Initiating safeLogout");
+      await web3auth.logout();
+
+      // Optional: Wait a bit to ensure state is fully reset
+      await new Promise((resolve) => setTimeout(resolve, 300));
+
+      // Optional but recommended: clear local storage
+      localStorage.removeItem("walletAddress");
+      localStorage.removeItem("kycVerified");
+
+      // Optional: reset any local app state here too
+      setWalletData(null);
+      setBalance(null);
+      setKycStatus(null);
+      setWeb3Provider(null);
+      setError("");
+
+      // Destroy ZKMe widget if active
+      if (zkmeWidgetRef.current) {
+        zkmeWidgetRef.current.destroy();
+        zkmeWidgetRef.current = null;
+      }
+    } catch (err) {
+      console.error("safeLogout error:", err);
+    }
+  };
+
   const handleConnect = async () => {
     if (!web3auth) {
       console.warn("Web3Auth not initialized yet");
@@ -80,7 +119,7 @@ const App = () => {
 
       // 🔥 On mobile, always clear session to force account picker
       if (isMobile) {
-        await web3auth.logout();
+        await safeLogout(); // 🔥 Force fresh session on mobile
       }
 
       const prov = await web3auth.connect(); // 🔥 always force login
