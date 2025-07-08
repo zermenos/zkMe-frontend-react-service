@@ -25,7 +25,6 @@ const App = () => {
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
   useEffect(() => {
-    web3auth.clearCache();
     const initWeb3Auth = async () => {
       try {
         const w3a = new Web3Auth({
