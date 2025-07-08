@@ -71,9 +71,11 @@ const App = () => {
 
   const handleConnect = async () => {
     if (!web3auth) return;
+    /*
     if (web3auth.provider) return; // Already connected
 
     setLoading(true);
+    */
     try {
       const prov = await web3auth.connect(); // 🔥 always force login
       if (!prov) throw new Error("No provider returned after connect");
