@@ -78,8 +78,8 @@ const App = () => {
     try {
       setLoading(true);
 
-      // 🔥 Only logout if there's an existing session
-      if (web3auth.connected) {
+      // 🔥 On mobile, always clear session to force account picker
+      if (isMobile) {
         await web3auth.logout();
       }
 
