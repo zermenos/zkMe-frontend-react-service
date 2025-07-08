@@ -70,13 +70,19 @@ const App = () => {
   }, []);
 
   const handleConnect = async () => {
-    if (!web3auth) return;
-    /*
-    if (web3auth.provider) return; // Already connected
+    if (!web3auth) {
+      console.warn("Web3Auth not initialized yet");
+      return;
+    }
 
-    setLoading(true);
-    */
     try {
+      setLoading(true);
+
+      // 🔥 Only logout if there's an existing session
+      if (web3auth.connected) {
+        await web3auth.logout();
+      }
+
       const prov = await web3auth.connect(); // 🔥 always force login
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
