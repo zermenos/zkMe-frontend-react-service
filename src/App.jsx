@@ -79,7 +79,7 @@ const App = () => {
       setLoading(true);
 
       // 🔥 On mobile, always clear session to force account picker
-      if (isMobile) {
+      if (isMobileDevice) {
         await web3auth.logout();
       }
 
