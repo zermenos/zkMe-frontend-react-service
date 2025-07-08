@@ -69,19 +69,6 @@ const App = () => {
     checkMobile();
   }, []);
 
-  useEffect(() => {
-    const forceClearSession = async () => {
-      if (web3auth) {
-        await web3auth.logout();
-        await web3auth.clearCachedAdapter();
-      }
-    };
-
-    if (isMobile) {
-      forceClearSession();
-    }
-  }, [web3auth, isMobile]);
-
   const safeLogout = async () => {
     if (!web3auth) {
       console.warn("Web3Auth not initialized, cannot logout");
