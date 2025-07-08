@@ -82,7 +82,6 @@ const App = () => {
     }
   }, [web3auth, isMobile]);
 
-  /*
   const safeLogout = async () => {
     if (!web3auth) {
       console.warn("Web3Auth not initialized, cannot logout");
@@ -92,7 +91,7 @@ const App = () => {
     try {
       console.log("Initiating safeLogout");
       await web3auth.logout();
-      await web3auth.clearCachedAdapter();
+      await web3auth.clearCache();
 
       // Optional: Wait a bit to ensure state is fully reset
       await new Promise((resolve) => setTimeout(resolve, 300));
@@ -117,7 +116,6 @@ const App = () => {
       console.error("safeLogout error:", err);
     }
   };
-  */
 
   const handleConnect = async () => {
     if (!web3auth) {
@@ -129,8 +127,9 @@ const App = () => {
       setLoading(true);
       // 🔥 Force full logout and session clear BEFORE connecting
 
-      localStorage.removeItem("web3auth_cached_adapter");
-      await web3auth.logout();
+      if (isMobile) {
+        await safeLogout(); // 🔥 Force fresh session on mobile
+      }
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await web3auth.connect(); // 🔥 always force login
