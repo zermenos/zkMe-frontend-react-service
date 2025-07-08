@@ -25,11 +25,6 @@ const App = () => {
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      // Prevent MetaMask popup on mobile by disabling it early
-      window.ethereum = undefined;
-    }
-
     const initWeb3Auth = async () => {
       try {
         const w3a = new Web3Auth({
@@ -74,6 +69,19 @@ const App = () => {
     checkMobile();
   }, []);
 
+  useEffect(() => {
+    const forceClearSession = async () => {
+      if (web3auth) {
+        await web3auth.logout();
+        await web3auth.clearCachedAdapter();
+      }
+    };
+
+    if (isMobile) {
+      forceClearSession();
+    }
+  }, [web3auth, isMobile]);
+
   const safeLogout = async () => {
     if (!web3auth) {
       console.warn("Web3Auth not initialized, cannot logout");
@@ -116,8 +124,10 @@ const App = () => {
     }
 
     try {
-      await safeLogout(); // 🔥 Force fresh session on mobile
       setLoading(true);
+      // 🔥 Force full logout and session clear BEFORE connecting
+      await web3auth.logout();
+      await web3auth.clearCachedAdapter();
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await web3auth.connect(); // 🔥 always force login
@@ -186,11 +196,6 @@ const App = () => {
       ); // ✅ not window.ethereum
       const signer = ethersProvider.getSigner(); // ✅ Already wrapped
       return [await signer.getAddress()];
-
-      /*
-      const signer = web3Provider.getSigner(); // ✅ Already wrapped
-      return [await signer.getAddress()];
-      */
     },
     async delegateTransaction(tx) {
       if (!web3auth || !web3auth.provider)
@@ -202,12 +207,6 @@ const App = () => {
       const signer = ethersProvider.getSigner(); // ✅ Already wrapped
       const res = await signer.sendTransaction(tx);
       return res.hash;
-
-      /*
-      const signer = web3Provider.getSigner(); // ✅ Already wrapped
-      const res = await signer.sendTransaction(tx);
-      return res.hash;
-      */
     },
   };
 
