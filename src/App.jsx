@@ -25,7 +25,6 @@ const App = () => {
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
   useEffect(() => {
-    localStorage.removeItem("web3auth_cached_adapter");
     const initWeb3Auth = async () => {
       try {
         const w3a = new Web3Auth({
@@ -35,7 +34,7 @@ const App = () => {
         });
         await w3a.init();
         setWeb3Auth(w3a);
-        if (w3a.provider) {
+        if (w3a.cachedAdapter) {
           const ethersProvider = new ethers.providers.Web3Provider(
             w3a.provider
           );
@@ -115,7 +114,7 @@ const App = () => {
       setLoading(true);
       // 🔥 Force full logout and session clear BEFORE connecting
 
-      await web3auth.logout(); // 🔥 Force fresh session on mobile
+      //await web3auth.logout(); // 🔥 Force fresh session on mobile
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await web3auth.connect(); // 🔥 always force login
