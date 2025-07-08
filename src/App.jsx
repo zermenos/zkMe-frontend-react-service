@@ -63,6 +63,11 @@ const App = () => {
     }
   }, [web3auth]);
 
+  const isMobileDevice = () =>
+    /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+      navigator.userAgent.toLowerCase()
+    );
+  /*
   useEffect(() => {
     // Detect if user is on mobile
     const checkMobile = () => {
@@ -75,6 +80,7 @@ const App = () => {
     };
     checkMobile();
   }, []);
+  */
 
   const handleConnect = async () => {
     if (!web3auth) {
@@ -86,14 +92,11 @@ const App = () => {
       setLoading(true);
 
       // 🔥 On mobile, always clear session to force account picker
-      if (isMobile) {
+      if (isMobileDevice() && web3auth?.provider) {
         try {
-          const hasSession = !!web3auth?.provider;
-          if (hasSession) {
-            await web3auth.logout();
-          }
+          await web3auth.logout();
         } catch (err) {
-          console.warn("Mobile session clear skipped:", err);
+          console.warn("Mobile logout skipped due to error:", err);
         }
       }
 
