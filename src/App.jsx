@@ -115,13 +115,10 @@ const App = () => {
     }
 
     try {
+      await safeLogout(); // 🔥 Force fresh session on mobile
       setLoading(true);
 
-      // 🔥 On mobile, always clear session to force account picker
-      if (isMobile) {
-        await safeLogout(); // 🔥 Force fresh session on mobile
-      }
-
+      // 🔥 Then trigger the login flow (will show the modal)
       const prov = await web3auth.connect(); // 🔥 always force login
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
