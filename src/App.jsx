@@ -14,7 +14,7 @@ const App = () => {
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
+  //const [isMobile, setIsMobile] = useState(false);
   //const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
   const [verificationLevel, setVerificationLevel] = useState("");
   const [rawProvider, setRawProvider] = useState(null); // You'll need this too
@@ -56,11 +56,12 @@ const App = () => {
     initWeb3Auth();
   }, []);
 
+  /*
   const isMobileDevice = () =>
     /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
       navigator.userAgent.toLowerCase()
     );
-  /*
+  */
   useEffect(() => {
     // Detect if user is on mobile
     const checkMobile = () => {
@@ -73,7 +74,6 @@ const App = () => {
     };
     checkMobile();
   }, []);
-  */
 
   const handleConnect = async () => {
     if (!web3auth) {
@@ -85,15 +85,8 @@ const App = () => {
       setLoading(true);
 
       // 🔥 On mobile, always clear session to force account picker
-      if (isMobileDevice() && web3auth?.provider) {
-        try {
-          await web3auth.logout();
-        } catch (logoutErr) {
-          console.warn(
-            "Logout failed on mobile (probably no session):",
-            logoutErr
-          );
-        }
+      if (isMobile) {
+        await web3auth.logout();
       }
 
       const prov = await web3auth.connect(); // 🔥 always force login
