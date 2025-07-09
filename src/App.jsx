@@ -100,7 +100,14 @@ const App = () => {
         await web3auth.logout();
       }
 */
-      await web3auth.logout();
+      try {
+        await web3auth.logout(); // this might fail, catch below
+      } catch (err) {
+        console.warn(
+          "Logout skipped or failed, likely no session:",
+          err.message
+        );
+      }
       await web3auth.clearCache?.();
 
       // Optional: Wait a bit to ensure state is fully reset
