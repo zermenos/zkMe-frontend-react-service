@@ -25,6 +25,24 @@ const App = () => {
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
+  const getEthersProvider = () => {
+    if (!web3auth?.provider) throw new Error("Web3Auth provider not ready");
+    return new ethers.providers.Web3Provider(web3auth.provider);
+  };
+
+  const getWalletInfo = async () => {
+    const provider = getEthersProvider();
+    const signer = provider.getSigner();
+    const address = await signer.getAddress();
+    const balance = await provider.getBalance(address);
+    return {
+      provider,
+      signer,
+      address,
+      balance: ethers.utils.formatEther(balance),
+    };
+  };
+
   useEffect(() => {
     const initWeb3Auth = async () => {
       try {
@@ -37,16 +55,14 @@ const App = () => {
         setWeb3Auth(w3a);
         setWeb3authReady(true);
         if (w3a.cachedAdapter) {
-          const ethersProvider = new ethers.providers.Web3Provider(
-            w3a.provider
-          );
-          const signer = ethersProvider.getSigner();
-          const address = await signer.getAddress();
-          const bal = await ethersProvider.getBalance(address);
-
-          setWeb3Provider(ethersProvider);
-          setWalletData({ provider: ethersProvider, signer, address });
-          setBalance(ethers.utils.formatEther(bal));
+          const info = await getWalletInfo();
+          setWeb3Provider(info.provider);
+          setWalletData({
+            provider: info.provider,
+            signer: info.signer,
+            address: info.address,
+          });
+          setBalance(info.balance);
         }
       } catch (err) {
         console.error("Web3Auth init error:", err);
@@ -79,8 +95,10 @@ const App = () => {
 
     try {
       console.log("Initiating safeLogout");
-      await web3auth.logout();
-      await web3auth.clearCache();
+      if (web3auth.provider) {
+        await web3auth.logout();
+      }
+      await web3auth.clearCache?.();
 
       // Optional: Wait a bit to ensure state is fully reset
       await new Promise((resolve) => setTimeout(resolve, 300));
@@ -122,15 +140,11 @@ const App = () => {
       const prov = await web3auth.connect(); // 🔥 always force login
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
-      const ethersProvider = new ethers.providers.Web3Provider(prov);
-      setWeb3Provider(ethersProvider);
+      const { provider, signer, address, balance } = await getWalletInfo();
 
-      const signer = ethersProvider.getSigner();
-      const address = await signer.getAddress();
-      const bal = await ethersProvider.getBalance(address);
-
-      setWalletData({ provider: ethersProvider, signer, address });
-      setBalance(ethers.utils.formatEther(bal));
+      setWeb3Provider(provider);
+      setWalletData({ provider, signer, address });
+      setBalance(balance);
       localStorage.setItem("walletAddress", address);
     } catch (err) {
       console.error("handleConnect error:", err);
@@ -199,23 +213,11 @@ const App = () => {
       return json.data.accessToken;
     },
     async getUserAccounts() {
-      if (!web3auth || !web3auth.provider)
-        throw new Error("Web3Auth not ready");
-
-      const ethersProvider = new ethers.providers.Web3Provider(
-        web3auth.provider
-      ); // ✅ not window.ethereum
-      const signer = ethersProvider.getSigner(); // ✅ Already wrapped
-      return [await signer.getAddress()];
+      const { address } = await getWalletInfo();
+      return [address];
     },
     async delegateTransaction(tx) {
-      if (!web3auth || !web3auth.provider)
-        throw new Error("Web3Auth not ready");
-
-      const ethersProvider = new ethers.providers.Web3Provider(
-        web3auth.provider
-      ); // ✅ same here
-      const signer = ethersProvider.getSigner(); // ✅ Already wrapped
+      const { signer } = await getWalletInfo();
       const res = await signer.sendTransaction(tx);
       return res.hash;
     },
