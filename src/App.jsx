@@ -43,18 +43,36 @@ const App = () => {
     };
   };
 
+  const isMobileDevice = () => {
+    const userAgent = navigator.userAgent.toLowerCase();
+    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+      userAgent
+    );
+  };
+
   useEffect(() => {
     const initWeb3Auth = async () => {
+      const mobile = isMobileDevice();
       try {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
           walletServicesConfig: {}, // optional services config
         });
+        if (mobile) {
+          // 👇 force logout before init (session cleanup on reload)
+          try {
+            await w3a.init(); // must init first before logout
+            await w3a.logout();
+            await w3a.clearCache?.();
+          } catch (logoutErr) {
+            console.warn("Mobile pre-logout failed:", logoutErr);
+          }
+        }
         await w3a.init();
         setWeb3Auth(w3a);
         setWeb3authReady(true);
-        if (w3a.cachedAdapter) {
+        if (!mobile && w3a.cachedAdapter) {
           const info = await getWalletInfo();
           setWeb3Provider(info.provider);
           setWalletData({
@@ -74,6 +92,7 @@ const App = () => {
     initWeb3Auth();
   }, []);
 
+  /*
   useEffect(() => {
     // Detect if user is on mobile
     const checkMobile = () => {
@@ -86,6 +105,7 @@ const App = () => {
     };
     checkMobile();
   }, []);
+  */
 
   const safeLogout = async () => {
     if (!web3auth) {
