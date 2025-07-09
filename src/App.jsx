@@ -64,7 +64,7 @@ const App = () => {
           try {
             await w3a.init(); // must init first before logout
             await w3a.logout();
-            await w3a.clearCache?.();
+            await web3auth.clearCache?.();
           } catch (logoutErr) {
             console.warn("Mobile pre-logout failed:", logoutErr);
           }
