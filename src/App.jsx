@@ -112,6 +112,7 @@ const App = () => {
           await safeLogout();
           // Wait a bit to ensure it clears properly
           await new Promise((r) => setTimeout(r, 200));
+          return;
         }
 
         if (!w3a.provider) {
