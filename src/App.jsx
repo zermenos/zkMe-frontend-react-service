@@ -54,7 +54,7 @@ const App = () => {
         await w3a.init();
         setWeb3Auth(w3a);
         setWeb3authReady(true);
-        if (w3a.provider) {
+        if (w3a.cachedAdapter) {
           const info = await getWalletInfo();
           setWeb3Provider(info.provider);
           setWalletData({
@@ -144,7 +144,7 @@ const App = () => {
       setLoading(true);
       // 🔥 Force full logout and session clear BEFORE connecting
 
-      //await web3auth.logout(); // 🔥 Force fresh session on mobile
+      await web3auth.logout(); // 🔥 Force fresh session on mobile
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await web3auth.connect(); // 🔥 always force login
