@@ -63,7 +63,7 @@ const App = () => {
         if (mobile && w3a.cachedAdapter) {
           console.log("Mobile reload detected, clearing session...");
           await w3a.logout();
-          //await w3a.clearCache();
+          w3a.clearCache();
           // Wait a bit to ensure it clears properly
           await new Promise((r) => setTimeout(r, 200));
         }
