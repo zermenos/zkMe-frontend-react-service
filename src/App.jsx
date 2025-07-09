@@ -50,64 +50,6 @@ const App = () => {
     );
   };
 
-  useEffect(() => {
-    const initWeb3Auth = async () => {
-      const mobile = isMobileDevice();
-      try {
-        const w3a = new Web3Auth({
-          clientId,
-          web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-          walletServicesConfig: {}, // optional services config
-        });
-
-        if (mobile && w3a.cachedAdapter) {
-          console.log("Mobile reload detected, clearing session...");
-          await w3a.logout();
-          w3a.clearCache();
-          // Wait a bit to ensure it clears properly
-          await new Promise((r) => setTimeout(r, 200));
-        }
-
-        if (!w3a.provider) {
-          await w3a.init(); // only needed if logout reset provider
-        }
-        setWeb3Auth(w3a);
-        setWeb3authReady(true);
-        if (!mobile && w3a.cachedAdapter) {
-          const info = await getWalletInfo();
-          setWeb3Provider(info.provider);
-          setWalletData({
-            provider: info.provider,
-            signer: info.signer,
-            address: info.address,
-          });
-          setBalance(info.balance);
-        }
-      } catch (err) {
-        console.error("Web3Auth init error:", err);
-      } finally {
-        setInitialLoading(false);
-      }
-    };
-
-    initWeb3Auth();
-  }, []);
-
-  /*
-  useEffect(() => {
-    // Detect if user is on mobile
-    const checkMobile = () => {
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice =
-        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
-          userAgent
-        );
-      setIsMobile(isMobileDevice);
-    };
-    checkMobile();
-  }, []);
-  */
-
   const safeLogout = async () => {
     if (!web3auth) {
       console.warn("Web3Auth not initialized, cannot logout");
@@ -155,12 +97,62 @@ const App = () => {
     }
   };
 
-  const logToScreen = (msg) => {
-    const el = document.createElement("div");
-    el.style = "background: #fff; color: red; font-size: 12px; padding: 4px;";
-    el.innerText = `[DEBUG] ${msg}`;
-    document.body.appendChild(el);
-  };
+  useEffect(() => {
+    const initWeb3Auth = async () => {
+      const mobile = isMobileDevice();
+      try {
+        const w3a = new Web3Auth({
+          clientId,
+          web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
+          walletServicesConfig: {}, // optional services config
+        });
+
+        if (mobile && w3a.cachedAdapter) {
+          console.log("Mobile reload detected, clearing session...");
+          await safeLogout();
+          // Wait a bit to ensure it clears properly
+          await new Promise((r) => setTimeout(r, 200));
+        }
+
+        if (!w3a.provider) {
+          await w3a.init(); // only needed if logout reset provider
+        }
+        setWeb3Auth(w3a);
+        setWeb3authReady(true);
+        if (!mobile && w3a.cachedAdapter) {
+          const info = await getWalletInfo();
+          setWeb3Provider(info.provider);
+          setWalletData({
+            provider: info.provider,
+            signer: info.signer,
+            address: info.address,
+          });
+          setBalance(info.balance);
+        }
+      } catch (err) {
+        console.error("Web3Auth init error:", err);
+      } finally {
+        setInitialLoading(false);
+      }
+    };
+
+    initWeb3Auth();
+  }, []);
+
+  /*
+  useEffect(() => {
+    // Detect if user is on mobile
+    const checkMobile = () => {
+      const userAgent = navigator.userAgent.toLowerCase();
+      const isMobileDevice =
+        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+          userAgent
+        );
+      setIsMobile(isMobileDevice);
+    };
+    checkMobile();
+  }, []);
+  */
 
   const handleConnect = async () => {
     if (!web3auth) {
@@ -182,9 +174,8 @@ const App = () => {
       setBalance(balance);
       localStorage.setItem("walletAddress", address);
     } catch (err) {
-      logToScreen("handleConnect error");
-      //console.error("handleConnect error:", err);
-      //setError(err.message || "Wallet connection failed.");
+      console.error("handleConnect error:", err);
+      setError(err.message || "Wallet connection failed.");
     } finally {
       setLoading(false);
     }
