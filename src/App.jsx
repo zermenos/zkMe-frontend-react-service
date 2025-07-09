@@ -54,7 +54,7 @@ const App = () => {
         await w3a.init();
         setWeb3Auth(w3a);
         setWeb3authReady(true);
-        if (w3a.cachedAdapter) {
+        if (w3a.provider) {
           const info = await getWalletInfo();
           setWeb3Provider(info.provider);
           setWalletData({
@@ -95,9 +95,12 @@ const App = () => {
 
     try {
       console.log("Initiating safeLogout");
+      /*
       if (web3auth.provider) {
         await web3auth.logout();
       }
+*/
+      await web3auth.logout();
       await web3auth.clearCache?.();
 
       // Optional: Wait a bit to ensure state is fully reset
