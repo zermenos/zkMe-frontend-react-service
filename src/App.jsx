@@ -59,17 +59,18 @@ const App = () => {
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
           walletServicesConfig: {}, // optional services config
         });
-        if (mobile) {
-          // 👇 force logout before init (session cleanup on reload)
-          try {
-            await w3a.init(); // must init first before logout
-            await w3a.logout();
-            await web3auth.clearCache?.();
-          } catch (logoutErr) {
-            console.warn("Mobile pre-logout failed:", logoutErr);
-          }
+
+        if (mobile && w3a.cachedAdapter) {
+          console.log("Mobile reload detected, clearing session...");
+          await w3a.logout();
+          //await w3a.clearCache();
+          // Wait a bit to ensure it clears properly
+          await new Promise((r) => setTimeout(r, 200));
         }
-        await w3a.init();
+
+        if (!w3a.provider) {
+          await w3a.init(); // only needed if logout reset provider
+        }
         setWeb3Auth(w3a);
         setWeb3authReady(true);
         if (!mobile && w3a.cachedAdapter) {
