@@ -21,6 +21,7 @@ const App = () => {
   const [web3Provider, setWeb3Provider] = useState(null);
   const [web3auth, setWeb3Auth] = useState(null);
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
+  const [web3authReady, setWeb3authReady] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -34,6 +35,7 @@ const App = () => {
         });
         await w3a.init();
         setWeb3Auth(w3a);
+        setWeb3authReady(true);
         if (w3a.cachedAdapter) {
           const ethersProvider = new ethers.providers.Web3Provider(
             w3a.provider
@@ -143,6 +145,19 @@ const App = () => {
   };
 
   const handleDisconnect = async () => {
+    if (!web3auth || !web3authReady) {
+      console.warn("Web3Auth not ready yet, cannot disconnect.");
+      return;
+    }
+
+    try {
+      await safeLogout();
+    } catch (err) {
+      console.error("Error during disconnect:", err);
+    }
+    /*
+    
+    
     try {
       if (!web3auth) {
         console.warn("Web3Auth not initialized, cannot disconnect.");
@@ -174,6 +189,7 @@ const App = () => {
     } catch (err) {
       console.error("Error during disconnect:", err);
     }
+      */
   };
 
   const zkmeProvider = {
