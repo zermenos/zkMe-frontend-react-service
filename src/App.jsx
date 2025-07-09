@@ -155,6 +155,13 @@ const App = () => {
     }
   };
 
+  const logToScreen = (msg) => {
+    const el = document.createElement("div");
+    el.style = "background: #fff; color: red; font-size: 12px; padding: 4px;";
+    el.innerText = `[DEBUG] ${msg}`;
+    document.body.appendChild(el);
+  };
+
   const handleConnect = async () => {
     if (!web3auth) {
       console.warn("Web3Auth not initialized yet");
@@ -175,8 +182,9 @@ const App = () => {
       setBalance(balance);
       localStorage.setItem("walletAddress", address);
     } catch (err) {
-      console.error("handleConnect error:", err);
-      setError(err.message || "Wallet connection failed.");
+      logToScreen("handleConnect error");
+      //console.error("handleConnect error:", err);
+      //setError(err.message || "Wallet connection failed.");
     } finally {
       setLoading(false);
     }
