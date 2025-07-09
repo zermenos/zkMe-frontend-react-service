@@ -142,9 +142,6 @@ const App = () => {
 
     try {
       setLoading(true);
-      // 🔥 Force full logout and session clear BEFORE connecting
-
-      await web3auth.logout(); // 🔥 Force fresh session on mobile
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await web3auth.connect(); // 🔥 always force login
