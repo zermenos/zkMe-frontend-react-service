@@ -71,10 +71,14 @@ const App = () => {
           err.message
         );
       }
-      await web3auth.clearCache?.();
+      try {
+        await web3auth.clearCache(); // 🔥 Remove optional chaining
+      } catch (e) {
+        console.warn("clearCache error:", e.message);
+      }
 
       // Optional: Wait a bit to ensure state is fully reset
-      await new Promise((resolve) => setTimeout(resolve, 300));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       // Optional but recommended: clear local storage
       localStorage.removeItem("walletAddress");
@@ -165,7 +169,12 @@ const App = () => {
       setLoading(true);
 
       // 🔥 Then trigger the login flow (will show the modal)
-      const prov = await web3auth.connect(); // 🔥 always force login
+      const prov = await Promise.race([
+        web3auth.connect(),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error("Connection timeout")), 10000)
+        ), // ⏱️ Timeout after 10s
+      ]);
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
