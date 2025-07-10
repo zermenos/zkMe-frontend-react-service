@@ -104,24 +104,6 @@ const App = () => {
   }, [initialLoading, web3authReady, walletData, logoutInProgress, loading]);
 
   useEffect(() => {
-    const wasPageReloaded = () => {
-      const navEntries = performance.getEntriesByType("navigation");
-      return navEntries.length > 0 && navEntries[0].type === "reload";
-    };
-    const clearSessionOnMobile = async () => {
-      const isMobile = isMobileDevice();
-      const reloaded = wasPageReloaded();
-      if (isMobile && reloaded) {
-        console.log("📱🔁 Mobile reload detected, logging out...");
-        //await safeLogout();
-        localStorage.setItem("forceLogout", "true");
-        await new Promise((r) => setTimeout(r, 200)); // allow time for cleanup
-      }
-    };
-    clearSessionOnMobile();
-  }, []);
-
-  useEffect(() => {
     const initWeb3Auth = async () => {
       setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
@@ -178,6 +160,24 @@ const App = () => {
     };
 
     initWeb3Auth();
+  }, []);
+
+  useEffect(() => {
+    const wasPageReloaded = () => {
+      const navEntries = performance.getEntriesByType("navigation");
+      return navEntries.length > 0 && navEntries[0].type === "reload";
+    };
+    const clearSessionOnMobile = async () => {
+      const isMobile = isMobileDevice();
+      const reloaded = wasPageReloaded();
+      if (isMobile && reloaded) {
+        console.log("📱🔁 Mobile reload detected, logging out...");
+        //await safeLogout();
+        localStorage.setItem("forceLogout", "true");
+        await new Promise((r) => setTimeout(r, 200)); // allow time for cleanup
+      }
+    };
+    clearSessionOnMobile();
   }, []);
 
   const handleConnect = async () => {
