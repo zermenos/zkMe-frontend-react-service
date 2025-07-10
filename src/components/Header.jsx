@@ -82,11 +82,11 @@ const Header = ({
             ) : (
               <button
                 onClick={
-                  !initialLoading && !loading && !logoutInProgress
+                  web3authReady && !loading && !logoutInProgress
                     ? onConnect
                     : undefined
                 }
-                disabled={initialLoading || loading || logoutInProgress}
+                disabled={!web3authReady || loading || logoutInProgress}
                 className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
                   initialLoading || loading || logoutInProgress
                     ? "bg-gray-300 cursor-not-allowed opacity-70"
