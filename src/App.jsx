@@ -100,7 +100,7 @@ const App = () => {
       console.error("safeLogout error:", err);
     }
   };
-
+  /*
   useEffect(() => {
     const wasPageReloaded = () => {
       const navEntries = performance.getEntriesByType("navigation");
@@ -118,6 +118,7 @@ const App = () => {
     };
     clearSessionOnMobile();
   }, []);
+  */
 
   useEffect(() => {
     const initWeb3Auth = async () => {
@@ -422,6 +423,7 @@ const App = () => {
               </p>
             </div>
           )}
+          {/* 
           <div className="flex flex-col items-center space-y-2">
             <p className="p text-sm text-gray-600"></p>
           </div>
@@ -439,6 +441,7 @@ const App = () => {
               aplicaciones Web3 y certificados blockchain como tokens o NFTs.
             </p>
           </div>
+*/}
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1 bg-[#F0F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#168E5D]">
               {error && (
