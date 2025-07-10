@@ -19,7 +19,7 @@ const Header = ({
   };
 
   const formatAddress = (address) => {
-    return `0x${address.slice(3, 6).toUpperCase()}...${address
+    return `0x${address.slice(2, 6).toUpperCase()}...${address
       .slice(-4)
       .toUpperCase()}`;
   };
