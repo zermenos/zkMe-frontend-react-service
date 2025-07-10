@@ -128,6 +128,7 @@ const App = () => {
 */
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
+
         // Wait for internal Web3Auth UI and provider to fully settle
         const waitUntilReady = async () => {
           while (!w3a.provider && !w3a.cachedAdapter) {
@@ -143,7 +144,7 @@ const App = () => {
           console.log("📱🔁 Forced logout after reload");
           await safeLogout();
           localStorage.removeItem("forceLogout");
-          await new Promise((r) => setTimeout(r, 200));
+          await new Promise((r) => setTimeout(r, 2000));
           return; // Exit early, avoid initializing Web3Auth
         }
 
