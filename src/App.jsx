@@ -22,6 +22,7 @@ const App = () => {
   const [web3auth, setWeb3Auth] = useState(null);
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const [web3authReady, setWeb3authReady] = useState(false);
+  const [logoutInProgress, setLogoutInProgress] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -57,12 +58,9 @@ const App = () => {
     }
 
     try {
+      setLogoutInProgress(true); // ✅ Begin tracking logout
       console.log("Initiating safeLogout");
-      /*
-      if (web3auth.provider) {
-        await web3auth.logout();
-      }
-*/
+
       try {
         await web3auth.logout(); // this might fail, catch below
       } catch (err) {
@@ -98,6 +96,8 @@ const App = () => {
       }
     } catch (err) {
       console.error("safeLogout error:", err);
+    } finally {
+      setLogoutInProgress(false); // ✅ Done with logout
     }
   };
   /*
@@ -392,6 +392,7 @@ const App = () => {
         onDisconnect={handleDisconnect}
         loading={loading}
         web3authReady={web3authReady}
+        logoutInProgress={logoutInProgress}
       />
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">

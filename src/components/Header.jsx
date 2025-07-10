@@ -8,6 +8,7 @@ const Header = ({
   onDisconnect,
   loading,
   web3authReady,
+  logoutInProgress,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
@@ -79,23 +80,29 @@ const Header = ({
               </>
             ) : (
               <button
-                onClick={web3authReady && !loading ? onConnect : undefined}
-                disabled={loading || !web3authReady}
+                onClick={
+                  web3authReady && !loading && !logoutInProgress
+                    ? onConnect
+                    : undefined
+                }
+                disabled={loading || !web3authReady || logoutInProgress}
                 className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  loading || !web3authReady
+                  loading || !web3authReady || logoutInProgress
                     ? "bg-gray-300 cursor-not-allowed opacity-70"
                     : "bg-[#F1F0F0] hover:bg-[#E2E1E1]"
                 }`}
               >
                 <div className="w-5 h-5">
-                  {loading || !web3authReady ? (
+                  {loading || !web3authReady || logoutInProgress ? (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mx-auto" />
                   ) : (
                     <Wallet className="text-[#282828] w-5 h-5" />
                   )}
                 </div>
                 <span className="text-sm">
-                  {loading
+                  {logoutInProgress
+                    ? "Reiniciando..."
+                    : loading
                     ? "Conectando..."
                     : !web3authReady
                     ? "Inicializando..."
