@@ -101,7 +101,7 @@ const App = () => {
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
-  }, [initialLoading, web3authReady, walletData]);
+  }, [initialLoading, web3authReady, walletData, logoutInProgress, loading]);
 
   useEffect(() => {
     const wasPageReloaded = () => {
@@ -123,6 +123,7 @@ const App = () => {
 
   useEffect(() => {
     const initWeb3Auth = async () => {
+      setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
       try {
         // 🔁 Check for mobile reload logout flag
@@ -130,6 +131,7 @@ const App = () => {
           console.log("📱🔁 Forced logout after reload");
           await safeLogout();
           localStorage.removeItem("forceLogout");
+          await new Promise((r) => setTimeout(r, 200));
           return; // Exit early, avoid initializing Web3Auth
         }
 
