@@ -87,13 +87,19 @@ const Header = ({
                     : "bg-[#F1F0F0] hover:bg-[#E2E1E1]"
                 }`}
               >
-                {loading ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600" />
-                ) : (
-                  <Wallet className="text-[#282828] w-5 h-5" />
-                )}
+                <div className="w-5 h-5">
+                  {loading || !web3authReady ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600 mx-auto" />
+                  ) : (
+                    <Wallet className="text-[#282828] w-5 h-5" />
+                  )}
+                </div>
                 <span className="text-sm">
-                  {loading ? "Conectando..." : "Conectar Cartera"}
+                  {loading
+                    ? "Conectando..."
+                    : !web3authReady
+                    ? "Inicializando..."
+                    : "Conectar Cartera"}
                 </span>
               </button>
             )}
