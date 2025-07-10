@@ -212,15 +212,14 @@ const App = () => {
   };
 
   const handleDisconnect = async () => {
-    if (!web3auth || !web3authReady) {
-      console.warn("Web3Auth not ready yet, cannot disconnect.");
-      return;
-    }
-
     try {
       await safeLogout();
     } catch (err) {
       console.error("Error during disconnect:", err);
+    }
+    if (!web3auth || !web3authReady) {
+      console.warn("Web3Auth not ready yet, cannot disconnect.");
+      return;
     }
   };
 
