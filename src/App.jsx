@@ -156,7 +156,6 @@ const App = () => {
           } catch (sessionErr) {
             console.warn("Stale session detected, logging out...");
             await w3a.logout();
-            await w3a.clearCache?.();
           }
         }
       } catch (err) {
@@ -405,7 +404,7 @@ const App = () => {
               Passing both verifications is necessary to anchor your Proof of Uniqueness credential to the Verax attestation registry, making you eligible to participate in the LXP drop.
             </p> */}
           </div>
-
+          {/*
           {!walletData && !initialLoading && (
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">
@@ -416,6 +415,7 @@ const App = () => {
               </p>
             </div>
           )}
+            */}
           {walletData && (
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">

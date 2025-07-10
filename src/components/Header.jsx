@@ -73,7 +73,7 @@ const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
             ) : (
               <button
                 onClick={onConnect}
-                disabled={loading}
+                disabled={loading || !web3authReady}
                 className="flex items-center space-x-2 bg-[#F1F0F0] hover:bg-[#E2E1E1] border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200"
               >
                 <Wallet className="text-[#282828] w-5 h-5" />
