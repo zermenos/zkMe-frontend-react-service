@@ -99,6 +99,7 @@ const App = () => {
   useEffect(() => {
     log("Initial loading: " + initialLoading);
     log("Web3auth ready: " + web3authReady);
+    log("Can connect: " + canConnect);
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
