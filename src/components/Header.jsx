@@ -35,7 +35,8 @@ const Header = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-  const shouldDisable = initialLoading || loading || logoutInProgress;
+  const shouldDisable =
+    initialLoading || loading || logoutInProgress || !web3authReady;
 
   return (
     <header className="bg-[#F1F0F0]">
@@ -82,11 +83,7 @@ const Header = ({
               </>
             ) : (
               <button
-                onClick={
-                  web3authReady && !loading && !logoutInProgress
-                    ? onConnect
-                    : undefined
-                }
+                onClick={shouldDisable ? undefined : onConnect}
                 disabled={shouldDisable}
                 className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
                   shouldDisable
@@ -99,7 +96,7 @@ const Header = ({
                   {shouldDisable ? "Cargando..." : "Conectar Cartera"}
                 </span>
                 {shouldDisable && (
-                  <div className="animate-spin ml-2 rounded-full h-4 w-4 border-b-2 border-gray-600" />
+                  <span className="ml-2 inline-block h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
                 )}
               </button>
             )}
