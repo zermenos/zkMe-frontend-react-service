@@ -23,7 +23,7 @@ const App = () => {
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
-  const [canConnect, setCanConnect] = useState(false);
+  const [connectReady, setConnectReady] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -96,10 +96,29 @@ const App = () => {
     }
   };
 
+  const waitForConnectReady = async (w3aInstance) => {
+    let attempts = 0;
+    while (
+      (!w3aInstance.connectedAdapterName ||
+        w3aInstance.status !== "connected" ||
+        !w3aInstance.provider) &&
+      attempts < 50 // wait max 5s
+    ) {
+      await new Promise((r) => setTimeout(r, 100));
+      attempts++;
+    }
+    if (
+      w3aInstance.connectedAdapterName &&
+      w3aInstance.status === "connected"
+    ) {
+      setConnectReady(true);
+    }
+  };
+
   useEffect(() => {
     log("Initial loading: " + initialLoading);
     log("Web3auth ready: " + web3authReady);
-    log("Can connect: " + canConnect);
+    log("connectReady: " + connectReady);
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
@@ -129,15 +148,8 @@ const App = () => {
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
 
-        // Wait for internal Web3Auth UI and provider to fully settle
-        const waitUntilReady = async () => {
-          while (!w3a.provider && !w3a.cachedAdapter) {
-            await new Promise((r) => setTimeout(r, 300));
-          }
-          setWeb3authReady(true); // UI/UIX is loaded
-          setCanConnect(true); // ✅ Really safe to call connect()
-        };
-        waitUntilReady();
+        setWeb3authReady(true);
+        waitForConnectReady(w3a);
 
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
@@ -366,7 +378,7 @@ const App = () => {
         web3authReady={web3authReady}
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
-        canConnect={canConnect}
+        connectReady={connectReady}
       />
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">

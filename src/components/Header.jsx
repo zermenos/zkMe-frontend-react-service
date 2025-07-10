@@ -10,7 +10,7 @@ const Header = ({
   web3authReady,
   logoutInProgress,
   initialLoading,
-  canConnect,
+  connectReady,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
@@ -41,7 +41,7 @@ const Header = ({
     loading ||
     logoutInProgress ||
     !web3authReady ||
-    !canConnect;
+    !connectReady;
 
   return (
     <header className="bg-[#F1F0F0]">
