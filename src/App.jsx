@@ -126,15 +126,6 @@ const App = () => {
       setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
       try {
-        // 🔁 Check for mobile reload logout flag
-        if (localStorage.getItem("forceLogout") === "true") {
-          console.log("📱🔁 Forced logout after reload");
-          await safeLogout();
-          localStorage.removeItem("forceLogout");
-          await new Promise((r) => setTimeout(r, 200));
-          return; // Exit early, avoid initializing Web3Auth
-        }
-
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
@@ -154,6 +145,14 @@ const App = () => {
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
         setWeb3authReady(true);
+        // 🔁 Check for mobile reload logout flag
+        if (localStorage.getItem("forceLogout") === "true") {
+          console.log("📱🔁 Forced logout after reload");
+          await safeLogout();
+          localStorage.removeItem("forceLogout");
+          await new Promise((r) => setTimeout(r, 200));
+          return; // Exit early, avoid initializing Web3Auth
+        }
 
         // ✅ Check if session is valid
         if (w3a.cachedAdapter && w3a.provider) {
