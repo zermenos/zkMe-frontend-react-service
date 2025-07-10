@@ -81,9 +81,17 @@ const Header = ({
               <button
                 onClick={onConnect}
                 disabled={loading || !web3authReady}
-                className="flex items-center space-x-2 bg-[#F1F0F0] hover:bg-[#E2E1E1] border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200"
+                className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
+                  loading || !web3authReady
+                    ? "bg-gray-300 cursor-not-allowed opacity-70"
+                    : "bg-[#F1F0F0] hover:bg-[#E2E1E1]"
+                }`}
               >
-                <Wallet className="text-[#282828] w-5 h-5" />
+                {loading ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600" />
+                ) : (
+                  <Wallet className="text-[#282828] w-5 h-5" />
+                )}
                 <span className="text-sm">
                   {loading ? "Conectando..." : "Conectar Cartera"}
                 </span>
