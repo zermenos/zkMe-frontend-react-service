@@ -83,11 +83,11 @@ const Header = ({
               </>
             ) : (
               <button
-                onClick={shouldDisable ? undefined : onConnect}
+                onClick={onConnect} // Always attach handler
                 disabled={shouldDisable}
                 className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
                   shouldDisable
-                    ? "bg-gray-300 cursor-not-allowed opacity-70"
+                    ? "bg-gray-300 opacity-70 cursor-not-allowed pointer-events-none"
                     : "bg-[#F1F0F0] hover:bg-[#E2E1E1]"
                 }`}
               >
@@ -96,7 +96,7 @@ const Header = ({
                   {shouldDisable ? "Cargando..." : "Conectar Cartera"}
                 </span>
                 {shouldDisable && (
-                  <span className="ml-2 inline-block h-4 w-4 border-2 border-gray-500 border-t-transparent rounded-full animate-spin" />
+                  <span className="ml-2 inline-block h-4 w-4 border-2 border-t-transparent border-gray-700 rounded-full animate-spin" />
                 )}
               </button>
             )}
