@@ -128,6 +128,15 @@ const App = () => {
 */
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
+        // Wait for internal Web3Auth UI and provider to fully settle
+        const waitUntilReady = async () => {
+          while (!w3a.provider && !w3a.cachedAdapter) {
+            await new Promise((r) => setTimeout(r, 300));
+          }
+          setWeb3authReady(true); // UI/UIX is loaded
+          setCanConnect(true); // ✅ Really safe to call connect()
+        };
+        waitUntilReady();
 
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
@@ -137,15 +146,6 @@ const App = () => {
           await new Promise((r) => setTimeout(r, 200));
           return; // Exit early, avoid initializing Web3Auth
         }
-        // Wait for internal Web3Auth UI and provider to fully settle
-        const waitUntilReady = async () => {
-          while (!w3a.provider && !w3a.cachedAdapter) {
-            await new Promise((r) => setTimeout(r, 1000));
-          }
-          setWeb3authReady(true); // UI/UIX is loaded
-          setCanConnect(true); // ✅ Really safe to call connect()
-        };
-        waitUntilReady();
 
         // ✅ Check if session is valid
         if (w3a.cachedAdapter && w3a.provider) {
