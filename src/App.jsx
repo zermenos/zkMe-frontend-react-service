@@ -23,6 +23,7 @@ const App = () => {
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
+  const [canConnect, setCanConnect] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -126,7 +127,17 @@ const App = () => {
 */
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
-        setWeb3authReady(true);
+
+        // Wait for internal Web3Auth UI and provider to fully settle
+        const waitUntilReady = async () => {
+          while (!w3a.provider && !w3a.cachedAdapter) {
+            await new Promise((r) => setTimeout(r, 100));
+          }
+          setWeb3authReady(true); // UI/UIX is loaded
+          setCanConnect(true); // ✅ Really safe to call connect()
+        };
+        waitUntilReady();
+
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
           console.log("📱🔁 Forced logout after reload");
@@ -354,6 +365,7 @@ const App = () => {
         web3authReady={web3authReady}
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
+        canConnect={canConnect}
       />
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
