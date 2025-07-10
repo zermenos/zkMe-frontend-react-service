@@ -390,6 +390,7 @@ const App = () => {
         onConnect={handleConnect}
         onDisconnect={handleDisconnect}
         loading={loading}
+        web3authReady={web3authReady}
       />
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
@@ -404,11 +405,9 @@ const App = () => {
               Passing both verifications is necessary to anchor your Proof of Uniqueness credential to the Verax attestation registry, making you eligible to participate in the LXP drop.
             </p> */}
           </div>
-
-          {!walletData &&
-            !initialLoading &&
-            {
-              /*
+          {/*
+          {!walletData && !initialLoading && (
+            
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">
                 Es necesario tener una cuenta en MetaMask, si aún no la tienes
@@ -417,9 +416,9 @@ const App = () => {
                 <br></br>
               </p>
             </div>
-            */
-            }}
-
+            
+          )}
+            */}
           {walletData && (
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">

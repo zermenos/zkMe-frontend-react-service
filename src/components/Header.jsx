@@ -1,7 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Wallet, ChevronDown, LogOut } from "lucide-react";
 
-const Header = ({ walletData, balance, onConnect, onDisconnect, loading }) => {
+const Header = ({
+  walletData,
+  balance,
+  onConnect,
+  onDisconnect,
+  loading,
+  web3authReady,
+}) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
 
