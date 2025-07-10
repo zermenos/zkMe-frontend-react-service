@@ -26,6 +26,9 @@ const App = () => {
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
+  const [debugLogs, setDebugLogs] = useState([]);
+  const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
+
   const getEthersProvider = () => {
     if (!web3auth?.provider) throw new Error("Web3Auth provider not ready");
     return new ethers.providers.Web3Provider(web3auth.provider);
@@ -103,7 +106,7 @@ const App = () => {
       if (isMobile && reloaded) {
         console.log("📱🔁 Mobile reload detected, logging out...");
         await safeLogout();
-        await web3auth.clearCache();
+        localStorage.setItem("forceLogout", "true");
         await new Promise((r) => setTimeout(r, 200)); // allow time for cleanup
       }
     };
@@ -114,6 +117,14 @@ const App = () => {
     const initWeb3Auth = async () => {
       const mobile = isMobileDevice();
       try {
+        // 🔁 Check for mobile reload logout flag
+        if (localStorage.getItem("forceLogout") === "true") {
+          console.log("📱🔁 Forced logout after reload");
+          await safeLogout();
+          localStorage.removeItem("forceLogout");
+          return; // Exit early, avoid initializing Web3Auth
+        }
+
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
@@ -281,7 +292,7 @@ const App = () => {
     });
 
     dynamicWidget.launch();
-    zkmeWidgetRef.current = newWidget;
+    zkmeWidgetRef.current = dynamicWidget;
   };
 
   const handleVerification = async () => {
