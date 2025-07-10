@@ -91,7 +91,7 @@ const App = () => {
       setLogoutInProgress(false); // ✅ Done with logout
     }
   };
-  /*
+
   useEffect(() => {
     const wasPageReloaded = () => {
       const navEntries = performance.getEntriesByType("navigation");
@@ -109,7 +109,6 @@ const App = () => {
     };
     clearSessionOnMobile();
   }, []);
-  */
 
   useEffect(() => {
     const initWeb3Auth = async () => {
@@ -160,21 +159,6 @@ const App = () => {
     initWeb3Auth();
   }, []);
 
-  /*
-  useEffect(() => {
-    // Detect if user is on mobile
-    const checkMobile = () => {
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice =
-        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
-          userAgent
-        );
-      setIsMobile(isMobileDevice);
-    };
-    checkMobile();
-  }, []);
-  */
-
   const handleConnect = async () => {
     if (!web3auth) {
       console.warn("Web3Auth not initialized yet");
@@ -217,41 +201,6 @@ const App = () => {
     } catch (err) {
       console.error("Error during disconnect:", err);
     }
-    /*
-    
-    
-    try {
-      if (!web3auth) {
-        console.warn("Web3Auth not initialized, cannot disconnect.");
-        return;
-      }
-
-      await web3auth.logout();
-      await web3auth.clearCache();
-
-      // Optional: Wait a bit to ensure state is fully reset
-      await new Promise((resolve) => setTimeout(resolve, 300));
-
-      // Optional but recommended: clear local storage
-      localStorage.removeItem("walletAddress");
-      localStorage.removeItem("kycVerified");
-
-      // Optional: reset any local app state here too
-      setWalletData(null);
-      setBalance(null);
-      setKycStatus(null);
-      setWeb3Provider(null);
-      setError("");
-
-      // Destroy ZKMe widget if active
-      if (zkmeWidgetRef.current) {
-        zkmeWidgetRef.current.destroy();
-        zkmeWidgetRef.current = null;
-      }
-    } catch (err) {
-      console.error("Error during disconnect:", err);
-    }
-      */
   };
 
   const zkmeProvider = {
