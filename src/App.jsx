@@ -78,7 +78,7 @@ const App = () => {
       }
 
       // Optional: Wait a bit to ensure state is fully reset
-      //await new Promise((resolve) => setTimeout(resolve, 200));
+      await new Promise((resolve) => setTimeout(resolve, 200));
 
       // Optional but recommended: clear local storage
       localStorage.removeItem("walletAddress");
