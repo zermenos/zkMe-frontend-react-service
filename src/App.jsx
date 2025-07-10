@@ -61,22 +61,13 @@ const App = () => {
       setLogoutInProgress(true); // ✅ Begin tracking logout
       console.log("Initiating safeLogout");
 
-      try {
-        await web3auth.logout(); // this might fail, catch below
-      } catch (err) {
-        console.warn(
-          "Logout skipped or failed, likely no session:",
-          err.message
-        );
+      if (web3auth.provider) {
+        await web3auth.logout();
       }
-      try {
-        await web3auth.clearCache(); // 🔥 Remove optional chaining
-      } catch (e) {
-        console.warn("clearCache error:", e.message);
-      }
+      await web3auth.clearCache?.();
 
       // Optional: Wait a bit to ensure state is fully reset
-      await new Promise((resolve) => setTimeout(resolve, 200));
+      //await new Promise((resolve) => setTimeout(resolve, 200));
 
       // Optional but recommended: clear local storage
       localStorage.removeItem("walletAddress");
@@ -393,6 +384,7 @@ const App = () => {
         loading={loading}
         web3authReady={web3authReady}
         logoutInProgress={logoutInProgress}
+        initialLoading={initialLoading}
       />
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
