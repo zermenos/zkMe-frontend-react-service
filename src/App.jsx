@@ -96,6 +96,12 @@ const App = () => {
   };
 
   useEffect(() => {
+    log("Initial loading: " + initialLoading);
+    log("Web3auth ready: " + web3authReady);
+    log("Wallet: " + (walletData?.address ?? "Not connected"));
+  }, [initialLoading, web3authReady, walletData]);
+
+  useEffect(() => {
     const wasPageReloaded = () => {
       const navEntries = performance.getEntriesByType("navigation");
       return navEntries.length > 0 && navEntries[0].type === "reload";
@@ -524,6 +530,11 @@ const App = () => {
               aquí
             </a>
           </p>
+          <div className="fixed bottom-0 left-0 bg-white p-2 text-xs w-full max-h-40 overflow-auto border-t">
+            {debugLogs.map((line, i) => (
+              <div key={i}>{line}</div>
+            ))}
+          </div>
         </div>
       </div>
     </div>
