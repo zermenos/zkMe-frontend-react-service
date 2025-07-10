@@ -79,7 +79,7 @@ const Header = ({
               </>
             ) : (
               <button
-                onClick={onConnect}
+                onClick={web3authReady && !loading ? onConnect : undefined}
                 disabled={loading || !web3authReady}
                 className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
                   loading || !web3authReady
