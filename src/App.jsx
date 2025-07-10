@@ -88,7 +88,7 @@ const App = () => {
       setWalletData(null);
       setBalance(null);
       setKycStatus(null);
-      //setWeb3Provider(null);
+      setWeb3Provider(null);
       setError("");
 
       // Destroy ZKMe widget if active
