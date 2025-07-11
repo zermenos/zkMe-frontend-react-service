@@ -364,6 +364,7 @@ const App = () => {
         canConnect={canConnect}
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
+        web3authReady={web3authReady}
       />
 
       <div className="p-4">
