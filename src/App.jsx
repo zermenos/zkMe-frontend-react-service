@@ -58,6 +58,79 @@ const App = () => {
   //const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
 
   useEffect(() => {
+    const initWeb3Auth = async () => {
+      setInitialLoading(true); // ✅ Always begin in loading state
+      const mobile = isMobileDevice();
+      try {
+        const w3a = new Web3Auth({
+          clientId,
+          web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
+          walletServicesConfig: {}, // optional services config
+        });
+        /*
+
+        if (mobile && w3a.cachedAdapter) {
+          console.log("Mobile reload detected, clearing session...");
+          await safeLogout();
+          await web3auth.clearCache();
+          // Wait a bit to ensure it clears properly
+          await new Promise((r) => setTimeout(r, 200));
+          return;
+        }
+*/
+        await w3a.init(); // always initialize here
+        setWeb3Auth(w3a);
+
+        // 🔁 Check for mobile reload logout flag
+        if (localStorage.getItem("forceLogout") === "true") {
+          console.log("📱🔁 Forced logout after reload");
+          await safeLogout();
+          localStorage.removeItem("forceLogout");
+          //await new Promise((r) => setTimeout(r, 200));
+          return; // Exit early, avoid initializing Web3Auth
+        }
+
+        // ✅ Check if session is valid
+        if (w3a.cachedAdapter && w3a.provider) {
+          try {
+            const info = await getWalletInfo();
+            setWeb3Provider(info.provider);
+            setWalletData({
+              provider: info.provider,
+              signer: info.signer,
+              address: info.address,
+            });
+            setBalance(info.balance);
+          } catch (sessionErr) {
+            console.warn("Stale session detected, logging out...");
+            await w3a.logout();
+          }
+        }
+      } catch (err) {
+        console.error("Web3Auth init error:", err);
+      } finally {
+        setInitialLoading(false);
+        setWeb3authReady(true);
+      }
+    };
+
+    initWeb3Auth();
+  }, []);
+
+  useEffect(() => {
+    if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
+      const timeout = setTimeout(() => {
+        setCanConnect(true);
+      }, 1000); // 1-second delay
+
+      return () => clearTimeout(timeout); // Cleanup if dependencies change
+    } else {
+      // If conditions aren't met, disable the button
+      setCanConnect(false);
+    }
+  }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
+
+  useEffect(() => {
     const wasPageReloaded = () => {
       const navEntries = performance.getEntriesByType("navigation");
       return navEntries.length > 0 && navEntries[0].type === "reload";
@@ -74,60 +147,6 @@ const App = () => {
     clearSessionOnMobile();
   }, []);
 
-  useEffect(() => {
-    const initWeb3Auth = async () => {
-      setInitialLoading(true); // ✅ Always begin in loading state
-      //const mobile = isMobileDevice();
-      try {
-        const w3a = new Web3Auth({
-          clientId,
-          web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-          walletServicesConfig: {}, // optional services config
-        });
-
-        await w3a.init(); // always initialize here
-        setWeb3Auth(w3a);
-
-        // 🔁 Step 1: If force logout was set (e.g. from reload), log out first
-        if (localStorage.getItem("forceLogout") === "true") {
-          console.log("📱🔁 Forced logout after reload");
-          await safeLogout();
-          //await w3a.clearCache?.();
-          localStorage.removeItem("forceLogout");
-        }
-
-        // ✅ Only attempt silent session restoration if session appears valid
-        if (w3a.cachedAdapter && w3a.provider) {
-          try {
-            const info = await getWalletInfo();
-            setWeb3Provider(info.provider);
-            setWalletData({
-              provider: info.provider,
-              signer: info.signer,
-              address: info.address,
-            });
-            setBalance(info.balance);
-          } catch (err) {
-            console.warn(
-              "⚠️ Cached session found but unusable. Logging out..."
-            );
-            await w3a.logout();
-            //await w3a.clearCache?.();
-          }
-        } else {
-          console.log("ℹ️ No cached session found, waiting for manual login");
-        }
-      } catch (err) {
-        console.error("Web3Auth init failed:", err);
-      } finally {
-        setWeb3authReady(true);
-        setInitialLoading(false);
-      }
-    };
-
-    initWeb3Auth();
-  }, []);
-
   const handleConnect = async () => {
     if (!web3auth || initialLoading || !canConnect || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
@@ -136,11 +155,13 @@ const App = () => {
 
     try {
       setLoading(true);
-      const prov = await web3auth.connect(); // 🔥 OK here, because user clicked
-      if (!prov) throw new Error("No provider returned after connect");
 
+      // 🔥 Then trigger the login flow (will show the modal)
+      const prov = await web3auth.connect(); // 🔥 always force login
+      if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
+
       setWeb3Provider(provider);
       setWalletData({ provider, signer, address });
       setBalance(balance);
@@ -152,18 +173,6 @@ const App = () => {
       setLoading(false);
     }
   };
-  useEffect(() => {
-    if (!initialLoading && web3auth && !logoutInProgress) {
-      const timeout = setTimeout(() => {
-        setCanConnect(true);
-      }, 100); // 1-second delay
-
-      return () => clearTimeout(timeout); // Cleanup if dependencies change
-    } else {
-      // If conditions aren't met, disable the button
-      setCanConnect(false);
-    }
-  }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
 
   const handleShowWallet = () => {
     if (web3auth) web3auth.showWalletUI();
