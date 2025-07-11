@@ -58,19 +58,6 @@ const App = () => {
   //const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
 
   useEffect(() => {
-    if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
-      const timeout = setTimeout(() => {
-        setCanConnect(true);
-      }, 1000); // 1-second delay
-
-      return () => clearTimeout(timeout); // Cleanup if dependencies change
-    } else {
-      // If conditions aren't met, disable the button
-      setCanConnect(false);
-    }
-  }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
-
-  useEffect(() => {
     const initWeb3Auth = async () => {
       setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
@@ -99,7 +86,7 @@ const App = () => {
           console.log("📱🔁 Forced logout after reload");
           await safeLogout();
           localStorage.removeItem("forceLogout");
-          await new Promise((r) => setTimeout(r, 200));
+          //await new Promise((r) => setTimeout(r, 200));
           return; // Exit early, avoid initializing Web3Auth
         }
 
@@ -114,6 +101,7 @@ const App = () => {
               address: info.address,
             });
             setBalance(info.balance);
+            await new Promise((r) => setTimeout(r, 1000));
             setWeb3authReady(true); // ✅ Set this only when fully initialized
           } catch (sessionErr) {
             console.warn("Stale session detected, logging out...");
@@ -130,6 +118,19 @@ const App = () => {
 
     initWeb3Auth();
   }, []);
+
+  useEffect(() => {
+    if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
+      const timeout = setTimeout(() => {
+        setCanConnect(true);
+      }, 1000); // 1-second delay
+
+      return () => clearTimeout(timeout); // Cleanup if dependencies change
+    } else {
+      // If conditions aren't met, disable the button
+      setCanConnect(false);
+    }
+  }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
 
   /*
   useEffect(() => {
