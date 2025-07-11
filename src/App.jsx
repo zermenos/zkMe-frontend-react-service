@@ -23,7 +23,7 @@ const App = () => {
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
-  const [canConnect, setCanConnect] = useState(false);
+  //const [canConnect, setCanConnect] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -95,8 +95,9 @@ const App = () => {
       setLogoutInProgress(false); // ✅ Done with logout
     }
   };
-  //const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
+  const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
 
+  /*
   useEffect(() => {
     if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
       const timeout = setTimeout(() => {
@@ -109,6 +110,7 @@ const App = () => {
       setCanConnect(false);
     }
   }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
+  */
 
   useEffect(() => {
     log("Initial loading: " + initialLoading);
@@ -205,7 +207,7 @@ const App = () => {
   }, []);
 
   const handleConnect = async () => {
-    if (!web3auth) {
+    if (!web3auth || !initialLoading || !web3auth.provider || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
       return;
     }
