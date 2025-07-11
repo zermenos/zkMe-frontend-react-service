@@ -11,6 +11,8 @@ const Header = ({
   logoutInProgress,
   initialLoading,
   web3authReady,
+  web3auth,
+  web3authprovider,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
@@ -41,6 +43,8 @@ const Header = ({
     loading ||
     logoutInProgress ||
     !canConnect ||
+    !web3auth ||
+    !web3authprovider ||
     !web3authReady;
 
   return (

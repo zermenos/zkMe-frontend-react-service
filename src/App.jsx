@@ -349,6 +349,8 @@ const App = () => {
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
+    log("web3auth: " + web3auth);
+    log("web3auth.provider: " + web3auth.provider);
   }, [
     initialLoading,
     walletData,
@@ -356,6 +358,8 @@ const App = () => {
     loading,
     canConnect,
     web3authReady,
+    web3auth,
+    web3auth?.provider,
   ]);
 
   if (initialLoading) {
@@ -381,6 +385,8 @@ const App = () => {
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
         web3authReady={web3authReady}
+        web3auth={web3auth}
+        web3authprovider={web3auth.provider}
       />
 
       <div className="p-4">
