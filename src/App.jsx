@@ -96,7 +96,7 @@ const App = () => {
             ).toFixed(2)}ms`
           );
           console.log("📱🔁 Forced logout after reload");
-          await safeLogout();
+          await w3a.logout();
           localStorage.removeItem("forceLogout");
           //await new Promise((r) => setTimeout(r, 200));
           return; // Exit early, avoid initializing Web3Auth
