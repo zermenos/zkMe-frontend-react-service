@@ -141,7 +141,7 @@ const App = () => {
           console.log("📱🔁 Forced logout after reload");
           await safeLogout();
           localStorage.removeItem("forceLogout");
-          await new Promise((r) => setTimeout(r, 5000));
+          await new Promise((r) => setTimeout(r, 1000));
           return; // Exit early, avoid initializing Web3Auth
         }
 
@@ -184,7 +184,7 @@ const App = () => {
       if (isMobile && reloaded) {
         console.log("📱🔁 Mobile reload detected, logging out...");
         localStorage.setItem("forceLogout", "true");
-        await new Promise((r) => setTimeout(r, 5000)); // allow time for cleanup
+        await new Promise((r) => setTimeout(r, 1000)); // allow time for cleanup
       }
     };
     clearSessionOnMobile();
