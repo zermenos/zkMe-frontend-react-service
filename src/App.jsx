@@ -100,8 +100,6 @@ const App = () => {
               address: info.address,
             });
             setBalance(info.balance);
-            await new Promise((r) => setTimeout(r, 1000));
-            setWeb3authReady(true); // ✅ Set this only when fully initialized
           } catch (sessionErr) {
             console.warn("Stale session detected, logging out...");
             await w3a.logout();
@@ -111,6 +109,7 @@ const App = () => {
         console.error("Web3Auth init error:", err);
       } finally {
         setInitialLoading(false);
+        await new Promise((r) => setTimeout(r, 1000));
         setWeb3authReady(true);
       }
     };
