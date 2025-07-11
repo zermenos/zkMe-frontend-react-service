@@ -232,14 +232,26 @@ const App = () => {
   };
 
   const safeLogout = async () => {
+    const start = performance.now();
+    log(`[Timer] 🔌 handleConnect started at ${start.toFixed(2)}ms`);
     if (!web3auth) {
       console.warn("Web3Auth not initialized, cannot logout");
+      log(
+        `[Timer] 🔐 cannot logout at ${(performance.now() - start).toFixed(
+          2
+        )}ms`
+      );
       return;
     }
 
     try {
       setLogoutInProgress(true); // ✅ Begin tracking logout
       console.log("Initiating safeLogout");
+      log(
+        `[Timer] 🔐 Initiating safeLogout at ${(
+          performance.now() - start
+        ).toFixed(2)}ms`
+      );
 
       if (web3auth.provider) {
         await web3auth.logout();
