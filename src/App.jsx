@@ -23,7 +23,7 @@ const App = () => {
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
-  //const [canConnect, setCanConnect] = useState(false);
+  const [canConnect, setCanConnect] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -55,54 +55,13 @@ const App = () => {
     );
   };
 
-  const safeLogout = async () => {
-    if (!web3auth) {
-      console.warn("Web3Auth not initialized, cannot logout");
-      return;
-    }
+  //const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
 
-    try {
-      setLogoutInProgress(true); // ✅ Begin tracking logout
-      console.log("Initiating safeLogout");
-
-      if (web3auth.provider) {
-        await web3auth.logout();
-      }
-      await web3auth.clearCache?.();
-
-      // Optional: Wait a bit to ensure state is fully reset
-      //await new Promise((resolve) => setTimeout(resolve, 200));
-
-      // Optional but recommended: clear local storage
-      localStorage.removeItem("walletAddress");
-      localStorage.removeItem("kycVerified");
-
-      // Optional: reset any local app state here too
-      setWalletData(null);
-      setBalance(null);
-      setKycStatus(null);
-      setWeb3Provider(null);
-      setError("");
-
-      // Destroy ZKMe widget if active
-      if (zkmeWidgetRef.current) {
-        zkmeWidgetRef.current.destroy();
-        zkmeWidgetRef.current = null;
-      }
-    } catch (err) {
-      console.error("safeLogout error:", err);
-    } finally {
-      setLogoutInProgress(false); // ✅ Done with logout
-    }
-  };
-  const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
-
-  /*
   useEffect(() => {
     if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
       const timeout = setTimeout(() => {
         setCanConnect(true);
-      }, 3000); // 1-second delay
+      }, 1000); // 1-second delay
 
       return () => clearTimeout(timeout); // Cleanup if dependencies change
     } else {
@@ -110,23 +69,6 @@ const App = () => {
       setCanConnect(false);
     }
   }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
-  */
-
-  useEffect(() => {
-    log("Initial loading: " + initialLoading);
-    log("canConnect: " + canConnect);
-    log("web3authReady: " + web3authReady);
-    log("logoutInProgress: " + logoutInProgress);
-    log("loading: " + loading);
-    log("Wallet: " + (walletData?.address ?? "Not connected"));
-  }, [
-    initialLoading,
-    walletData,
-    logoutInProgress,
-    loading,
-    canConnect,
-    web3authReady,
-  ]);
 
   useEffect(() => {
     const initWeb3Auth = async () => {
@@ -189,6 +131,7 @@ const App = () => {
     initWeb3Auth();
   }, []);
 
+  /*
   useEffect(() => {
     const wasPageReloaded = () => {
       const navEntries = performance.getEntriesByType("navigation");
@@ -205,9 +148,10 @@ const App = () => {
     };
     clearSessionOnMobile();
   }, []);
+  */
 
   const handleConnect = async () => {
-    if (!web3auth || initialLoading || !web3auth.provider || !web3authReady) {
+    if (!web3auth || initialLoading || !canConnect || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
       return;
     }
@@ -235,6 +179,47 @@ const App = () => {
 
   const handleShowWallet = () => {
     if (web3auth) web3auth.showWalletUI();
+  };
+
+  const safeLogout = async () => {
+    if (!web3auth) {
+      console.warn("Web3Auth not initialized, cannot logout");
+      return;
+    }
+
+    try {
+      setLogoutInProgress(true); // ✅ Begin tracking logout
+      console.log("Initiating safeLogout");
+
+      if (web3auth.provider) {
+        await web3auth.logout();
+      }
+      await web3auth.clearCache?.();
+
+      // Optional: Wait a bit to ensure state is fully reset
+      //await new Promise((resolve) => setTimeout(resolve, 200));
+
+      // Optional but recommended: clear local storage
+      localStorage.removeItem("walletAddress");
+      localStorage.removeItem("kycVerified");
+
+      // Optional: reset any local app state here too
+      setWalletData(null);
+      setBalance(null);
+      setKycStatus(null);
+      setWeb3Provider(null);
+      setError("");
+
+      // Destroy ZKMe widget if active
+      if (zkmeWidgetRef.current) {
+        zkmeWidgetRef.current.destroy();
+        zkmeWidgetRef.current = null;
+      }
+    } catch (err) {
+      console.error("safeLogout error:", err);
+    } finally {
+      setLogoutInProgress(false); // ✅ Done with logout
+    }
   };
 
   const handleDisconnect = async () => {
@@ -357,6 +342,22 @@ const App = () => {
     setInitialLoading(false);
   }, []);
   */
+
+  useEffect(() => {
+    log("Initial loading: " + initialLoading);
+    log("canConnect: " + canConnect);
+    log("web3authReady: " + web3authReady);
+    log("logoutInProgress: " + logoutInProgress);
+    log("loading: " + loading);
+    log("Wallet: " + (walletData?.address ?? "Not connected"));
+  }, [
+    initialLoading,
+    walletData,
+    logoutInProgress,
+    loading,
+    canConnect,
+    web3authReady,
+  ]);
 
   if (initialLoading) {
     return (
