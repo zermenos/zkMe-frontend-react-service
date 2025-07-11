@@ -29,27 +29,6 @@ const App = () => {
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
 
-  /*
-  const waitForConnectReady = async (w3aInstance) => {
-    let attempts = 0;
-    while (
-      (!w3aInstance.connectedAdapterName ||
-        w3aInstance.status !== "connected" ||
-        !w3aInstance.provider) &&
-      attempts < 50 // wait max 5s
-    ) {
-      await new Promise((r) => setTimeout(r, 100));
-      attempts++;
-    }
-    if (
-      w3aInstance.connectedAdapterName &&
-      w3aInstance.status === "connected"
-    ) {
-      setConnectReady(true);
-    }
-  };
-  */
-
   const getEthersProvider = () => {
     if (!web3auth?.provider) throw new Error("Web3Auth provider not ready");
     return new ethers.providers.Web3Provider(web3auth.provider);
@@ -118,11 +97,11 @@ const App = () => {
 
   useEffect(() => {
     log("Initial loading: " + initialLoading);
-    log("canConnect: " + canConnect);
+    log("canConnect: " + !!web3auth && !!web3auth.provider);
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
-  }, [initialLoading, walletData, logoutInProgress, loading, canConnect]);
+  }, [initialLoading, walletData, logoutInProgress, loading]);
 
   useEffect(() => {
     const initWeb3Auth = async () => {
@@ -193,7 +172,6 @@ const App = () => {
       const reloaded = wasPageReloaded();
       if (isMobile && reloaded) {
         console.log("📱🔁 Mobile reload detected, logging out...");
-        //await safeLogout();
         localStorage.setItem("forceLogout", "true");
         await new Promise((r) => setTimeout(r, 200)); // allow time for cleanup
       }
@@ -368,7 +346,6 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
-      {/*
       <Header
         walletData={walletData}
         //balance={balance}
@@ -379,7 +356,7 @@ const App = () => {
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
       />
-      */}
+
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
           <div className="space-y-4 mt-8">
