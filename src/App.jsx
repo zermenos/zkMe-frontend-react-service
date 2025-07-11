@@ -156,6 +156,8 @@ const App = () => {
 
   useEffect(() => {
     if (!initialLoading && web3auth && !logoutInProgress) {
+      const start = performance.now();
+      log(`[Timer] 🔌 canConnect started at ${start.toFixed(2)}ms`);
       const timeout = setTimeout(() => {
         setCanConnect(true);
       }, 1000); // 1-second delay
