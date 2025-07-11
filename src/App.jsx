@@ -150,8 +150,8 @@ const App = () => {
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
 
-        web3auth?.provider !== nul;
-        waitForConnectReady(w3a);
+        web3auth?.provider !== null;
+        //waitForConnectReady(w3a);
 
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
