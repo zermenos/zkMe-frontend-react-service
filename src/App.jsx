@@ -261,6 +261,10 @@ const App = () => {
       // Optional: Wait a bit to ensure state is fully reset
       //await new Promise((resolve) => setTimeout(resolve, 200));
 
+      // 🔥 Manually clear Web3Auth internal state
+      web3auth.provider = null;
+      web3auth.cachedAdapter = null;
+
       // Optional but recommended: clear local storage
       localStorage.removeItem("walletAddress");
       localStorage.removeItem("kycVerified");
@@ -287,8 +291,8 @@ const App = () => {
 
   const handleDisconnect = async () => {
     try {
-      //await safeLogout();
-      await web3auth.logout();
+      await safeLogout();
+      //await web3auth.logout();
     } catch (err) {
       console.error("Error during disconnect:", err);
     }
