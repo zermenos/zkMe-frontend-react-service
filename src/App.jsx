@@ -128,19 +128,6 @@ const App = () => {
     initWeb3Auth();
   }, []);
 
-  useEffect(() => {
-    if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
-      const timeout = setTimeout(() => {
-        setCanConnect(true);
-      }, 100); // 1-second delay
-
-      return () => clearTimeout(timeout); // Cleanup if dependencies change
-    } else {
-      // If conditions aren't met, disable the button
-      setCanConnect(false);
-    }
-  }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
-
   const handleConnect = async () => {
     if (!web3auth || initialLoading || !canConnect || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
@@ -165,6 +152,18 @@ const App = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    if (!initialLoading && web3auth && !logoutInProgress) {
+      const timeout = setTimeout(() => {
+        setCanConnect(true);
+      }, 100); // 1-second delay
+
+      return () => clearTimeout(timeout); // Cleanup if dependencies change
+    } else {
+      // If conditions aren't met, disable the button
+      setCanConnect(false);
+    }
+  }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
 
   const handleShowWallet = () => {
     if (web3auth) web3auth.showWalletUI();
