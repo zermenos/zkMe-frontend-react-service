@@ -81,7 +81,7 @@ const App = () => {
 
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
-
+        /*
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
           console.log("📱🔁 Forced logout after reload");
@@ -90,7 +90,7 @@ const App = () => {
           //await new Promise((r) => setTimeout(r, 200));
           return; // Exit early, avoid initializing Web3Auth
         }
-
+*/
         // ✅ Check if session is valid
         if (w3a.cachedAdapter && w3a.provider) {
           try {
@@ -131,6 +131,7 @@ const App = () => {
     }
   }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
 
+  /*
   useEffect(() => {
     const wasPageReloaded = () => {
       const navEntries = performance.getEntriesByType("navigation");
@@ -147,6 +148,7 @@ const App = () => {
     };
     clearSessionOnMobile();
   }, []);
+  */
 
   const handleConnect = async () => {
     if (!canConnect || !web3authReady) {
