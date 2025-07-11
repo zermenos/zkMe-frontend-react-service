@@ -122,7 +122,7 @@ const App = () => {
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
-  }, [initialLoading, web3authReady, walletData, logoutInProgress, loading]);
+  }, [initialLoading, walletData, logoutInProgress, loading, canConnect]);
 
   useEffect(() => {
     const initWeb3Auth = async () => {
