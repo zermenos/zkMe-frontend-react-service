@@ -23,8 +23,6 @@ const App = () => {
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   //const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
-  const [connectReady, setConnectReady] = useState(false);
-  const canConnect = !!web3auth && !!web3auth.provider;
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -121,7 +119,6 @@ const App = () => {
   useEffect(() => {
     log("Initial loading: " + initialLoading);
     log("canConnect: " + canConnect);
-    log("connectReady: " + connectReady);
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
@@ -356,6 +353,8 @@ const App = () => {
   }, []);
   */
 
+  const canConnect = !!web3auth && !!web3auth.provider;
+
   if (initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -378,7 +377,6 @@ const App = () => {
         canConnect={canConnect}
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
-        connectReady={connectReady}
       />
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
