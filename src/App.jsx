@@ -287,8 +287,8 @@ const App = () => {
 
   const handleDisconnect = async () => {
     try {
-      await safeLogout();
-      //await web3auth.logout();
+      //await safeLogout();
+      await web3auth.logout();
     } catch (err) {
       console.error("Error during disconnect:", err);
     }
