@@ -60,14 +60,14 @@ const App = () => {
   useEffect(() => {
     const initWeb3Auth = async () => {
       setInitialLoading(true); // ✅ Always begin in loading state
-      //const mobile = isMobileDevice();
+      const mobile = isMobileDevice();
       try {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
           walletServicesConfig: {}, // optional services config
         });
-        /*
+
         if (mobile && w3a.cachedAdapter) {
           console.log("Mobile reload detected, clearing session...");
           await safeLogout();
@@ -76,7 +76,7 @@ const App = () => {
           await new Promise((r) => setTimeout(r, 200));
           return;
         }
-*/
+
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
 
