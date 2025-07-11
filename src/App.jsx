@@ -21,7 +21,7 @@ const App = () => {
   const [web3Provider, setWeb3Provider] = useState(null);
   const [web3auth, setWeb3Auth] = useState(null);
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
-  const [web3authReady, setWeb3authReady] = useState(false);
+  //const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [connectReady, setConnectReady] = useState(false);
   const clientId =
@@ -29,6 +29,27 @@ const App = () => {
 
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
+
+  /*
+  const waitForConnectReady = async (w3aInstance) => {
+    let attempts = 0;
+    while (
+      (!w3aInstance.connectedAdapterName ||
+        w3aInstance.status !== "connected" ||
+        !w3aInstance.provider) &&
+      attempts < 50 // wait max 5s
+    ) {
+      await new Promise((r) => setTimeout(r, 100));
+      attempts++;
+    }
+    if (
+      w3aInstance.connectedAdapterName &&
+      w3aInstance.status === "connected"
+    ) {
+      setConnectReady(true);
+    }
+  };
+  */
 
   const getEthersProvider = () => {
     if (!web3auth?.provider) throw new Error("Web3Auth provider not ready");
@@ -96,28 +117,9 @@ const App = () => {
     }
   };
 
-  const waitForConnectReady = async (w3aInstance) => {
-    let attempts = 0;
-    while (
-      (!w3aInstance.connectedAdapterName ||
-        w3aInstance.status !== "connected" ||
-        !w3aInstance.provider) &&
-      attempts < 50 // wait max 5s
-    ) {
-      await new Promise((r) => setTimeout(r, 100));
-      attempts++;
-    }
-    if (
-      w3aInstance.connectedAdapterName &&
-      w3aInstance.status === "connected"
-    ) {
-      setConnectReady(true);
-    }
-  };
-
   useEffect(() => {
     log("Initial loading: " + initialLoading);
-    log("Web3auth ready: " + web3authReady);
+    log("canConnect: " + !!web3auth && !!web3auth.provider);
     log("connectReady: " + connectReady);
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
@@ -148,7 +150,7 @@ const App = () => {
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
 
-        setWeb3authReady(true);
+        web3auth?.provider !== nul;
         waitForConnectReady(w3a);
 
         // 🔁 Check for mobile reload logout flag
@@ -375,7 +377,7 @@ const App = () => {
         onConnect={handleConnect}
         onDisconnect={handleDisconnect}
         loading={loading}
-        web3authReady={web3authReady}
+        canConnect={!!web3auth && !!web3auth.provider}
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
         connectReady={connectReady}
