@@ -74,14 +74,21 @@ const App = () => {
         // 🔁 Step 1: If force logout was set (e.g. from reload), log out first
         if (localStorage.getItem("forceLogout") === "true") {
           console.log("📱🔁 Forced logout after reload");
-          await w3a.logout();
+          await safeLogout();
           //await w3a.clearCache?.();
           localStorage.removeItem("forceLogout");
+          return;
         }
 
         // 🔁 Step 2: If there's a valid session, try to restore it
-        if (w3a.cachedAdapter && w3a.provider) {
+        if (w3a.cachedAdapter) {
           try {
+            const prov = await w3a.connect(); // 🔥 try to restore session
+            if (!prov)
+              throw new Error(
+                "No provider returned after reconnecting session"
+              );
+
             const info = await getWalletInfo();
             setWeb3Provider(info.provider);
             setWalletData({
@@ -92,7 +99,7 @@ const App = () => {
             setBalance(info.balance);
           } catch (sessionErr) {
             console.warn("Stale session detected, logging out...");
-            await w3a.logout();
+            await safeLogout();
             //await w3a.clearCache?.();
           }
         }
