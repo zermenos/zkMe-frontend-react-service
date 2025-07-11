@@ -40,7 +40,7 @@ const Header = ({
     initialLoading ||
     loading ||
     logoutInProgress ||
-    //!canConnect ||
+    !canConnect ||
     !web3authReady;
 
   return (

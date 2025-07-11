@@ -135,7 +135,6 @@ const App = () => {
 */
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
-        setWeb3authReady(true); // ✅ Set this only when fully initialized
 
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
@@ -157,6 +156,7 @@ const App = () => {
               address: info.address,
             });
             setBalance(info.balance);
+            setWeb3authReady(true); // ✅ Set this only when fully initialized
           } catch (sessionErr) {
             console.warn("Stale session detected, logging out...");
             await w3a.logout();
@@ -167,6 +167,7 @@ const App = () => {
       } finally {
         setInitialLoading(false);
       }
+      setWeb3authReady(true);
     };
 
     initWeb3Auth();
