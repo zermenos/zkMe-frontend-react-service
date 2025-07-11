@@ -67,7 +67,6 @@ const App = () => {
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
           walletServicesConfig: {}, // optional services config
         });
-        /*
 
         if (mobile && w3a.cachedAdapter) {
           console.log("Mobile reload detected, clearing session...");
@@ -77,7 +76,7 @@ const App = () => {
           await new Promise((r) => setTimeout(r, 200));
           return;
         }
-*/
+
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
 
