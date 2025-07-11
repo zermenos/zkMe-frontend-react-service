@@ -94,14 +94,15 @@ const App = () => {
       setLogoutInProgress(false); // ✅ Done with logout
     }
   };
+  const canConnect = !!web3auth && !!web3auth.provider;
 
   useEffect(() => {
     log("Initial loading: " + initialLoading);
-    log("canConnect: " + !!web3auth && !!web3auth.provider);
+    log("canConnect: " + canConnect);
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
-  }, [initialLoading, walletData, logoutInProgress, loading]);
+  }, [initialLoading, walletData, logoutInProgress, loading, canConnect]);
 
   useEffect(() => {
     const initWeb3Auth = async () => {
@@ -330,8 +331,6 @@ const App = () => {
     setInitialLoading(false);
   }, []);
   */
-
-  const canConnect = !!web3auth && !!web3auth.provider;
 
   if (initialLoading) {
     return (
