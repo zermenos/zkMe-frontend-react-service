@@ -264,7 +264,7 @@ const App = () => {
       //await new Promise((resolve) => setTimeout(resolve, 200));
 
       // 🔥 Manually clear Web3Auth internal state
-      web3auth.provider = null;
+      //web3auth.provider = null;
       web3auth.cachedAdapter = null;
 
       // Optional but recommended: clear local storage
