@@ -268,8 +268,8 @@ const App = () => {
       web3auth.cachedAdapter = null;
 
       // Optional but recommended: clear local storage
-      localStorage.removeItem("walletAddress");
-      localStorage.removeItem("kycVerified");
+      //localStorage.removeItem("walletAddress");
+      //localStorage.removeItem("kycVerified");
 
       // Optional: reset any local app state here too
       setWalletData(null);
