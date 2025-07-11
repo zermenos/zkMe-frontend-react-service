@@ -154,25 +154,33 @@ const App = () => {
 
     try {
       setLoading(true);
+      let p = web3auth.provider;
 
       // ✅ If session already exists and provider is ready, reuse it
-      if (web3auth.cachedAdapter && web3auth.provider) {
-        const { provider, signer, address, balance } = await getWalletInfo();
-        setRawProvider(web3auth.provider);
-        setWeb3Provider(provider);
-        setWalletData({ provider, signer, address });
-        setBalance(balance);
-        localStorage.setItem("walletAddress", address);
-        return;
+      if (web3auth.cachedAdapter && p) {
+        try {
+          const { provider, signer, address, balance } = await getWalletInfo();
+          setRawProvider(p);
+          setWeb3Provider(provider);
+          setWalletData({ provider, signer, address });
+          setBalance(balance);
+          localStorage.setItem("walletAddress", address);
+          return;
+        } catch (sessionError) {
+          console.warn(
+            "⚠️ Session invalid, falling back to login:",
+            sessionError.message
+          );
+          // Fall through to force login
+        }
       }
 
       // 🔥 Otherwise, force login flow
-      const prov = await web3auth.connect(); // 🔥 always force login
-      if (!prov) throw new Error("No provider returned after connect");
+      p = await web3auth.connect(); // 🔥 always force login
+      if (!p) throw new Error("No provider returned after connect");
 
-      setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
-
+      setRawProvider(p);
       setWeb3Provider(provider);
       setWalletData({ provider, signer, address });
       setBalance(balance);
