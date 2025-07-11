@@ -253,14 +253,14 @@ const App = () => {
         ).toFixed(2)}ms`
       );
 
-      if (web3auth.provider) {
+      if (web3auth) {
         await web3auth.logout();
       }
       await web3auth.clearCache?.();
 
       // Optional: Wait a bit to ensure state is fully reset
       //await new Promise((resolve) => setTimeout(resolve, 200));
-      /*
+
       // Optional but recommended: clear local storage
       localStorage.removeItem("walletAddress");
       localStorage.removeItem("kycVerified");
@@ -270,8 +270,9 @@ const App = () => {
       setBalance(null);
       setKycStatus(null);
       setWeb3Provider(null);
+      setRawProvider(null);
       setError("");
-*/
+
       // Destroy ZKMe widget if active
       if (zkmeWidgetRef.current) {
         zkmeWidgetRef.current.destroy();
