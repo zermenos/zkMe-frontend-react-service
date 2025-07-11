@@ -23,6 +23,7 @@ const App = () => {
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
+  const [canConnect, setCanConnect] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -94,7 +95,20 @@ const App = () => {
       setLogoutInProgress(false); // ✅ Done with logout
     }
   };
-  const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
+  //const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
+
+  useEffect(() => {
+    if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
+      const timeout = setTimeout(() => {
+        setCanConnect(true);
+      }, 3000); // 1-second delay
+
+      return () => clearTimeout(timeout); // Cleanup if dependencies change
+    } else {
+      // If conditions aren't met, disable the button
+      setCanConnect(false);
+    }
+  }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
 
   useEffect(() => {
     log("Initial loading: " + initialLoading);
@@ -141,7 +155,7 @@ const App = () => {
           console.log("📱🔁 Forced logout after reload");
           await safeLogout();
           localStorage.removeItem("forceLogout");
-          await new Promise((r) => setTimeout(r, 1000));
+          await new Promise((r) => setTimeout(r, 200));
           return; // Exit early, avoid initializing Web3Auth
         }
 
@@ -184,7 +198,7 @@ const App = () => {
       if (isMobile && reloaded) {
         console.log("📱🔁 Mobile reload detected, logging out...");
         localStorage.setItem("forceLogout", "true");
-        await new Promise((r) => setTimeout(r, 1000)); // allow time for cleanup
+        await new Promise((r) => setTimeout(r, 200)); // allow time for cleanup
       }
     };
     clearSessionOnMobile();
