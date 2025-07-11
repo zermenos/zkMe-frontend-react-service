@@ -233,7 +233,7 @@ const App = () => {
 
   const safeLogout = async () => {
     const start = performance.now();
-    log(`[Timer] 🔌 handleConnect started at ${start.toFixed(2)}ms`);
+    log(`[Timer] 🔌 handleDisconnect started at ${start.toFixed(2)}ms`);
     if (!web3auth) {
       console.warn("Web3Auth not initialized, cannot logout");
       log(
@@ -260,7 +260,7 @@ const App = () => {
 
       // Optional: Wait a bit to ensure state is fully reset
       //await new Promise((resolve) => setTimeout(resolve, 200));
-
+      /*
       // Optional but recommended: clear local storage
       localStorage.removeItem("walletAddress");
       localStorage.removeItem("kycVerified");
@@ -271,7 +271,7 @@ const App = () => {
       setKycStatus(null);
       setWeb3Provider(null);
       setError("");
-
+*/
       // Destroy ZKMe widget if active
       if (zkmeWidgetRef.current) {
         zkmeWidgetRef.current.destroy();
@@ -287,6 +287,7 @@ const App = () => {
   const handleDisconnect = async () => {
     try {
       await safeLogout();
+      //await web3auth.logout();
     } catch (err) {
       console.error("Error during disconnect:", err);
     }
