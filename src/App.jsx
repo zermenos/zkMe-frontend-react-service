@@ -155,7 +155,7 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
+    if (!initialLoading && web3auth && !logoutInProgress) {
       const timeout = setTimeout(() => {
         setCanConnect(true);
       }, 1000); // 1-second delay
@@ -170,7 +170,7 @@ const App = () => {
       // If conditions aren't met, disable the button
       setCanConnect(false);
     }
-  }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
+  }, [initialLoading, web3auth, logoutInProgress]);
 
   useEffect(() => {
     const wasPageReloaded = () => {

@@ -44,7 +44,6 @@ const Header = ({
     logoutInProgress ||
     !canConnect ||
     !web3auth ||
-    !web3authprovider ||
     !web3authReady;
 
   return (
