@@ -368,6 +368,7 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-[#F0F0F0]">
+      {/*
       <Header
         walletData={walletData}
         //balance={balance}
@@ -378,6 +379,7 @@ const App = () => {
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
       />
+      */}
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
           <div className="space-y-4 mt-8">
