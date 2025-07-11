@@ -60,14 +60,14 @@ const App = () => {
   useEffect(() => {
     const initWeb3Auth = async () => {
       setInitialLoading(true); // ✅ Always begin in loading state
-      const mobile = isMobileDevice();
+      //const mobile = isMobileDevice();
       try {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
           walletServicesConfig: {}, // optional services config
         });
-
+        /*
         if (mobile && w3a.cachedAdapter) {
           console.log("Mobile reload detected, clearing session...");
           await safeLogout();
@@ -76,7 +76,7 @@ const App = () => {
           await new Promise((r) => setTimeout(r, 200));
           return;
         }
-
+*/
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
 
@@ -109,7 +109,6 @@ const App = () => {
         console.error("Web3Auth init error:", err);
       } finally {
         setInitialLoading(false);
-        await new Promise((r) => setTimeout(r, 1000));
         setWeb3authReady(true);
       }
     };
@@ -121,7 +120,7 @@ const App = () => {
     if (!initialLoading && web3auth && web3auth.provider && !logoutInProgress) {
       const timeout = setTimeout(() => {
         setCanConnect(true);
-      }, 1000); // 1-second delay
+      }, 100); // 1-second delay
 
       return () => clearTimeout(timeout); // Cleanup if dependencies change
     } else {
@@ -148,7 +147,7 @@ const App = () => {
   }, []);
 
   const handleConnect = async () => {
-    if (!web3auth || initialLoading || !canConnect || !web3authReady) {
+    if (!canConnect || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
       return;
     }
@@ -156,9 +155,21 @@ const App = () => {
     try {
       setLoading(true);
 
-      // 🔥 Then trigger the login flow (will show the modal)
+      // ✅ If session already exists and provider is ready, reuse it
+      if (web3auth.cachedAdapter && web3auth.provider) {
+        const { provider, signer, address, balance } = await getWalletInfo();
+        setRawProvider(web3auth.provider);
+        setWeb3Provider(provider);
+        setWalletData({ provider, signer, address });
+        setBalance(balance);
+        localStorage.setItem("walletAddress", address);
+        return;
+      }
+
+      // 🔥 Otherwise, force login flow
       const prov = await web3auth.connect(); // 🔥 always force login
       if (!prov) throw new Error("No provider returned after connect");
+
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
 
