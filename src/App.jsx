@@ -166,8 +166,8 @@ const App = () => {
         console.error("Web3Auth init error:", err);
       } finally {
         setInitialLoading(false);
+        setWeb3authReady(true);
       }
-      setWeb3authReady(true);
     };
 
     initWeb3Auth();
