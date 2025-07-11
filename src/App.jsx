@@ -58,6 +58,23 @@ const App = () => {
   //const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
 
   useEffect(() => {
+    const wasPageReloaded = () => {
+      const navEntries = performance.getEntriesByType("navigation");
+      return navEntries.length > 0 && navEntries[0].type === "reload";
+    };
+    const clearSessionOnMobile = async () => {
+      const isMobile = isMobileDevice();
+      const reloaded = wasPageReloaded();
+      if (isMobile && reloaded) {
+        console.log("📱🔁 Mobile reload detected, logging out...");
+        localStorage.setItem("forceLogout", "true");
+        await new Promise((r) => setTimeout(r, 200)); // allow time for cleanup
+      }
+    };
+    clearSessionOnMobile();
+  }, []);
+
+  useEffect(() => {
     const initWeb3Auth = async () => {
       setInitialLoading(true); // ✅ Always begin in loading state
       //const mobile = isMobileDevice();
@@ -77,37 +94,31 @@ const App = () => {
           await safeLogout();
           //await w3a.clearCache?.();
           localStorage.removeItem("forceLogout");
-          return;
         }
 
         // 🔁 Step 2: If there's a valid session, try to restore it
         if (w3a.cachedAdapter) {
-          try {
-            const prov = await w3a.connect(); // 🔥 try to restore session
-            if (!prov)
-              throw new Error(
-                "No provider returned after reconnecting session"
-              );
+          console.log("🔁 Cached adapter found, trying to reconnect...");
+          const prov = await w3a.connect(); // 🔥 try to restore session
+          if (!prov)
+            throw new Error("No provider returned after reconnecting session");
 
-            const info = await getWalletInfo();
-            setWeb3Provider(info.provider);
-            setWalletData({
-              provider: info.provider,
-              signer: info.signer,
-              address: info.address,
-            });
-            setBalance(info.balance);
-          } catch (sessionErr) {
-            console.warn("Stale session detected, logging out...");
-            await safeLogout();
-            //await w3a.clearCache?.();
-          }
+          const info = await getWalletInfo();
+          setWeb3Provider(info.provider);
+          setWalletData({
+            provider: info.provider,
+            signer: info.signer,
+            address: info.address,
+          });
+          setBalance(info.balance);
+        } else {
+          console.log("No cached session found");
         }
       } catch (err) {
-        console.error("Web3Auth init error:", err);
+        console.error("Web3Auth init failed:", err);
       } finally {
-        setInitialLoading(false);
         setWeb3authReady(true);
+        setInitialLoading(false);
       }
     };
 
@@ -127,25 +138,8 @@ const App = () => {
     }
   }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
 
-  useEffect(() => {
-    const wasPageReloaded = () => {
-      const navEntries = performance.getEntriesByType("navigation");
-      return navEntries.length > 0 && navEntries[0].type === "reload";
-    };
-    const clearSessionOnMobile = async () => {
-      const isMobile = isMobileDevice();
-      const reloaded = wasPageReloaded();
-      if (isMobile && reloaded) {
-        console.log("📱🔁 Mobile reload detected, logging out...");
-        localStorage.setItem("forceLogout", "true");
-        await new Promise((r) => setTimeout(r, 200)); // allow time for cleanup
-      }
-    };
-    clearSessionOnMobile();
-  }, []);
-
   const handleConnect = async () => {
-    if (!canConnect || !web3authReady) {
+    if (!web3auth || initialLoading || !canConnect || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
       return;
     }
