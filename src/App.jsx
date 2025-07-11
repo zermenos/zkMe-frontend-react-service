@@ -68,30 +68,18 @@ const App = () => {
           walletServicesConfig: {}, // optional services config
         });
 
-        /*
-        if (mobile && w3a.cachedAdapter) {
-          console.log("Mobile reload detected, clearing session...");
-          await safeLogout();
-          await web3auth.clearCache();
-          // Wait a bit to ensure it clears properly
-          await new Promise((r) => setTimeout(r, 200));
-          return;
-        }
-          */
-
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
-        /*
-        // 🔁 Check for mobile reload logout flag
+
+        // 🔁 Step 1: If force logout was set (e.g. from reload), log out first
         if (localStorage.getItem("forceLogout") === "true") {
           console.log("📱🔁 Forced logout after reload");
-          await safeLogout();
+          await w3a.logout();
+          //await w3a.clearCache?.();
           localStorage.removeItem("forceLogout");
-          //await new Promise((r) => setTimeout(r, 200));
-          return; // Exit early, avoid initializing Web3Auth
         }
-*/
-        // ✅ Check if session is valid
+
+        // 🔁 Step 2: If there's a valid session, try to restore it
         if (w3a.cachedAdapter && w3a.provider) {
           try {
             const info = await getWalletInfo();
@@ -105,6 +93,7 @@ const App = () => {
           } catch (sessionErr) {
             console.warn("Stale session detected, logging out...");
             await w3a.logout();
+            //await w3a.clearCache?.();
           }
         }
       } catch (err) {
