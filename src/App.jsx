@@ -132,7 +132,6 @@ const App = () => {
     }
   }, [initialLoading, web3auth, web3auth?.provider, logoutInProgress]);
 
-  /*
   useEffect(() => {
     const wasPageReloaded = () => {
       const navEntries = performance.getEntriesByType("navigation");
@@ -149,7 +148,6 @@ const App = () => {
     };
     clearSessionOnMobile();
   }, []);
-  */
 
   const handleConnect = async () => {
     if (!web3auth || initialLoading || !canConnect || !web3authReady) {
