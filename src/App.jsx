@@ -59,6 +59,8 @@ const App = () => {
 
   useEffect(() => {
     const initWeb3Auth = async () => {
+      const startTime = performance.now();
+      log(`[Timer] 🟡 initWeb3Auth started at ${startTime.toFixed(2)}ms`);
       setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
       try {
@@ -79,10 +81,20 @@ const App = () => {
         }
 */
         await w3a.init(); // always initialize here
+        log(
+          `[Timer] ⏱️ Web3Auth constructed at ${(
+            performance.now() - startTime
+          ).toFixed(2)}ms`
+        );
         setWeb3Auth(w3a);
 
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
+          log(
+            `[Timer] ❌ Forced logout detected at ${(
+              performance.now() - startTime
+            ).toFixed(2)}ms`
+          );
           console.log("📱🔁 Forced logout after reload");
           await safeLogout();
           localStorage.removeItem("forceLogout");
@@ -92,8 +104,18 @@ const App = () => {
 
         // ✅ Check if session is valid
         if (w3a.cachedAdapter && w3a.provider) {
+          log(
+            `[Timer] ✅ Cached session found at ${(
+              performance.now() - startTime
+            ).toFixed(2)}ms`
+          );
           try {
             const info = await getWalletInfo();
+            log(
+              `[Timer] 🪪 Wallet info loaded at ${(
+                performance.now() - startTime
+              ).toFixed(2)}ms`
+            );
             setWeb3Provider(info.provider);
             setWalletData({
               provider: info.provider,
@@ -101,8 +123,18 @@ const App = () => {
               address: info.address,
             });
             setBalance(info.balance);
+            log(
+              `[Timer] ✅ Wallet set at ${(
+                performance.now() - startTime
+              ).toFixed(2)}ms`
+            );
           } catch (sessionErr) {
             console.warn("Stale session detected, logging out...");
+            log(
+              `[Timer] ❌ Failed to fetch wallet info at ${(
+                performance.now() - startTime
+              ).toFixed(2)}ms`
+            );
             await w3a.logout();
           }
         }
@@ -111,6 +143,11 @@ const App = () => {
       } finally {
         setInitialLoading(false);
         setWeb3authReady(true);
+        log(
+          `[Timer] ✅ web3authReady set at ${(
+            performance.now() - startTime
+          ).toFixed(2)}ms`
+        );
       }
     };
 
@@ -122,6 +159,11 @@ const App = () => {
       const timeout = setTimeout(() => {
         setCanConnect(true);
       }, 1000); // 1-second delay
+      log(
+        `[Timer] 🟢 canConnect set to true at ${(
+          performance.now() - startTime
+        ).toFixed(2)}ms`
+      );
 
       return () => clearTimeout(timeout); // Cleanup if dependencies change
     } else {
@@ -148,6 +190,8 @@ const App = () => {
   }, []);
 
   const handleConnect = async () => {
+    const start = performance.now();
+    log(`[Timer] 🔌 handleConnect started at ${start.toFixed(2)}ms`);
     if (!web3auth || initialLoading || !canConnect || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
       return;
@@ -158,6 +202,11 @@ const App = () => {
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await web3auth.connect(); // 🔥 always force login
+      log(
+        `[Timer] 🔐 web3auth.connect() completed at ${(
+          performance.now() - start
+        ).toFixed(2)}ms`
+      );
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
