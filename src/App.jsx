@@ -24,6 +24,7 @@ const App = () => {
   //const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [connectReady, setConnectReady] = useState(false);
+  const canConnect = !!web3auth && !!web3auth.provider;
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -119,7 +120,7 @@ const App = () => {
 
   useEffect(() => {
     log("Initial loading: " + initialLoading);
-    log("canConnect: " + !!web3auth && !!web3auth.provider);
+    log("canConnect: " + canConnect);
     log("connectReady: " + connectReady);
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
@@ -149,9 +150,6 @@ const App = () => {
 */
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
-
-        web3auth?.provider !== null;
-        //waitForConnectReady(w3a);
 
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
@@ -377,7 +375,7 @@ const App = () => {
         onConnect={handleConnect}
         onDisconnect={handleDisconnect}
         loading={loading}
-        canConnect={!!web3auth && !!web3auth.provider}
+        canConnect={canConnect}
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
         connectReady={connectReady}
