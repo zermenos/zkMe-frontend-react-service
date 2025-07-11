@@ -163,7 +163,7 @@ const App = () => {
       }, 1000); // 1-second delay
       log(
         `[Timer] 🟢 canConnect set to true at ${(
-          performance.now() - startTime
+          performance.now() - start
         ).toFixed(2)}ms`
       );
 
