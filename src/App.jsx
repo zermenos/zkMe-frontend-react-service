@@ -21,7 +21,7 @@ const App = () => {
   const [web3Provider, setWeb3Provider] = useState(null);
   const [web3auth, setWeb3Auth] = useState(null);
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
-  //const [web3authReady, setWeb3authReady] = useState(false);
+  const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
@@ -94,15 +94,23 @@ const App = () => {
       setLogoutInProgress(false); // ✅ Done with logout
     }
   };
-  const canConnect = !!web3auth && !!web3auth.provider;
+  const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
 
   useEffect(() => {
     log("Initial loading: " + initialLoading);
     log("canConnect: " + canConnect);
+    log("web3authReady: " + web3authReady);
     log("logoutInProgress: " + logoutInProgress);
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
-  }, [initialLoading, walletData, logoutInProgress, loading, canConnect]);
+  }, [
+    initialLoading,
+    walletData,
+    logoutInProgress,
+    loading,
+    canConnect,
+    web3authReady,
+  ]);
 
   useEffect(() => {
     const initWeb3Auth = async () => {
@@ -127,6 +135,7 @@ const App = () => {
 */
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
+        setWeb3authReady(true); // ✅ Set this only when fully initialized
 
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {

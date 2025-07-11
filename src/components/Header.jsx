@@ -10,6 +10,7 @@ const Header = ({
   canConnect,
   logoutInProgress,
   initialLoading,
+  web3authReady,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
@@ -36,7 +37,11 @@ const Header = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
   const shouldDisable =
-    initialLoading || loading || logoutInProgress || !canConnect;
+    initialLoading ||
+    loading ||
+    logoutInProgress ||
+    !canConnect ||
+    !web3authReady;
 
   return (
     <header className="bg-[#F1F0F0]">
