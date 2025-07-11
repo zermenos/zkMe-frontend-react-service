@@ -350,7 +350,7 @@ const App = () => {
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
     log("web3auth: " + web3auth);
-    log("web3auth.provider: " + web3auth.provider);
+    log("web3auth.provider: " + web3auth?.provider);
   }, [
     initialLoading,
     walletData,
