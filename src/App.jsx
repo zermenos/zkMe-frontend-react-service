@@ -252,10 +252,12 @@ const App = () => {
           performance.now() - start
         ).toFixed(2)}ms`
       );
-
+      /*
       if (web3auth) {
         await web3auth.logout();
       }
+*/
+      await web3auth.logout();
       await web3auth.clearCache?.();
 
       // Optional: Wait a bit to ensure state is fully reset
