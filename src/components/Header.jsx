@@ -16,6 +16,7 @@ const Header = ({
   web3auth,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [readyToShow, setReadyToShow] = useState(false);
   const dropdownRef = useRef();
 
   const toggleDropdown = () => {
@@ -39,6 +40,19 @@ const Header = ({
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  useEffect(() => {
+    let timer;
+    if (!shouldDisable) {
+      timer = setTimeout(() => {
+        setReadyToShow(true);
+      }, 3000); // Delay for 1 second
+    } else {
+      setReadyToShow(false); // Reset if conditions become invalid again
+    }
+    return () => clearTimeout(timer);
+  }, [shouldDisable]);
+
   const shouldDisable =
     initialLoading ||
     loading ||
@@ -46,18 +60,6 @@ const Header = ({
     !canConnect ||
     !web3auth ||
     !web3authReady;
-
-  useEffect(() => {
-    let timer;
-    if (!shouldDisable) {
-      timer = setTimeout(() => {
-        setReadyToShow(true);
-      }, 1000); // Delay for 1 second
-    } else {
-      setReadyToShow(false); // Reset if conditions become invalid again
-    }
-    return () => clearTimeout(timer);
-  }, [shouldDisable]);
 
   return (
     <header className="bg-[#F1F0F0]">
