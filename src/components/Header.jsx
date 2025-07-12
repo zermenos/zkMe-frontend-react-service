@@ -52,7 +52,7 @@ const Header = ({
     if (!shouldDisable) {
       timer = setTimeout(() => {
         setDelay(false);
-      }, 3000); // Delay for 1 second
+      }, 2000); // Delay for 1 second
     } else {
       setDelay(true); // Reset if conditions become invalid again
     }
