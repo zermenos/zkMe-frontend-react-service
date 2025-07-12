@@ -231,6 +231,11 @@ const App = () => {
     if (web3auth) web3auth.showWalletUI();
   };
 
+  const wasPageReloaded = () => {
+    const navEntries = performance.getEntriesByType("navigation");
+    return navEntries.length > 0 && navEntries[0].type === "reload";
+  };
+
   const safeLogout = async () => {
     const start = performance.now();
     log(`[Timer] 🔌 handleDisconnect started at ${start.toFixed(2)}ms`);
@@ -266,6 +271,12 @@ const App = () => {
       // 🔥 Manually clear Web3Auth internal state
       //web3auth.provider = null;
       web3auth.cachedAdapter = null;
+      if (isMobileDevice() && wasPageReloaded()) {
+        log("📱🔁 Mobile hard reload, clearing wallet data");
+        localStorage.removeItem("walletAddress");
+        localStorage.removeItem("kycVerified");
+        localStorage.setItem("forceLogout", "true");
+      }
 
       // Optional but recommended: clear local storage
       //localStorage.removeItem("walletAddress");
