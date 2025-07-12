@@ -39,6 +39,14 @@ const Header = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const shouldDisable =
+    initialLoading ||
+    loading ||
+    logoutInProgress ||
+    !canConnect ||
+    !web3auth ||
+    !web3authReady;
+
   useEffect(() => {
     let timer;
     if (!shouldDisable) {
@@ -50,14 +58,6 @@ const Header = ({
     }
     return () => clearTimeout(timer);
   }, [shouldDisable]);
-
-  const shouldDisable =
-    initialLoading ||
-    loading ||
-    logoutInProgress ||
-    !canConnect ||
-    !web3auth ||
-    !web3authReady;
 
   return (
     <header className="bg-[#F1F0F0]">
