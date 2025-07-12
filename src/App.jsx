@@ -160,7 +160,7 @@ const App = () => {
       log(`[Timer] 🔌 canConnect started at ${start.toFixed(2)}ms`);
       const timeout = setTimeout(() => {
         setCanConnect(true);
-      }, 1000); // 1-second delay
+      }, 100); // 1-second delay
       log(
         `[Timer] 🟢 canConnect set to true at ${(
           performance.now() - start

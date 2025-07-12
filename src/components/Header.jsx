@@ -12,7 +12,6 @@ const Header = ({
   initialLoading,
   web3authReady,
   web3auth,
-  web3authprovider,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef();
@@ -93,6 +92,11 @@ const Header = ({
               <button
                 onClick={onConnect} // Always attach handler
                 disabled={shouldDisable}
+                style={{
+                  //opacity: shouldDisable ? 0.5 : 1,
+                  pointerEvents: shouldDisable ? "none" : "auto", // disables interaction
+                  //visibility: shouldDisable ? "hidden" : "visible", // OR hide it fully
+                }}
                 className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
                   shouldDisable
                     ? "bg-gray-300 opacity-70 cursor-not-allowed pointer-events-none"
