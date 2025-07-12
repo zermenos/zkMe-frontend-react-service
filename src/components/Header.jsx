@@ -1,6 +1,8 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Wallet, ChevronDown, LogOut } from "lucide-react";
 
+const [readyToShow, setReadyToShow] = useState(false);
+
 const Header = ({
   walletData,
   balance,
@@ -44,6 +46,18 @@ const Header = ({
     !canConnect ||
     !web3auth ||
     !web3authReady;
+
+  useEffect(() => {
+    let timer;
+    if (!shouldDisable) {
+      timer = setTimeout(() => {
+        setReadyToShow(true);
+      }, 1000); // Delay for 1 second
+    } else {
+      setReadyToShow(false); // Reset if conditions become invalid again
+    }
+    return () => clearTimeout(timer);
+  }, [shouldDisable]);
 
   return (
     <header className="bg-[#F1F0F0]">
@@ -91,23 +105,22 @@ const Header = ({
             ) : (
               <button
                 onClick={onConnect} // Always attach handler
-                disabled={shouldDisable}
                 style={{
-                  //opacity: shouldDisable ? 0.5 : 1,
-                  pointerEvents: shouldDisable ? "none" : "auto", // disables interaction
-                  //visibility: shouldDisable ? "hidden" : "visible", // OR hide it fully
+                  //opacity: readyToShow ? 0.5 : 1,
+                  pointerEvents: readyToShow ? "none" : "auto", // disables interaction
+                  //visibility: readyToShow ? "hidden" : "visible", // OR hide it fully
                 }}
                 className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  shouldDisable
+                  readyToShow
                     ? "bg-gray-300 opacity-70 cursor-not-allowed pointer-events-none"
                     : "bg-[#F1F0F0] hover:bg-[#E2E1E1]"
                 }`}
               >
                 <Wallet className="text-[#282828] w-5 h-5" />
                 <span className="text-sm">
-                  {shouldDisable ? "Cargando..." : "Conectar Cartera"}
+                  {readyToShow ? "Cargando..." : "Conectar Cartera"}
                 </span>
-                {shouldDisable && (
+                {readyToShow && (
                   <span className="ml-2 inline-block h-4 w-4 border-2 border-t-transparent border-gray-700 rounded-full animate-spin" />
                 )}
               </button>
