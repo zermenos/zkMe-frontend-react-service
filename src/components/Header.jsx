@@ -14,7 +14,7 @@ const Header = ({
   web3auth,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [readyToShow, setReadyToShow] = useState(false);
+  const [delay, setDelay] = useState(false);
   const dropdownRef = useRef();
 
   const toggleDropdown = () => {
@@ -51,10 +51,10 @@ const Header = ({
     let timer;
     if (!shouldDisable) {
       timer = setTimeout(() => {
-        setReadyToShow(true);
+        setDelay(false);
       }, 3000); // Delay for 1 second
     } else {
-      setReadyToShow(false); // Reset if conditions become invalid again
+      setDelay(true); // Reset if conditions become invalid again
     }
     return () => clearTimeout(timer);
   }, [shouldDisable]);
@@ -106,21 +106,21 @@ const Header = ({
               <button
                 onClick={onConnect} // Always attach handler
                 style={{
-                  //opacity: readyToShow ? 0.5 : 1,
-                  pointerEvents: readyToShow ? "none" : "auto", // disables interaction
-                  //visibility: readyToShow ? "hidden" : "visible", // OR hide it fully
+                  //opacity: delay ? 0.5 : 1,
+                  pointerEvents: delay ? "none" : "auto", // disables interaction
+                  //visibility: delay ? "hidden" : "visible", // OR hide it fully
                 }}
                 className={`flex items-center space-x-2 border border-gray-500 px-4 py-2 rounded-lg transition-colors duration-200 ${
-                  readyToShow
+                  delay
                     ? "bg-gray-300 opacity-70 cursor-not-allowed pointer-events-none"
                     : "bg-[#F1F0F0] hover:bg-[#E2E1E1]"
                 }`}
               >
                 <Wallet className="text-[#282828] w-5 h-5" />
                 <span className="text-sm">
-                  {readyToShow ? "Cargando..." : "Conectar Cartera"}
+                  {delay ? "Cargando..." : "Conectar Cartera"}
                 </span>
-                {readyToShow && (
+                {delay && (
                   <span className="ml-2 inline-block h-4 w-4 border-2 border-t-transparent border-gray-700 rounded-full animate-spin" />
                 )}
               </button>
