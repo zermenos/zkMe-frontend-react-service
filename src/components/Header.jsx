@@ -1,8 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Wallet, ChevronDown, LogOut } from "lucide-react";
 
-const [readyToShow, setReadyToShow] = useState(false);
-
 const Header = ({
   walletData,
   balance,
