@@ -87,7 +87,7 @@ const App = () => {
           ).toFixed(2)}ms`
         );
         setWeb3Auth(w3a);
-
+        /*
         // 🔁 Check for mobile reload logout flag
         if (localStorage.getItem("forceLogout") === "true") {
           log(
@@ -101,6 +101,7 @@ const App = () => {
           await new Promise((r) => setTimeout(r, 1000));
           return; // Exit early, avoid initializing Web3Auth
         }
+          */
 
         // ✅ Check if session is valid
         if (w3a.cachedAdapter && w3a.provider) {
@@ -160,7 +161,7 @@ const App = () => {
       log(`[Timer] 🔌 canConnect started at ${start.toFixed(2)}ms`);
       const timeout = setTimeout(() => {
         setCanConnect(true);
-      }, 100); // 1-second delay
+      }, 1000); // 1-second delay
       log(
         `[Timer] 🟢 canConnect set to true at ${(
           performance.now() - start
