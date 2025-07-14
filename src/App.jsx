@@ -10,8 +10,6 @@ import {
   WEB3AUTH_NETWORK,
   CONFIRMATION_STRATEGY,
 } from "@web3auth/modal";
-import { WalletConnectV2Adapter } from "@web3auth/wallet-connect-v2-adapter";
-//import { useWeb3AuthConnect } from "@web3auth/modal/react";
 
 const App = () => {
   const [walletData, setWalletData] = useState(null);
@@ -70,7 +68,7 @@ const App = () => {
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
 
           walletServicesConfig: {
-            confirmationStrategy: CONFIRMATION_STRATEGY.AUTO - APPROVE,
+            confirmationStrategy: CONFIRMATION_STRATEGY.AUTO_APPROVE,
           }, // optional services config
         });
 
@@ -174,7 +172,6 @@ const App = () => {
     } finally {
       setLoading(false);
     }
-    log("Used adapter:", web3auth.currentAdapterName);
     log("window.ethereum.providers?", window.ethereum?.providers);
   };
 
