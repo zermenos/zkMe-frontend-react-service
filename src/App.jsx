@@ -7,6 +7,7 @@ import Header from "./components/Header";
 import "./index.css";
 import {
   Web3Auth,
+  WALLET_CONNECTORS,
   WEB3AUTH_NETWORK,
   CONFIRMATION_STRATEGY,
 } from "@web3auth/modal";
@@ -83,7 +84,7 @@ const App = () => {
           walletServicesConfig: {
             confirmationStrategy: CONFIRMATION_STRATEGY.AUTO_APPROVE,
             whiteLabel: {
-              hideWalletConnect: false,
+              hideWalletConnect: true,
             },
           }, // optional services config
         });
