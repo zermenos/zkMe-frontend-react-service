@@ -58,8 +58,6 @@ const App = () => {
 
   useEffect(() => {
     const initWeb3Auth = async () => {
-      const startTime = performance.now();
-      log(`[Timer] 🟡 initWeb3Auth started at ${startTime.toFixed(2)}ms`);
       setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
       try {
@@ -75,7 +73,10 @@ const App = () => {
 
         const wc2Adapter = new WalletConnectV2Adapter({
           adapterSettings: {
-            qrcodeModal: QRCodeModal, // QRCodeModal is not required if you are using web3auth modal
+            //qrcodeModal: QRCodeModal, // QRCodeModal is not required if you are using web3auth modal
+            qrcodeModalOptions: {
+              mobileLinks: ["metamask"],
+            },
             walletConnectInitOptions: {
               projectId: clientId,
             },
@@ -85,11 +86,6 @@ const App = () => {
         w3a.configureAdapter(wc2Adapter);
 
         await w3a.init(); // always initialize here
-        log(
-          `[Timer] ⏱️ Web3Auth constructed at ${(
-            performance.now() - startTime
-          ).toFixed(2)}ms`
-        );
         setWeb3Auth(w3a);
         /*
         // 🔁 Check for mobile reload logout flag
@@ -109,18 +105,8 @@ const App = () => {
 
         // ✅ Check if session is valid
         if (w3a.cachedAdapter && w3a.provider) {
-          log(
-            `[Timer] ✅ Cached session found at ${(
-              performance.now() - startTime
-            ).toFixed(2)}ms`
-          );
           try {
             const info = await getWalletInfo();
-            log(
-              `[Timer] 🪪 Wallet info loaded at ${(
-                performance.now() - startTime
-              ).toFixed(2)}ms`
-            );
             setWeb3Provider(info.provider);
             setWalletData({
               provider: info.provider,
@@ -128,18 +114,8 @@ const App = () => {
               address: info.address,
             });
             setBalance(info.balance);
-            log(
-              `[Timer] ✅ Wallet set at ${(
-                performance.now() - startTime
-              ).toFixed(2)}ms`
-            );
           } catch (sessionErr) {
             console.warn("Stale session detected, logging out...");
-            log(
-              `[Timer] ❌ Failed to fetch wallet info at ${(
-                performance.now() - startTime
-              ).toFixed(2)}ms`
-            );
             await w3a.logout();
           }
         }
@@ -148,11 +124,6 @@ const App = () => {
       } finally {
         setInitialLoading(false);
         setWeb3authReady(true);
-        log(
-          `[Timer] ✅ web3authReady set at ${(
-            performance.now() - startTime
-          ).toFixed(2)}ms`
-        );
       }
     };
 
@@ -161,17 +132,9 @@ const App = () => {
 
   useEffect(() => {
     if (!initialLoading && web3auth && !logoutInProgress) {
-      const start = performance.now();
-      log(`[Timer] 🔌 canConnect started at ${start.toFixed(2)}ms`);
       const timeout = setTimeout(() => {
         setCanConnect(true);
       }, 100); // 1-second delay
-      log(
-        `[Timer] 🟢 canConnect set to true at ${(
-          performance.now() - start
-        ).toFixed(2)}ms`
-      );
-
       return () => clearTimeout(timeout); // Cleanup if dependencies change
     } else {
       // If conditions aren't met, disable the button
@@ -198,8 +161,6 @@ const App = () => {
   */
 
   const handleConnect = async () => {
-    const start = performance.now();
-    log(`[Timer] 🔌 handleConnect started at ${start.toFixed(2)}ms`);
     if (!web3auth || initialLoading || !canConnect || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
       return;
@@ -214,11 +175,6 @@ const App = () => {
       const prov = await web3auth.connectTo("wallet-connect-v2", {
         loginProvider: "metamask",
       });
-      log(
-        `[Timer] 🔐 web3auth.connect() completed at ${(
-          performance.now() - start
-        ).toFixed(2)}ms`
-      );
 
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
@@ -248,31 +204,14 @@ const App = () => {
   };
 
   const safeLogout = async () => {
-    const start = performance.now();
-    log(`[Timer] 🔌 handleDisconnect started at ${start.toFixed(2)}ms`);
     if (!web3auth) {
       console.warn("Web3Auth not initialized, cannot logout");
-      log(
-        `[Timer] 🔐 cannot logout at ${(performance.now() - start).toFixed(
-          2
-        )}ms`
-      );
       return;
     }
 
     try {
       setLogoutInProgress(true); // ✅ Begin tracking logout
       console.log("Initiating safeLogout");
-      log(
-        `[Timer] 🔐 Initiating safeLogout at ${(
-          performance.now() - start
-        ).toFixed(2)}ms`
-      );
-      /*
-      if (web3auth) {
-        await web3auth.logout();
-      }
-*/
       await web3auth.logout();
       await web3auth.clearCache?.();
 
