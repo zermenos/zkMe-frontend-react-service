@@ -5,6 +5,7 @@ import { ZkMeWidget } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
+import { getDefaultExternalAdapters } from "@web3auth/default-evm-adapter";
 import {
   Web3Auth,
   WEB3AUTH_NETWORK,
@@ -61,6 +62,9 @@ const App = () => {
     const initWeb3Auth = async () => {
       setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
+      const adapters = await getDefaultExternalAdapters({
+        options: web3AuthOptions,
+      });
       try {
         const w3a = new Web3Auth({
           clientId,
@@ -72,6 +76,10 @@ const App = () => {
               hideWalletConnect: false,
             },
           }, // optional services config
+        });
+
+        adapters.forEach((adapter) => {
+          web3auth.configureAdapter(adapter);
         });
 
         await w3a.init(); // always initialize here
