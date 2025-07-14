@@ -34,3 +34,10 @@ div {
   font-weight: 400;
   color: #282828;
 }
+
+.center-logo-container {
+  visibility: hidden; /* Keep it hidden */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

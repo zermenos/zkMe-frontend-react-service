@@ -66,7 +66,7 @@ const Header = ({
           <div className="flex items-center space-x-3">
             <img src="logo.PNG" alt="Everi Logo" className="h-8 w-auto" />
           </div>
-          <div className="flex items-center justify-center space-x-3">
+          <div className="center-logo-container">
             <img src="icon.png" alt="Everi Icon" className="h-8 w-auto" />
           </div>
 
