@@ -56,7 +56,6 @@ const App = () => {
       userAgent
     );
   };
-  console.log("clientId:", clientId);
 
   useEffect(() => {
     const initWeb3Auth = async () => {
@@ -72,7 +71,17 @@ const App = () => {
           }, // optional services config
         });
 
-        await w3a.init(); // always initialize here
+        //await w3a.init(); // always initialize here
+
+        await w3a.initModal({
+          modalConfig: {
+            injected: {
+              label: "Injected",
+              showOnModal: false, // 👈 disable MetaMask/Injected entirely
+            },
+          },
+        });
+
         setWeb3Auth(w3a);
         /*
         // 🔁 Check for mobile reload logout flag
@@ -172,7 +181,6 @@ const App = () => {
     } finally {
       setLoading(false);
     }
-    log("window.ethereum.providers?", window.ethereum?.providers);
   };
 
   const handleShowWallet = () => {
@@ -363,7 +371,6 @@ const App = () => {
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
     log("web3auth: " + web3auth);
-    log("window.ethereum.providers?" + window.ethereum?.providers);
     //log("web3auth.provider: " + web3auth?.provider);
   }, [
     initialLoading,
