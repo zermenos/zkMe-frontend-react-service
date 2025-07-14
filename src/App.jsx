@@ -5,7 +5,11 @@ import { ZkMeWidget } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
-import { Web3Auth, WEB3AUTH_NETWORK } from "@web3auth/modal";
+import {
+  Web3Auth,
+  WEB3AUTH_NETWORK,
+  CONFIRMATION_STRATEGY,
+} from "@web3auth/modal";
 import { WalletConnectV2Adapter } from "@web3auth/wallet-connect-v2-adapter";
 //import { useWeb3AuthConnect } from "@web3auth/modal/react";
 
@@ -64,26 +68,11 @@ const App = () => {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-          /*
+
           walletServicesConfig: {
             confirmationStrategy: CONFIRMATION_STRATEGY.AUTO - APPROVE,
           }, // optional services config
-          */
         });
-
-        const wc2Adapter = new WalletConnectV2Adapter({
-          adapterSettings: {
-            //qrcodeModal: QRCodeModal, // QRCodeModal is not required if you are using web3auth modal
-            qrcodeModalOptions: {
-              mobileLinks: ["metamask"],
-            },
-            walletConnectInitOptions: {
-              projectId: clientId,
-            },
-          },
-          chainConfig: currentChainConfig,
-        });
-        w3a.configureAdapter(wc2Adapter);
 
         await w3a.init(); // always initialize here
         setWeb3Auth(w3a);
@@ -170,12 +159,7 @@ const App = () => {
       setLoading(true);
 
       // 🔥 Then trigger the login flow (will show the modal)
-      //const prov = useWeb3AuthConnect();
-      //const prov = await web3auth.connect(); // 🔥 always force login
-      const prov = await web3auth.connectTo("wallet-connect-v2", {
-        loginProvider: "metamask",
-      });
-
+      const prov = await web3auth.connect(); // 🔥 always force login
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
