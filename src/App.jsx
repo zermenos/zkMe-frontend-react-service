@@ -1,11 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
-import { Wallet, AlertCircle, RefreshCw, LogOut } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { ZkMeWidget } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
 import { Web3Auth, WEB3AUTH_NETWORK } from "@web3auth/modal";
+import { WalletConnectV2Adapter } from "@web3auth/wallet-connect-v2-adapter";
+//import { useWeb3AuthConnect } from "@web3auth/modal/react";
 
 const App = () => {
   const [walletData, setWalletData] = useState(null);
@@ -14,8 +16,6 @@ const App = () => {
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
-  const [isMobile, setIsMobile] = useState(false);
-  //const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
   const [verificationLevel, setVerificationLevel] = useState("");
   const [rawProvider, setRawProvider] = useState(null); // You'll need this too
   const [web3Provider, setWeb3Provider] = useState(null);
@@ -25,8 +25,7 @@ const App = () => {
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
-  const clientId =
-    "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
+  const clientId = process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID;
 
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
@@ -56,8 +55,6 @@ const App = () => {
     );
   };
 
-  //const canConnect = !!web3auth && !!web3auth.provider && web3authReady;
-
   useEffect(() => {
     const initWeb3Auth = async () => {
       const startTime = performance.now();
@@ -68,19 +65,20 @@ const App = () => {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-          walletServicesConfig: {}, // optional services config
-        });
-        /*
 
-        if (mobile && w3a.cachedAdapter) {
-          console.log("Mobile reload detected, clearing session...");
-          await safeLogout();
-          await web3auth.clearCache();
-          // Wait a bit to ensure it clears properly
-          await new Promise((r) => setTimeout(r, 200));
-          return;
-        }
-*/
+          walletServicesConfig: {
+            confirmationStrategy: CONFIRMATION_STRATEGY.AUTO - APPROVE,
+          }, // optional services config
+        });
+        const wcAdapter = new WalletConnectV2Adapter({
+          adapterSettings: {
+            qrcode: false,
+            projectId: clientId,
+            metadata: { name: "Everi", url: window.location.origin },
+          },
+        });
+        w3a.configureAdapter(wcAdapter);
+
         await w3a.init(); // always initialize here
         log(
           `[Timer] ⏱️ Web3Auth constructed at ${(
@@ -206,12 +204,18 @@ const App = () => {
       setLoading(true);
 
       // 🔥 Then trigger the login flow (will show the modal)
-      const prov = await web3auth.connect(); // 🔥 always force login
+      //const prov = useWeb3AuthConnect();
+      //const prov = await web3auth.connect(); // 🔥 always force login
+      const prov = await web3auth.connectTo("wallet-connect-v2", {
+        loginProvider: "metamask",
+      });
       log(
         `[Timer] 🔐 web3auth.connect() completed at ${(
           performance.now() - start
         ).toFixed(2)}ms`
       );
+      log("Used adapter:", web3auth.currentAdapterName);
+      log("window.ethereum.providers?", window.ethereum?.providers);
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
