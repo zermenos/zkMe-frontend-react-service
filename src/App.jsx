@@ -24,6 +24,7 @@ const App = () => {
   const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [canConnect, setCanConnect] = useState(false);
+  const [delay, setDelay] = useState(false);
   const clientId =
     "BGCPmDmIBwoWZWItt0e_Mh2W1pUarb8-TpQPcnq5CHlURvqbBobvO-fcvl70ME97Ze6KFvwRK-NsbPw7jVAbbQw";
 
@@ -444,6 +445,26 @@ const App = () => {
     web3auth?.provider,
   ]);
 
+  const shouldDisable =
+    initialLoading ||
+    loading ||
+    logoutInProgress ||
+    !canConnect ||
+    !web3auth ||
+    !web3authReady;
+
+  useEffect(() => {
+    let timer;
+    if (!shouldDisable) {
+      timer = setTimeout(() => {
+        setDelay(false);
+      }, 2750); // Delay for 1 second
+    } else {
+      setDelay(true); // Reset if conditions become invalid again
+    }
+    return () => clearTimeout(timer);
+  }, [shouldDisable]);
+
   if (initialLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
@@ -561,8 +582,17 @@ const App = () => {
                 {kycStatus !== "success" && (
                   <button
                     onClick={handleLevel1Verification}
-                    disabled={loading}
-                    className="button bg-[#168E5D] hover:bg-[#127b50] py-3 px-4 rounded-lg"
+                    style={{
+                      //opacity: delay ? 0.5 : 1,
+                      pointerEvents: delay ? "none" : "auto", // disables interaction
+                      //visibility: delay ? "hidden" : "visible", // OR hide it fully
+                      //disabled={loading}
+                    }}
+                    className={`button bg-[#168E5D] hover:bg-[#127b50] py-3 px-4 rounded-lg ${
+                      delay
+                        ? "opacity-70 cursor-not-allowed pointer-events-none"
+                        : "bg-[#168E5D] hover:bg-[#127b50]"
+                    }`}
                   >
                     Verificar
                   </button>
