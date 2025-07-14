@@ -66,25 +66,11 @@ const App = () => {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-          modalConfig: {
-            connectors: {
-              [WALLET_CONNECTORS.AUTH]: {
-                label: "auth",
-                loginMethods: {
-                  // Disable Facebook and Reddit
-                  metamask: {
-                    name: "metamask",
-                    showOnModal: false,
-                  },
-                },
-              },
-            },
-          },
           multiInjectedProviderDiscovery: false,
           walletServicesConfig: {
             confirmationStrategy: CONFIRMATION_STRATEGY.AUTO_APPROVE,
             whiteLabel: {
-              hideWalletConnect: true,
+              hideWalletConnect: false,
             },
           }, // optional services config
         });
