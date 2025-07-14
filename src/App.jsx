@@ -62,9 +62,7 @@ const App = () => {
     const initWeb3Auth = async () => {
       setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
-      const adapters = await getDefaultExternalAdapters({
-        options: web3AuthOptions,
-      });
+
       try {
         const w3a = new Web3Auth({
           clientId,
@@ -77,6 +75,8 @@ const App = () => {
             },
           }, // optional services config
         });
+
+        const adapters = await getDefaultExternalAdapters();
 
         adapters.forEach((adapter) => {
           web3auth.configureAdapter(adapter);
