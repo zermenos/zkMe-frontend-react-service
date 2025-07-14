@@ -65,10 +65,11 @@ const App = () => {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-
+          /*
           walletServicesConfig: {
             confirmationStrategy: CONFIRMATION_STRATEGY.AUTO - APPROVE,
           }, // optional services config
+          */
         });
         const wcAdapter = new WalletConnectV2Adapter({
           adapterSettings: {
@@ -437,7 +438,9 @@ const App = () => {
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
     log("web3auth: " + web3auth);
-    log("web3auth.provider: " + web3auth?.provider);
+    log("Used adapter:", web3auth.currentAdapterName);
+    log("window.ethereum.providers?", window.ethereum?.providers);
+    //log("web3auth.provider: " + web3auth?.provider);
   }, [
     initialLoading,
     walletData,
