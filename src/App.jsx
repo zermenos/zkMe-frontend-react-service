@@ -7,7 +7,6 @@ import Header from "./components/Header";
 import "./index.css";
 import {
   Web3Auth,
-  WALLET_CONNECTORS,
   WEB3AUTH_NETWORK,
   CONFIRMATION_STRATEGY,
 } from "@web3auth/modal";
