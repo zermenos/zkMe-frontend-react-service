@@ -54,6 +54,7 @@ const App = () => {
       userAgent
     );
   };
+  console.log("clientId:", clientId);
 
   useEffect(() => {
     const initWeb3Auth = async () => {
