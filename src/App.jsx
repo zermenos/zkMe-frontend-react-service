@@ -363,7 +363,6 @@ const App = () => {
     log("loading: " + loading);
     log("Wallet: " + (walletData?.address ?? "Not connected"));
     log("web3auth: " + web3auth);
-    log("Used adapter:", web3auth.currentAdapterName);
     log("window.ethereum.providers?", window.ethereum?.providers);
     //log("web3auth.provider: " + web3auth?.provider);
   }, [
