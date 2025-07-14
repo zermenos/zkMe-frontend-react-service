@@ -74,7 +74,7 @@ const App = () => {
         const wcAdapter = new WalletConnectV2Adapter({
           adapterSettings: {
             qrcode: false,
-            projectId: clientId,
+            projectId: process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID,
             metadata: { name: "Everi", url: window.location.origin },
           },
         });
@@ -215,8 +215,7 @@ const App = () => {
           performance.now() - start
         ).toFixed(2)}ms`
       );
-      log("Used adapter:", web3auth.currentAdapterName);
-      log("window.ethereum.providers?", window.ethereum?.providers);
+
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
@@ -231,6 +230,8 @@ const App = () => {
     } finally {
       setLoading(false);
     }
+    log("Used adapter:", web3auth.currentAdapterName);
+    log("window.ethereum.providers?", window.ethereum?.providers);
   };
 
   const handleShowWallet = () => {
