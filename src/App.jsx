@@ -72,14 +72,17 @@ const App = () => {
           }, // optional services config
           */
         });
-        const wcAdapter = new WalletConnectV2Adapter({
+
+        const wc2Adapter = new WalletConnectV2Adapter({
           adapterSettings: {
-            qrcode: false,
-            projectId: clientId,
-            metadata: { name: "Everi", url: window.location.origin },
+            qrcodeModal: QRCodeModal, // QRCodeModal is not required if you are using web3auth modal
+            walletConnectInitOptions: {
+              projectId: clientId,
+            },
           },
+          chainConfig: currentChainConfig,
         });
-        w3a.configureAdapter(wcAdapter);
+        w3a.configureAdapter(wc2Adapter);
 
         await w3a.init(); // always initialize here
         log(
