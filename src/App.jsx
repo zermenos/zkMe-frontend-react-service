@@ -5,7 +5,6 @@ import { ZkMeWidget } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
-import { getDefaultExternalAdapters } from "@web3auth/default-evm-adapter";
 import {
   Web3Auth,
   WEB3AUTH_NETWORK,
@@ -67,19 +66,13 @@ const App = () => {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-          multiInjectedProviderDiscovery: false,
+          multiInjectedProviderDiscovery: true,
           walletServicesConfig: {
             confirmationStrategy: CONFIRMATION_STRATEGY.AUTO_APPROVE,
             whiteLabel: {
               hideWalletConnect: false,
             },
           }, // optional services config
-        });
-
-        const adapters = await getDefaultExternalAdapters();
-
-        adapters.forEach((adapter) => {
-          web3auth.configureAdapter(adapter);
         });
 
         await w3a.init(); // always initialize here
