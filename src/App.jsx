@@ -65,22 +65,14 @@ const App = () => {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-
+          web3AuthOptions: web3AuthOptions(),
+          multiInjectedProviderDiscovery: false,
           walletServicesConfig: {
             confirmationStrategy: CONFIRMATION_STRATEGY.AUTO_APPROVE,
           }, // optional services config
         });
 
-        //await w3a.init(); // always initialize here
-
-        await w3a.initModal({
-          modalConfig: {
-            injected: {
-              label: "Injected",
-              showOnModal: false, // 👈 disable MetaMask/Injected entirely
-            },
-          },
-        });
+        await w3a.init(); // always initialize here
 
         setWeb3Auth(w3a);
         /*
