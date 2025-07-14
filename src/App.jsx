@@ -25,7 +25,7 @@ const App = () => {
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
-  const clientId = process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID;
+  const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
 
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
@@ -75,7 +75,7 @@ const App = () => {
         const wcAdapter = new WalletConnectV2Adapter({
           adapterSettings: {
             qrcode: false,
-            projectId: process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID,
+            projectId: clientId,
             metadata: { name: "Everi", url: window.location.origin },
           },
         });
@@ -162,7 +162,7 @@ const App = () => {
       log(`[Timer] 🔌 canConnect started at ${start.toFixed(2)}ms`);
       const timeout = setTimeout(() => {
         setCanConnect(true);
-      }, 1000); // 1-second delay
+      }, 100); // 1-second delay
       log(
         `[Timer] 🟢 canConnect set to true at ${(
           performance.now() - start
