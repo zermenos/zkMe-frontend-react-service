@@ -66,6 +66,9 @@ const Header = ({
           <div className="flex items-center space-x-3">
             <img src="logo.PNG" alt="Everi Logo" className="h-8 w-auto" />
           </div>
+          <div className="flex items-center space-x-3">
+            <img src="icon.PNG" alt="Everi Logo" className="h-8 w-auto" />
+          </div>
 
           <div className="flex items-center space-x-4">
             {walletData ? (
