@@ -59,6 +59,7 @@ const App = () => {
 
     return getEthersProvider;
   };
+
   const useWalletInfo = () => {
     const getEthersProvider = useEthersProvider();
 
@@ -81,7 +82,6 @@ const App = () => {
 
     return getWalletInfo;
   };
-  const getWalletInfo = useWalletInfo();
 
   const waitForProviderReady = async (timeout = 10000) => {
     const interval = 100;
@@ -95,6 +95,11 @@ const App = () => {
       throw new Error("Wallet provider did not initialize in time");
     }
   };
+  console.log("Web3Auth state:");
+  console.log("  isInitialized:", isInitialized);
+  console.log("  isConnected:", isConnected);
+  console.log("  provider:", provider);
+  console.log("  web3auth.provider:", web3auth?.provider);
 
   /*
   const getEthersProvider = () => {
@@ -125,6 +130,7 @@ const App = () => {
       userAgent
     );
   };
+  const getWalletInfo = useWalletInfo();
 
   useEffect(() => {
     const initWeb3Auth = async () => {
