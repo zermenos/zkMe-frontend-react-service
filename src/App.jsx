@@ -384,7 +384,7 @@ const App = () => {
     setInitialLoading(false);
   }, []);
   */
-
+  /*
   useEffect(() => {
     log("Initial loading: " + initialLoading);
     log("canConnect: " + canConnect);
@@ -404,6 +404,7 @@ const App = () => {
     web3auth,
     web3auth?.provider,
   ]);
+  */
 
   const shouldDisable = initialLoading || !canConnect;
   useEffect(() => {
@@ -472,6 +473,7 @@ const App = () => {
             
           )}
             */}
+          {/*
           {walletData && (
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">
@@ -479,6 +481,7 @@ const App = () => {
               </p>
             </div>
           )}
+            */}
           {/* 
           <div className="flex flex-col items-center space-y-2">
             <p className="p text-sm text-gray-600"></p>
