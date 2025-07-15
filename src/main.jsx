@@ -6,7 +6,14 @@ import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <Web3AuthProvider>
+    <Web3AuthProvider
+      config={{
+        web3AuthOptions: {
+          clientId: import.meta.env.VITE_WEB3AUTH_CLIENT_ID,
+          web3AuthNetwork: "sapphire_devnet",
+        },
+      }}
+    >
       <App />
     </Web3AuthProvider>
   </StrictMode>
