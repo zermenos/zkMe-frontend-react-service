@@ -405,20 +405,18 @@ const App = () => {
     web3auth?.provider,
   ]);
 
-  const shouldDisable =
-    initialLoading ||
-    !canConnect ||
-    useEffect(() => {
-      let timer;
-      if (!shouldDisable) {
-        timer = setTimeout(() => {
-          setDelay(false);
-        }, 2750); // Delay for 1 second
-      } else {
-        setDelay(true); // Reset if conditions become invalid again
-      }
-      return () => clearTimeout(timer);
-    }, [shouldDisable]);
+  const shouldDisable = initialLoading || !canConnect;
+  useEffect(() => {
+    let timer;
+    if (!shouldDisable) {
+      timer = setTimeout(() => {
+        setDelay(false);
+      }, 2750); // Delay for 1 second
+    } else {
+      setDelay(true); // Reset if conditions become invalid again
+    }
+    return () => clearTimeout(timer);
+  }, [shouldDisable]);
 
   if (initialLoading) {
     return (
