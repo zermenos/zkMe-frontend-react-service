@@ -81,6 +81,7 @@ const App = () => {
 
   /////////////METHOD TO LISTEN TO METAMASK CONNECTION///////////
 
+  const { web3auth } = useWeb3Auth();
   useEffect(() => {
     if (!web3auth || !isInitialized) return;
 
@@ -92,8 +93,6 @@ const App = () => {
 
     web3auth.configureAdapter(metamaskAdapter);
   }, [web3auth, isInitialized]);
-
-  const { web3auth } = useWeb3Auth();
 
   useEffect(() => {
     if (!web3auth || !isInitialized) return;
