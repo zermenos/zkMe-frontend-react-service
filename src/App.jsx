@@ -66,7 +66,8 @@ const App = () => {
         const w3a = new Web3Auth({
           clientId,
           web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-          multiInjectedProviderDiscovery: true,
+          adapters: [], // 🔥 disables external wallet options
+          multiInjectedProviderDiscovery: false,
           walletServicesConfig: {
             confirmationStrategy: CONFIRMATION_STRATEGY.AUTO_APPROVE,
             whiteLabel: {
