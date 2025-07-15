@@ -11,11 +11,12 @@ import {
   useWeb3AuthDisconnect,
 } from "@web3auth/modal/react";
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
-
-import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
-import { Web3Auth } from "@web3auth/modal";
+/*
+import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
+import { Web3Auth } from "@web3auth/modal";
+*/
 const App = () => {
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -80,27 +81,44 @@ const App = () => {
 
   /////////////METHOD TO LISTEN TO METAMASK CONNECTION///////////
 
+  useEffect(() => {
+    if (!web3auth || !isInitialized) return;
+
+    const metamaskAdapter = new MetamaskAdapter({
+      clientId, // ✅ use your Web3Auth client ID here
+      sessionTime: 3600,
+      web3AuthNetwork: "mainnet", // or "testnet" or "cyan"
+    });
+
+    web3auth.configureAdapter(metamaskAdapter);
+  }, [web3auth, isInitialized]);
+
   const { web3auth } = useWeb3Auth();
 
   useEffect(() => {
-    if (web3auth) {
-      const metamaskAdapter = web3auth.adapterManager.getAdapter(
-        WALLET_ADAPTERS.METAMASK
-      );
-      metamaskAdapter?.subscribeAdapterEvents((event) => {
-        log("🦊 MetaMask event received:", event);
-        if (event.name === "CONNECTING") {
-          if (isMobileDevice()) {
-            log("📱 Is mobile:", isMobile);
-            const dappUrl = window.location.host + window.location.pathname;
-            const deeplink = `https://metamask.app.link/dapp/${dappUrl}`;
-            log("🔗 Redirecting to MetaMask Deeplink:", deeplink);
-            window.location.href = deeplink;
-          }
-        }
-      });
+    if (!web3auth || !isInitialized) return;
+    const metamaskAdapter = web3auth.adapterManager.getAdapter(
+      WALLET_ADAPTERS.METAMASK
+    );
+    if (!metamaskAdapter) {
+      log("❌ MetaMask adapter is not available");
+      return;
     }
-  }, [web3auth]);
+    metamaskAdapter?.subscribeAdapterEvents((event) => {
+      const eventName = event?.name ?? "Unknown";
+      log("🦊 MetaMask event received:", event);
+      if (event.name === "CONNECTING") {
+        const isMobile = isMobileDevice();
+        if (isMobile) {
+          log("📱 Is mobile:", isMobile);
+          const dappUrl = window.location.host + window.location.pathname;
+          const deeplink = `https://metamask.app.link/dapp/${dappUrl}`;
+          log("🔗 Redirecting to MetaMask Deeplink:", deeplink);
+          window.location.href = deeplink;
+        }
+      }
+    });
+  }, [web3auth, isInitialized]);
   ///////////////////////////////////////////////////////
 
   useEffect(() => {
