@@ -271,6 +271,8 @@ const App = () => {
   const handleLevel1Verification = async () => {
     try {
       const address = walletData.address;
+      console.log("walletAddress from localStorage:", address);
+      console.log("mchNo:", mchNo);
       //const { address } = await getWalletInfo();
       const { isGrant } = await verifyKycWithZkMeServices(
         mchNo,
@@ -278,8 +280,7 @@ const App = () => {
         // Optional configurations are detailed in the table below
         //options
       );
-      console.log("walletAddress from localStorage:", address);
-      console.log("mchNo:", mchNo);
+
       console.log(isGrant);
 
       if (!web3auth || !web3auth.provider) {
@@ -406,23 +407,18 @@ const App = () => {
 
   const shouldDisable =
     initialLoading ||
-    loading ||
-    logoutInProgress ||
     !canConnect ||
-    !web3auth ||
-    !web3authReady;
-
-  useEffect(() => {
-    let timer;
-    if (!shouldDisable) {
-      timer = setTimeout(() => {
-        setDelay(false);
-      }, 2750); // Delay for 1 second
-    } else {
-      setDelay(true); // Reset if conditions become invalid again
-    }
-    return () => clearTimeout(timer);
-  }, [shouldDisable]);
+    useEffect(() => {
+      let timer;
+      if (!shouldDisable) {
+        timer = setTimeout(() => {
+          setDelay(false);
+        }, 2750); // Delay for 1 second
+      } else {
+        setDelay(true); // Reset if conditions become invalid again
+      }
+      return () => clearTimeout(timer);
+    }, [shouldDisable]);
 
   if (initialLoading) {
     return (
