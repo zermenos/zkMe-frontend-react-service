@@ -208,7 +208,6 @@ const App = () => {
       //web3auth.provider = null;
       web3auth.cachedAdapter = null;
       if (isMobileDevice() && wasPageReloaded()) {
-        log("📱🔁 Mobile hard reload, clearing wallet data");
         localStorage.removeItem("walletAddress");
         localStorage.removeItem("kycVerified");
         localStorage.setItem("forceLogout", "true");
