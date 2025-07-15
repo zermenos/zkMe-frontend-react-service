@@ -268,12 +268,11 @@ const App = () => {
     },
   };
 
-  const userAccount = zkmeProvider.getUserAccounts();
-
   const handleLevel1Verification = async () => {
+    const { address } = await getWalletInfo();
     const { isGrant } = await verifyKycWithZkMeServices(
       mchNo,
-      userAccount
+      address
       // Optional configurations are detailed in the table below
       //options
     );
