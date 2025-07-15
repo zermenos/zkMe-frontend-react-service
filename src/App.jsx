@@ -108,7 +108,6 @@ const App = () => {
   console.log("  isInitialized:", isInitialized);
   console.log("  isConnected:", isConnected);
   console.log("  provider:", provider);
-  console.log("  web3auth.provider:", web3auth?.provider);
 
   /*
   const getEthersProvider = () => {
