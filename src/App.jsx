@@ -216,10 +216,11 @@ const App = () => {
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await connect(); // 🔥 always force login
-      console.log("provider:" + prov);
+
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
+      console.log("prov:" + prov);
       console.log("provider:" + provider);
       console.log("signer:" + signer);
       console.log("address:" + address);
