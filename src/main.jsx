@@ -13,6 +13,7 @@ createRoot(document.getElementById("root")).render(
           web3AuthNetwork: "sapphire_devnet",
         },
       }}
+      enableLogging={true} // ✅ enables internal logging
     >
       <App />
     </Web3AuthProvider>

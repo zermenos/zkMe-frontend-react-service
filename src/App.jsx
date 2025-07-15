@@ -19,6 +19,9 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
 */
 const App = () => {
+  const { provider, isConnected, isInitialized, web3auth } = useWeb3Auth();
+  console.log("🧪 web3auth in App:", web3auth);
+  console.log("🧪 isInitialized:", isInitialized);
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -31,7 +34,7 @@ const App = () => {
   const widgetEventHandlerRef = useRef(null);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [delay, setDelay] = useState(false);
-  const { provider, isConnected, isInitialized, web3auth } = useWeb3Auth();
+
   const { connect, loading: connecting } = useWeb3AuthConnect();
   const { disconnect } = useWeb3AuthDisconnect();
   const [connectRequested, setConnectRequested] = useState(false);
@@ -83,7 +86,21 @@ const App = () => {
   /////////////METHOD TO LISTEN TO METAMASK CONNECTION///////////
 
   useEffect(() => {
-    if (!web3auth || !isInitialized) return;
+    if (!web3auth || !isInitialized) {
+      console.log("❌ web3auth or isInitialized not ready yet");
+      return;
+    }
+    const metamaskAdapter = new MetamaskAdapter({
+      clientId,
+      web3AuthNetwork: "mainnet",
+    });
+
+    if (!metamaskAdapter) {
+      console.log("❌ MetaMask adapter is not available");
+      log("❌ MetaMask adapter is not available");
+      return;
+    }
+    web3auth.configureAdapter(metamaskAdapter);
 
     const listener = (event) => {
       const eventName = event?.name ?? "Unknown";
