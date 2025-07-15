@@ -9,7 +9,7 @@ const Header = ({
   loading,
   canConnect,
   logoutInProgress,
-  initialLoading,
+  isInitialized,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [delay, setDelay] = useState(false);
@@ -38,7 +38,7 @@ const Header = ({
   }, []);
 
   const shouldDisable =
-    initialLoading || loading || logoutInProgress || !canConnect;
+    isInitialized || loading || logoutInProgress || !canConnect;
 
   useEffect(() => {
     let timer;

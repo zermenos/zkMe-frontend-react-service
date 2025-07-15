@@ -501,7 +501,7 @@ const App = () => {
   ]);
   */
 
-  const shouldDisable = initialLoading || !canConnect;
+  const shouldDisable = isInitialized || !canConnect;
   useEffect(() => {
     let timer;
     if (!shouldDisable) {
@@ -535,7 +535,7 @@ const App = () => {
         loading={loading}
         canConnect={canConnect}
         logoutInProgress={logoutInProgress}
-        initialLoading={initialLoading}
+        isInitialized={isInitialized}
       />
 
       <div className="p-4">
