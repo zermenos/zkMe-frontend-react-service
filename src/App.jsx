@@ -66,7 +66,9 @@ const App = () => {
   const useWalletInfo = () => {
     //const { provider, isConnected, isInitialized } = useWeb3Auth();
 
-    const getWalletInfo = async () => {
+    const getWalletInfo = async (prov) => {
+      if (!prov) throw new Error("Web3Auth provider is not ready");
+
       if (!isInitialized) throw new Error("Web3Auth not initialized");
       if (!isConnected) throw new Error("Wallet not connected");
       if (!provider) throw new Error("Web3Auth provider is not ready");
@@ -251,6 +253,27 @@ const App = () => {
     clearSessionOnMobile();
   }, []);
   */
+  useEffect(() => {
+    const fetchWallet = async () => {
+      if (!connectRequested || !isConnected || !provider) return;
+
+      try {
+        const info = await getWalletInfo(provider);
+        setWalletData(info);
+        setBalance(info.balance);
+        console.log("provider:" + provider);
+        console.log("signer:" + signer);
+        console.log("address:" + address);
+        console.log("balance:" + balance);
+      } catch (err) {
+        setError("Failed to fetch wallet info");
+      } finally {
+        setConnectRequested(false);
+      }
+    };
+
+    fetchWallet();
+  }, [connectRequested, isConnected, provider]);
 
   const handleConnect = async () => {
     if (!isInitialized) {
@@ -269,28 +292,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    const fetchWallet = async () => {
-      if (!connectRequested || !isConnected || !provider) return;
-
-      try {
-        const info = await getWalletInfo();
-        setWalletData(info);
-        setBalance(info.balance);
-        console.log("provider:" + provider);
-        console.log("signer:" + signer);
-        console.log("address:" + address);
-        console.log("balance:" + balance);
-      } catch (err) {
-        setError("Failed to fetch wallet info");
-      } finally {
-        setConnectRequested(false);
-      }
-    };
-
-    fetchWallet();
-  }, [connectRequested, isConnected, provider]);
 
   //const prov = await web3auth.connect();
   /*
@@ -346,7 +347,7 @@ const App = () => {
       }
 
       // Optional but recommended: clear local storage
-      //localStorage.removeItem("walletAddress");
+      localStorage.removeItem("walletAddress");
       //localStorage.removeItem("kycVerified");
 
       // Optional: reset any local app state here too
