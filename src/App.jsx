@@ -17,6 +17,10 @@ import {
   useWeb3AuthConnect,
   useWeb3AuthDisconnect,
 } from "@web3auth/modal/react";
+import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
+import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
+import { MetamaskAdapter } from "@web3auth/metamask-adapter";
+import { Web3Auth } from "@web3auth/modal";
 
 const App = () => {
   const [walletData, setWalletData] = useState(null);
@@ -91,18 +95,6 @@ const App = () => {
     return getWalletInfo;
   };
 
-  const waitForProvider = async (timeout = 5000) => {
-    const interval = 100;
-    let waited = 0;
-    while ((!provider || !isConnected) && waited < timeout) {
-      await new Promise((res) => setTimeout(res, interval));
-      waited += interval;
-    }
-
-    if (!provider || !isConnected) {
-      throw new Error("Wallet provider did not initialize in time");
-    }
-  };
   /*
 
   const waitForProviderReady = async (timeout = 5000) => {
@@ -251,6 +243,31 @@ const App = () => {
     clearSessionOnMobile();
   }, []);
   */
+
+  /////////////METHOD TO LISTEN TO METAMASK CONNECTION///////////
+
+  const { web3auth } = useWeb3Auth();
+
+  useEffect(() => {
+    if (web3auth) {
+      const metamaskAdapter = web3auth.adapterManager.getAdapter(
+        WALLET_ADAPTERS.METAMASK
+      );
+      metamaskAdapter?.subscribeAdapterEvents((event) => {
+        if (event.name === "CONNECTING") {
+          const isMobile = /android|iphone|ipad|ipod/i.test(
+            navigator.userAgent
+          );
+          if (isMobile) {
+            const dappUrl = encodeURIComponent(window.location.hostname);
+            const deeplink = `https://metamask.app.link/dapp/${dappUrl}`;
+            window.location.href = deeplink;
+          }
+        }
+      });
+    }
+  }, [web3auth]);
+  ///////////////////////////////////////////////////////
 
   useEffect(() => {
     const fetchWallet = async () => {
