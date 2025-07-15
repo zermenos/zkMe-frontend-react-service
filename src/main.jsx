@@ -5,9 +5,9 @@ import "./index.css";
 import App from "./App.jsx";
 
 createRoot(document.getElementById("root")).render(
-  <Web3AuthProvider>
-    <StrictMode>
+  <StrictMode>
+    <Web3AuthProvider>
       <App />
-    </StrictMode>
-  </Web3AuthProvider>
+    </Web3AuthProvider>
+  </StrictMode>
 );
