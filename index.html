@@ -3,6 +3,12 @@
   <head>
     <meta charset="UTF-8" />
     <!-- <link rel="icon" type="image/svg+xml" href="/vite.svg" /> -->
+    <script type="module">
+      import { Buffer } from "buffer";
+      import process from "process";
+      window.Buffer = Buffer;
+      window.process = process;
+    </script>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Everi</title>
