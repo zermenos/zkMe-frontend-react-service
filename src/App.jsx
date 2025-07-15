@@ -67,20 +67,18 @@ const App = () => {
     //const { provider, isConnected, isInitialized } = useWeb3Auth();
 
     const getWalletInfo = async (prov) => {
-      if (!prov) throw new Error("Web3Auth provider is not ready");
-
       if (!isInitialized) throw new Error("Web3Auth not initialized");
       if (!isConnected) throw new Error("Wallet not connected");
-      if (!provider) throw new Error("Web3Auth provider is not ready");
+      if (!prov) throw new Error("Web3Auth provider is not ready");
 
-      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      const ethersProvider = new ethers.providers.Web3Provider(prov);
 
       const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
       const balance = await ethersProvider.getBalance(address);
       console.log("🧠 getWalletInfo: isInitialized", isInitialized);
       console.log("🧠 getWalletInfo: isConnected", isConnected);
-      console.log("🧠 getWalletInfo: provider", provider);
+      console.log("🧠 getWalletInfo: provider", prov);
 
       return {
         provider: ethersProvider,
@@ -253,7 +251,7 @@ const App = () => {
     clearSessionOnMobile();
   }, []);
   */
-  /*
+
   useEffect(() => {
     const fetchWallet = async () => {
       if (!connectRequested || !isConnected || !provider) return;
@@ -267,6 +265,7 @@ const App = () => {
         console.log("address:" + address);
         console.log("balance:" + balance);
       } catch (err) {
+        console.error("Fetch wallet error:", err); // 🔍 get actual reason
         setError("Failed to fetch wallet info");
       } finally {
         setConnectRequested(false);
@@ -275,7 +274,6 @@ const App = () => {
 
     fetchWallet();
   }, [connectRequested, isConnected, provider]);
-  */
 
   const handleConnect = async () => {
     if (!isInitialized) {
