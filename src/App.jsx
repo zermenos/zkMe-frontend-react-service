@@ -270,7 +270,7 @@ const App = () => {
 
   const handleLevel1Verification = async () => {
     try {
-      const address = localStorage.getItem("walletAddress");
+      const { address } = await getWalletInfo();
       const { isGrant } = await verifyKycWithZkMeServices(
         mchNo,
         address
@@ -290,6 +290,7 @@ const App = () => {
 
       if (isGrant) {
         setKycStatus("success");
+        setInitialLoading(false);
       } else {
         launchKYCWidget("MeID");
       }
