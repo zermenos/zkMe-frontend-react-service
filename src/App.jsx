@@ -271,7 +271,7 @@ const App = () => {
   const handleLevel1Verification = async () => {
     const { isGrant } = await verifyKycWithZkMeServices(
       mchNo,
-      userAccount,
+      address,
       // Optional configurations are detailed in the table below
       options
     );
