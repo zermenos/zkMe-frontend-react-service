@@ -501,7 +501,7 @@ const App = () => {
   ]);
   */
 
-  const shouldDisable = isInitialized || !canConnect;
+  const shouldDisable = !isInitialized || !canConnect;
   useEffect(() => {
     let timer;
     if (!shouldDisable) {

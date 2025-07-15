@@ -38,7 +38,7 @@ const Header = ({
   }, []);
 
   const shouldDisable =
-    isInitialized || loading || logoutInProgress || !canConnect;
+    !isInitialized || loading || logoutInProgress || !canConnect;
 
   useEffect(() => {
     let timer;
