@@ -206,6 +206,10 @@ const App = () => {
   */
 
   const handleConnect = async () => {
+    console.log("web3auth:" + web3auth);
+    console.log("initialLoading:" + initialLoading);
+    console.log("canConnect:" + canConnect);
+    console.log("web3authReady:" + web3authReady);
     if (!web3auth || initialLoading || !canConnect || !web3authReady) {
       console.warn("Web3Auth not initialized yet");
       return;
