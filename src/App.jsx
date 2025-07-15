@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
 import { AlertCircle } from "lucide-react";
-import { ZkMeWidget } from "@zkmelabs/widget";
+import { ZkMeWidget, verifyKycWithZkMeServices } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
@@ -28,6 +28,7 @@ const App = () => {
   const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
+  const mchNo = import.meta.env.ZKME_APP_ID;
 
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
@@ -268,6 +269,13 @@ const App = () => {
   };
 
   const handleLevel1Verification = async () => {
+    const { isGrant } = await verifyKycWithZkMeServices(
+      mchNo,
+      userAccount,
+      // Optional configurations are detailed in the table below
+      options
+    );
+
     if (!web3auth || !web3auth.provider) {
       await handleConnect(); // wait until it's ready
       return;
@@ -277,8 +285,9 @@ const App = () => {
       await handleConnect();
       return;
     }
-
-    launchKYCWidget("MeID");
+    if (!isGrant) {
+      launchKYCWidget("MeID");
+    }
   };
 
   const handleLevel2Verification = async () => {
@@ -301,7 +310,7 @@ const App = () => {
       zkmeWidgetRef.current = null;
     }
     const dynamicWidget = new ZkMeWidget(
-      "M2025012255531684563023546877743",
+      mchNo,
       "zKMe KYC",
       "137", // Polygon Mainnet
       zkmeProvider,
