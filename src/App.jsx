@@ -269,7 +269,7 @@ const App = () => {
   };
 
   const handleLevel1Verification = async () => {
-    const { address } = await getWalletInfo();
+    const address = localStorage.getItem("walletAddress");
     const { isGrant } = await verifyKycWithZkMeServices(
       mchNo,
       address
@@ -286,7 +286,10 @@ const App = () => {
       await handleConnect();
       return;
     }
-    if (!isGrant) {
+
+    if (isGrant) {
+      setKycStatus("success");
+    } else {
       launchKYCWidget("MeID");
     }
   };
