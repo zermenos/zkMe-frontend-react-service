@@ -269,28 +269,35 @@ const App = () => {
   };
 
   const handleLevel1Verification = async () => {
-    const address = localStorage.getItem("walletAddress");
-    const { isGrant } = await verifyKycWithZkMeServices(
-      mchNo,
-      address
-      // Optional configurations are detailed in the table below
-      //options
-    );
+    try {
+      const address = localStorage.getItem("walletAddress");
+      const { isGrant } = await verifyKycWithZkMeServices(
+        mchNo,
+        address
+        // Optional configurations are detailed in the table below
+        //options
+      );
 
-    if (!web3auth || !web3auth.provider) {
-      await handleConnect(); // wait until it's ready
-      return;
-    }
+      if (!web3auth || !web3auth.provider) {
+        await handleConnect(); // wait until it's ready
+        return;
+      }
 
-    if (!walletData) {
-      await handleConnect();
-      return;
-    }
+      if (!walletData) {
+        await handleConnect();
+        return;
+      }
 
-    if (isGrant) {
-      setKycStatus("success");
-    } else {
-      launchKYCWidget("MeID");
+      if (isGrant) {
+        setKycStatus("success");
+      } else {
+        launchKYCWidget("MeID");
+      }
+    } catch (err) {
+      console.error("Error in handleLevel1Verification:", err);
+      setError(
+        err?.message || "Ocurrió un error durante la verificación de identidad."
+      );
     }
   };
 
