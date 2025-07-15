@@ -58,20 +58,26 @@ const App = () => {
 
     return getEthersProvider;
   };
-  const getWalletInfo = async () => {
+  const useWalletInfo = () => {
     const getEthersProvider = useEthersProvider();
-    const provider = getEthersProvider();
-    const signer = provider.getSigner();
-    const address = await signer.getAddress();
-    const balance = await provider.getBalance(address);
 
-    return {
-      provider,
-      signer,
-      address,
-      balance: ethers.utils.formatEther(balance),
+    const getWalletInfo = async () => {
+      const provider = getEthersProvider();
+      const signer = provider.getSigner();
+      const address = await signer.getAddress();
+      const balance = await provider.getBalance(address);
+
+      return {
+        provider,
+        signer,
+        address,
+        balance: ethers.utils.formatEther(balance),
+      };
     };
+
+    return getWalletInfo;
   };
+  const getWalletInfo = useWalletInfo();
 
   /*
   const getEthersProvider = () => {
