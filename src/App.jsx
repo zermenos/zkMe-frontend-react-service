@@ -35,7 +35,7 @@ const App = () => {
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
-  //const { provider, isConnected, isInitialized } = useWeb3Auth();
+  const { provider, isConnected, isInitialized } = useWeb3Auth();
   const { connect, loading: connecting } = useWeb3AuthConnect();
   const { disconnect } = useWeb3AuthDisconnect();
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
@@ -63,7 +63,7 @@ const App = () => {
   */
 
   const useWalletInfo = () => {
-    const { provider, isConnected, isInitialized } = useWeb3Auth();
+    //const { provider, isConnected, isInitialized } = useWeb3Auth();
 
     const getWalletInfo = async () => {
       if (!isInitialized) throw new Error("Web3Auth not initialized");
