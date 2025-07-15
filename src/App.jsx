@@ -271,9 +271,9 @@ const App = () => {
   const handleLevel1Verification = async () => {
     const { isGrant } = await verifyKycWithZkMeServices(
       mchNo,
-      address,
+      address
       // Optional configurations are detailed in the table below
-      options
+      //options
     );
 
     if (!web3auth || !web3auth.provider) {
