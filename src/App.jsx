@@ -63,13 +63,13 @@ const App = () => {
     const getEthersProvider = useEthersProvider();
 
     const getWalletInfo = async () => {
-      console.log("🧠 getWalletInfo: isInitialized", isInitialized);
-      console.log("🧠 getWalletInfo: isConnected", isConnected);
-      console.log("🧠 getWalletInfo: provider", provider);
       const provider = getEthersProvider();
       const signer = provider.getSigner();
       const address = await signer.getAddress();
       const balance = await provider.getBalance(address);
+      console.log("🧠 getWalletInfo: isInitialized", isInitialized);
+      console.log("🧠 getWalletInfo: isConnected", isConnected);
+      console.log("🧠 getWalletInfo: provider", provider);
 
       return {
         provider,
