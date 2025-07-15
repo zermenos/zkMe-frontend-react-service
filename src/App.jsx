@@ -5,39 +5,30 @@ import { ZkMeWidget, verifyKycWithZkMeServices } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
-/*
-import {
-  Web3Auth,
-  WEB3AUTH_NETWORK,
-  CONFIRMATION_STRATEGY,
-} from "@web3auth/modal";
-*/
 import {
   useWeb3Auth,
   useWeb3AuthConnect,
   useWeb3AuthDisconnect,
 } from "@web3auth/modal/react";
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
+/*
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 import { Web3Auth } from "@web3auth/modal";
+*/
 
 const App = () => {
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
-  //const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
   const [verificationLevel, setVerificationLevel] = useState("");
   const [rawProvider, setRawProvider] = useState(null); // You'll need this too
   const [web3Provider, setWeb3Provider] = useState(null);
-  //const [web3auth, setWeb3Auth] = useState(null);
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const widgetEventHandlerRef = useRef(null);
-  //const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
-  //const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
   const { provider, isConnected, isInitialized } = useWeb3Auth();
   const { connect, loading: connecting } = useWeb3AuthConnect();
@@ -50,26 +41,8 @@ const App = () => {
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
 */
-  /*
-  const useEthersProvider = () => {
-    const { provider, isConnected, isInitialized } = useWeb3Auth();
-
-    const getEthersProvider = () => {
-      if (!isInitialized) throw new Error("Web3Auth not initialized");
-      if (!isConnected) throw new Error("Wallet not connected");
-      if (!provider) throw new Error("Web3Auth provider is not ready");
-
-      //const ethersProvider = new ethers.providers.Web3Provider(provider);
-      return new ethers.providers.Web3Provider(provider);
-    };
-
-    return getEthersProvider;
-  };
-  */
 
   const useWalletInfo = () => {
-    //const { provider, isConnected, isInitialized } = useWeb3Auth();
-
     const getWalletInfo = async (prov) => {
       if (!isInitialized) throw new Error("Web3Auth not initialized");
       if (!isConnected) throw new Error("Wallet not connected");
@@ -95,48 +68,10 @@ const App = () => {
     return getWalletInfo;
   };
 
-  /*
-
-  const waitForProviderReady = async (timeout = 5000) => {
-    const interval = 100;
-    let waited = 0;
-    while ((!provider || !isConnected) && waited < timeout) {
-      await new Promise((r) => setTimeout(r, interval));
-      waited += interval;
-    }
-
-    if (!provider || !isConnected) {
-      throw new Error("Wallet provider did not initialize in time");
-    }
-  };
-  */
   console.log("Web3Auth state:");
   console.log("  isInitialized:", isInitialized);
   console.log("  isConnected:", isConnected);
   console.log("  provider:", provider);
-
-  /*
-  const getEthersProvider = () => {
-    if (!isInitialized) throw new Error("Web3Auth not initialized");
-    if (!isConnected) throw new Error("Wallet not connected");
-    if (!provider) throw new Error("Web3Auth provider is not ready");
-    if (!web3auth?.provider) throw new Error("provider not ready");
-    return new ethers.providers.Web3Provider(web3auth.provider);
-  };
-
-  const getWalletInfo = async () => {
-    const provider = getEthersProvider();
-    const signer = provider.getSigner();
-    const address = await signer.getAddress();
-    const balance = await provider.getBalance(address);
-    return {
-      provider,
-      signer,
-      address,
-      balance: ethers.utils.formatEther(balance),
-    };
-  };
-  */
 
   const isMobileDevice = () => {
     const userAgent = navigator.userAgent.toLowerCase();
@@ -145,104 +80,6 @@ const App = () => {
     );
   };
   const getWalletInfo = useWalletInfo();
-
-  /*
-  useEffect(() => {
-    const initWeb3Auth = async () => {
-      setInitialLoading(true); // ✅ Always begin in loading state
-      const mobile = isMobileDevice();
-
-      try {
-        const w3a = new Web3Auth({
-          clientId,
-          web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
-          //adapters: [], // 🔥 disables external wallet options
-          multiInjectedProviderDiscovery: false,
-          walletServicesConfig: {
-            confirmationStrategy: CONFIRMATION_STRATEGY.AUTO_APPROVE,
-            whiteLabel: {
-              hideWalletConnect: false,
-            },
-          }, // optional services config
-        });
-
-        await w3a.init(); // always initialize here
-
-        setWeb3Auth(w3a);
-        /*
-        // 🔁 Check for mobile reload logout flag
-        if (localStorage.getItem("forceLogout") === "true") {
-          log(
-            `[Timer] ❌ Forced logout detected at ${(
-              performance.now() - startTime
-            ).toFixed(2)}ms`
-          );
-          console.log("📱🔁 Forced logout after reload");
-          await w3a.logout();
-          localStorage.removeItem("forceLogout");
-          await new Promise((r) => setTimeout(r, 1000));
-          return; // Exit early, avoid initializing Web3Auth
-        }
-          */
-  /*
-        // ✅ Check if session is valid
-        if (w3a.cachedAdapter && w3a.provider) {
-          try {
-            const info = await getWalletInfo();
-            setWeb3Provider(info.provider);
-            setWalletData({
-              provider: info.provider,
-              signer: info.signer,
-              address: info.address,
-            });
-            setBalance(info.balance);
-          } catch (sessionErr) {
-            console.warn("Stale session detected, logging out...");
-            await w3a.logout();
-          }
-        }
-      } catch (err) {
-        console.error("Web3Auth init error:", err);
-      } finally {
-        setInitialLoading(false);
-        setWeb3authReady(true);
-      }
-    };
-
-    initWeb3Auth();
-  }, []);
-  */
-  /*
-  useEffect(() => {
-    if (!isInitialized && web3auth && !logoutInProgress) {
-      const timeout = setTimeout(() => {
-        setCanConnect(true);
-      }, 100); // 1-second delay
-      return () => clearTimeout(timeout); // Cleanup if dependencies change
-    } else {
-      // If conditions aren't met, disable the button
-      setCanConnect(false);
-    }
-  }, [isInitialized, web3auth, logoutInProgress]);
-  */
-  /*
-  useEffect(() => {
-    const wasPageReloaded = () => {
-      const navEntries = performance.getEntriesByType("navigation");
-      return navEntries.length > 0 && navEntries[0].type === "reload";
-    };
-    const clearSessionOnMobile = async () => {
-      const isMobile = isMobileDevice();
-      const reloaded = wasPageReloaded();
-      if (isMobile && reloaded) {
-        console.log("📱🔁 Mobile reload detected, logging out...");
-        localStorage.setItem("forceLogout", "true");
-        await new Promise((r) => setTimeout(r, 200)); // allow time for cleanup
-      }
-    };
-    clearSessionOnMobile();
-  }, []);
-  */
 
   /////////////METHOD TO LISTEN TO METAMASK CONNECTION///////////
 
@@ -255,10 +92,7 @@ const App = () => {
       );
       metamaskAdapter?.subscribeAdapterEvents((event) => {
         if (event.name === "CONNECTING") {
-          const isMobile = /android|iphone|ipad|ipod/i.test(
-            navigator.userAgent
-          );
-          if (isMobile) {
+          if (isMobileDevice()) {
             const dappUrl = encodeURIComponent(window.location.hostname);
             const deeplink = `https://metamask.app.link/dapp/${dappUrl}`;
             window.location.href = deeplink;
@@ -309,34 +143,6 @@ const App = () => {
       setLoading(false);
     }
   };
-
-  //const prov = await web3auth.connect();
-  /*
-      if (!prov) throw new Error("No provider returned after connect");
-      setRawProvider(prov);
-      // ✅ Wait for React hook to update
-      await waitForProviderReady();
-      */
-  /*
-      await waitForProvider();
-
-      const { provider, signer, address, balance } = await getWalletInfo();
-      console.log("provider:" + provider);
-      console.log("signer:" + signer);
-      console.log("address:" + address);
-      console.log("balance:" + balance);
-
-      setWalletData({ provider, signer, address });
-      setBalance(balance);
-      localStorage.setItem("walletAddress", address);
-    } catch (err) {
-      console.error("handleConnect error:", err);
-      setError(err.message || "Wallet connection failed.");
-    } finally {
-      setLoading(false);
-    }
-  };
-  */
 
   const wasPageReloaded = () => {
     const navEntries = performance.getEntriesByType("navigation");
@@ -521,24 +327,7 @@ const App = () => {
       launchKYCWidget();
     }
   };
-  /*
-  useEffect(() => {
-    if (!web3auth || !web3auth.provider) return;
-    const isVerified = localStorage.getItem("kycVerified");
-    if (isVerified === "true") {
-      setKycStatus("success");
-    }
-  }, [web3auth]);
-  */
 
-  /*
-  useEffect(() => {
-    const savedAddress = localStorage.getItem("walletAddress");
-    const isVerified = localStorage.getItem("kycVerified") === "true";
-    if (isVerified) setKycStatus("success");
-    setInitialLoading(false);
-  }, []);
-  */
   /*
   useEffect(() => {
     log("Initial loading: " + initialLoading);
