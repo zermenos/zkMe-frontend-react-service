@@ -82,6 +82,8 @@ const App = () => {
   /////////////METHOD TO LISTEN TO METAMASK CONNECTION///////////
 
   const { web3auth } = useWeb3Auth();
+  const availableAdapters = web3auth.adapterManager.getAdapters();
+  console.log("🧩 Available adapters:", Object.keys(availableAdapters));
   useEffect(() => {
     if (!web3auth || !isInitialized) return;
 
@@ -92,6 +94,7 @@ const App = () => {
     });
 
     web3auth.configureAdapter(metamaskAdapter);
+    console.log("✅ MetaMask adapter configured");
   }, [web3auth, isInitialized]);
 
   useEffect(() => {
@@ -100,13 +103,15 @@ const App = () => {
       WALLET_ADAPTERS.METAMASK
     );
     if (!metamaskAdapter) {
+      console.log("❌ MetaMask adapter is not available");
       log("❌ MetaMask adapter is not available");
       return;
     }
     metamaskAdapter?.subscribeAdapterEvents((event) => {
       const eventName = event?.name ?? "Unknown";
+      console.log("🦊 MetaMask event received:", event);
       log("🦊 MetaMask event received:", event);
-      if (event.name === "CONNECTING") {
+      if (eventName === "CONNECTING") {
         const isMobile = isMobileDevice();
         if (isMobile) {
           log("📱 Is mobile:", isMobile);
