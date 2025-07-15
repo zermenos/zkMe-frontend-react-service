@@ -10,6 +10,12 @@ import {
   WEB3AUTH_NETWORK,
   CONFIRMATION_STRATEGY,
 } from "@web3auth/modal";
+import {
+  useWeb3Auth,
+  useWeb3AuthConnect,
+  useWeb3AuthDisconnect,
+  useWalletUI,
+} from "@web3auth/modal/react";
 
 const App = () => {
   const [walletData, setWalletData] = useState(null);
@@ -27,6 +33,9 @@ const App = () => {
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
+  const { provider, isConnected, isInitialized } = useWeb3Auth();
+  const { connect, loading: connecting } = useWeb3AuthConnect();
+  const { disconnect } = useWeb3AuthDisconnect();
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
   const mchNo = import.meta.env.VITE_WEB3AUTH_ZKME_ID;
 
@@ -165,7 +174,7 @@ const App = () => {
       setLoading(true);
 
       // 🔥 Then trigger the login flow (will show the modal)
-      const prov = await web3auth.connect(); // 🔥 always force login
+      const prov = await connect(); // 🔥 always force login
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
@@ -200,7 +209,8 @@ const App = () => {
     try {
       setLogoutInProgress(true); // ✅ Begin tracking logout
       console.log("Initiating safeLogout");
-      await web3auth.logout();
+      await disconnect();
+      //await web3auth.logout();
       await web3auth.clearCache?.();
 
       // Optional: Wait a bit to ensure state is fully reset
