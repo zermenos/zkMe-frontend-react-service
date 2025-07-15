@@ -72,9 +72,9 @@ const App = () => {
 
       const ethersProvider = new ethers.providers.Web3Provider(provider);
 
-      const signer = provider.getSigner();
+      const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
-      const balance = await provider.getBalance(address);
+      const balance = await ethersProvider.getBalance(address);
       console.log("🧠 getWalletInfo: isInitialized", isInitialized);
       console.log("🧠 getWalletInfo: isConnected", isConnected);
       console.log("🧠 getWalletInfo: provider", provider);
