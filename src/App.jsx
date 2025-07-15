@@ -19,9 +19,8 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
 */
 const App = () => {
-  const { provider, isConnected, isInitialized, web3auth } = useWeb3Auth();
-  console.log("🧪 web3auth in App:", web3auth);
-  console.log("🧪 isInitialized:", isInitialized);
+  const { provider, isConnected, isInitialized } = useWeb3Auth();
+
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -40,6 +39,12 @@ const App = () => {
   const [connectRequested, setConnectRequested] = useState(false);
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
   const mchNo = import.meta.env.VITE_WEB3AUTH_ZKME_ID;
+  const web3auth = new Web3Auth({
+    clientId, // Get your Client ID from Web3Auth Dashboard
+    web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET, // or WEB3AUTH_NETWORK.SAPPHIRE_DEVNET
+  });
+  console.log("🧪 web3auth in App:", web3auth);
+  console.log("🧪 isInitialized:", isInitialized);
 
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
