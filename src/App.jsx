@@ -509,7 +509,7 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [shouldDisable]);
 
-  if (isInitialized) {
+  if (!isInitialized) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
         <div className="text-center">
