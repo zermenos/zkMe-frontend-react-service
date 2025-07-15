@@ -12,7 +12,7 @@ import {
 } from "@web3auth/modal/react";
 import { WALLET_ADAPTERS } from "@web3auth/base";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
-import { Web3Auth } from "@web3auth/modal";
+import { Web3Auth, WEB3AUTH_NETWORK } from "@web3auth/modal";
 /*
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
