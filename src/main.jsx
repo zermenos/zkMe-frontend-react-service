@@ -1,6 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Web3AuthProvider } from "@web3auth/modal/react";
+import { CHAIN_NAMESPACES } from "@web3auth/base";
 import "./index.css";
 import App from "./App.jsx";
 
