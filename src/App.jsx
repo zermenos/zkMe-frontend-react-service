@@ -30,8 +30,10 @@ const App = () => {
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
   const mchNo = import.meta.env.VITE_WEB3AUTH_ZKME_ID;
 
+  /*
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
+*/
 
   const getEthersProvider = () => {
     if (!web3auth?.provider) throw new Error("Web3Auth provider not ready");
@@ -269,6 +271,16 @@ const App = () => {
 
   const handleLevel1Verification = async () => {
     try {
+      if (!web3auth || !web3auth.provider) {
+        await handleConnect(); // wait until it's ready
+        return;
+      }
+
+      if (!walletData) {
+        await handleConnect();
+        return;
+      }
+
       const address = walletData.address;
       console.log("walletAddress from localStorage:", address);
       console.log("mchNo:", mchNo);
@@ -281,16 +293,6 @@ const App = () => {
       );
 
       console.log(isGrant);
-
-      if (!web3auth || !web3auth.provider) {
-        await handleConnect(); // wait until it's ready
-        return;
-      }
-
-      if (!walletData) {
-        await handleConnect();
-        return;
-      }
 
       if (isGrant) {
         setKycStatus("success");
