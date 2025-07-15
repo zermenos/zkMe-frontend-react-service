@@ -83,7 +83,7 @@ const App = () => {
   };
   const getWalletInfo = useWalletInfo();
 
-  const waitForProviderReady = async (timeout = 5000) => {
+  const waitForProviderReady = async (timeout = 10000) => {
     const interval = 100;
     let waited = 0;
     while ((!provider || !isConnected) && waited < timeout) {
@@ -236,6 +236,7 @@ const App = () => {
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await connect(); // 🔥 always force login
+      //const prov = await web3auth.connect();
 
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
