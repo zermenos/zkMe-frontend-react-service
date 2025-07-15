@@ -223,7 +223,7 @@ const App = () => {
       // If conditions aren't met, disable the button
       setCanConnect(false);
     }
-  }, [initialLoading, provider, logoutInProgress]);
+  }, [isInitialized, provider, logoutInProgress]);
   /*
   useEffect(() => {
     const wasPageReloaded = () => {
