@@ -63,6 +63,9 @@ const App = () => {
     const getEthersProvider = useEthersProvider();
 
     const getWalletInfo = async () => {
+      console.log("🧠 getWalletInfo: isInitialized", isInitialized);
+      console.log("🧠 getWalletInfo: isConnected", isConnected);
+      console.log("🧠 getWalletInfo: provider", provider);
       const provider = getEthersProvider();
       const signer = provider.getSigner();
       const address = await signer.getAddress();
@@ -79,6 +82,19 @@ const App = () => {
     return getWalletInfo;
   };
   const getWalletInfo = useWalletInfo();
+
+  const waitForProviderReady = async (timeout = 5000) => {
+    const interval = 100;
+    let waited = 0;
+    while ((!provider || !isConnected) && waited < timeout) {
+      await new Promise((r) => setTimeout(r, interval));
+      waited += interval;
+    }
+
+    if (!provider || !isConnected) {
+      throw new Error("Wallet provider did not initialize in time");
+    }
+  };
 
   /*
   const getEthersProvider = () => {
@@ -223,6 +239,8 @@ const App = () => {
 
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
+      // ✅ Wait for React hook to update
+      await waitForProviderReady();
       const { provider, signer, address, balance } = await getWalletInfo();
       console.log("prov:" + prov);
       console.log("provider:" + provider);
