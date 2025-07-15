@@ -10,8 +10,6 @@ const Header = ({
   canConnect,
   logoutInProgress,
   initialLoading,
-  web3authReady,
-  web3auth,
 }) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [delay, setDelay] = useState(false);
@@ -40,12 +38,7 @@ const Header = ({
   }, []);
 
   const shouldDisable =
-    initialLoading ||
-    loading ||
-    logoutInProgress ||
-    !canConnect ||
-    !web3auth ||
-    !web3authReady;
+    initialLoading || loading || logoutInProgress || !canConnect;
 
   useEffect(() => {
     let timer;

@@ -5,16 +5,17 @@ import { ZkMeWidget, verifyKycWithZkMeServices } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
+/*
 import {
   Web3Auth,
   WEB3AUTH_NETWORK,
   CONFIRMATION_STRATEGY,
 } from "@web3auth/modal";
+*/
 import {
   useWeb3Auth,
   useWeb3AuthConnect,
   useWeb3AuthDisconnect,
-  useWalletUI,
 } from "@web3auth/modal/react";
 
 const App = () => {
@@ -27,14 +28,14 @@ const App = () => {
   const [verificationLevel, setVerificationLevel] = useState("");
   const [rawProvider, setRawProvider] = useState(null); // You'll need this too
   const [web3Provider, setWeb3Provider] = useState(null);
-  const [web3auth, setWeb3Auth] = useState(null);
+  //const [web3auth, setWeb3Auth] = useState(null);
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
   const widgetEventHandlerRef = useRef(null);
-  const [web3authReady, setWeb3authReady] = useState(false);
+  //const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
-  const { provider, isConnected, isInitialized } = useWeb3Auth();
+  //const { provider, isConnected, isInitialized } = useWeb3Auth();
   const { connect, loading: connecting } = useWeb3AuthConnect();
   const { disconnect } = useWeb3AuthDisconnect();
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
@@ -44,7 +45,7 @@ const App = () => {
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
 */
-
+  /*
   const useEthersProvider = () => {
     const { provider, isConnected, isInitialized } = useWeb3Auth();
 
@@ -53,18 +54,24 @@ const App = () => {
       if (!isConnected) throw new Error("Wallet not connected");
       if (!provider) throw new Error("Web3Auth provider is not ready");
 
-      const ethersProvider = new ethers.providers.Web3Provider(provider);
-      return ethersProvider;
+      //const ethersProvider = new ethers.providers.Web3Provider(provider);
+      return new ethers.providers.Web3Provider(provider);
     };
 
     return getEthersProvider;
   };
+  */
 
   const useWalletInfo = () => {
-    const getEthersProvider = useEthersProvider();
+    const { provider, isConnected, isInitialized } = useWeb3Auth();
 
     const getWalletInfo = async () => {
-      const provider = getEthersProvider();
+      if (!isInitialized) throw new Error("Web3Auth not initialized");
+      if (!isConnected) throw new Error("Wallet not connected");
+      if (!provider) throw new Error("Web3Auth provider is not ready");
+
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+
       const signer = provider.getSigner();
       const address = await signer.getAddress();
       const balance = await provider.getBalance(address);
@@ -73,7 +80,7 @@ const App = () => {
       console.log("🧠 getWalletInfo: provider", provider);
 
       return {
-        provider,
+        provider: ethersProvider,
         signer,
         address,
         balance: ethers.utils.formatEther(balance),
@@ -82,8 +89,9 @@ const App = () => {
 
     return getWalletInfo;
   };
+  /*
 
-  const waitForProviderReady = async (timeout = 10000) => {
+  const waitForProviderReady = async (timeout = 5000) => {
     const interval = 100;
     let waited = 0;
     while ((!provider || !isConnected) && waited < timeout) {
@@ -95,6 +103,7 @@ const App = () => {
       throw new Error("Wallet provider did not initialize in time");
     }
   };
+  */
   console.log("Web3Auth state:");
   console.log("  isInitialized:", isInitialized);
   console.log("  isConnected:", isConnected);
@@ -133,6 +142,15 @@ const App = () => {
   const getWalletInfo = useWalletInfo();
 
   useEffect(() => {
+    if (isInitialized && provider && isConnected) {
+      setInitialLoading(false);
+    } else {
+      setInitialLoading(true);
+    }
+  }, [isInitialized, provider, isConnected]);
+
+  /*
+  useEffect(() => {
     const initWeb3Auth = async () => {
       setInitialLoading(true); // ✅ Always begin in loading state
       const mobile = isMobileDevice();
@@ -169,7 +187,7 @@ const App = () => {
           return; // Exit early, avoid initializing Web3Auth
         }
           */
-
+  /*
         // ✅ Check if session is valid
         if (w3a.cachedAdapter && w3a.provider) {
           try {
@@ -196,9 +214,10 @@ const App = () => {
 
     initWeb3Auth();
   }, []);
+  */
 
   useEffect(() => {
-    if (!initialLoading && web3auth && !logoutInProgress) {
+    if (!initialLoading && provider && !logoutInProgress) {
       const timeout = setTimeout(() => {
         setCanConnect(true);
       }, 100); // 1-second delay
@@ -207,7 +226,7 @@ const App = () => {
       // If conditions aren't met, disable the button
       setCanConnect(false);
     }
-  }, [initialLoading, web3auth, logoutInProgress]);
+  }, [initialLoading, provider, logoutInProgress]);
   /*
   useEffect(() => {
     const wasPageReloaded = () => {
@@ -228,11 +247,7 @@ const App = () => {
   */
 
   const handleConnect = async () => {
-    console.log("web3auth:" + web3auth);
-    console.log("initialLoading:" + initialLoading);
-    console.log("canConnect:" + canConnect);
-    console.log("web3authReady:" + web3authReady);
-    if (!web3auth || initialLoading || !canConnect || !web3authReady) {
+    if (!isInitialized || !canConnect) {
       console.warn("Web3Auth not initialized yet");
       return;
     }
@@ -241,13 +256,14 @@ const App = () => {
       setLoading(true);
 
       // 🔥 Then trigger the login flow (will show the modal)
-      const prov = await connect(); // 🔥 always force login
+      await connect(); // 🔥 always force login
       //const prov = await web3auth.connect();
-
+      /*
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       // ✅ Wait for React hook to update
       await waitForProviderReady();
+      */
       const { provider, signer, address, balance } = await getWalletInfo();
       console.log("prov:" + prov);
       console.log("provider:" + provider);
@@ -255,7 +271,6 @@ const App = () => {
       console.log("address:" + address);
       console.log("balance:" + balance);
 
-      setWeb3Provider(provider);
       setWalletData({ provider, signer, address });
       setBalance(balance);
       localStorage.setItem("walletAddress", address);
@@ -267,17 +282,13 @@ const App = () => {
     }
   };
 
-  const handleShowWallet = () => {
-    if (web3auth) web3auth.showWalletUI();
-  };
-
   const wasPageReloaded = () => {
     const navEntries = performance.getEntriesByType("navigation");
     return navEntries.length > 0 && navEntries[0].type === "reload";
   };
 
   const safeLogout = async () => {
-    if (!web3auth) {
+    if (!isConnected) {
       console.warn("Web3Auth not initialized, cannot logout");
       return;
     }
@@ -286,15 +297,10 @@ const App = () => {
       setLogoutInProgress(true); // ✅ Begin tracking logout
       console.log("Initiating safeLogout");
       await disconnect();
-      //await web3auth.logout();
-      await web3auth.clearCache?.();
 
       // Optional: Wait a bit to ensure state is fully reset
       //await new Promise((resolve) => setTimeout(resolve, 200));
 
-      // 🔥 Manually clear Web3Auth internal state
-      //web3auth.provider = null;
-      web3auth.cachedAdapter = null;
       if (isMobileDevice() && wasPageReloaded()) {
         localStorage.removeItem("walletAddress");
         localStorage.removeItem("kycVerified");
@@ -328,13 +334,8 @@ const App = () => {
   const handleDisconnect = async () => {
     try {
       await safeLogout();
-      //await web3auth.logout();
     } catch (err) {
       console.error("Error during disconnect:", err);
-    }
-    if (!web3auth || !web3authReady) {
-      console.warn("Web3Auth not ready yet, cannot disconnect.");
-      return;
     }
   };
 
@@ -357,7 +358,7 @@ const App = () => {
 
   const handleLevel1Verification = async () => {
     try {
-      if (!web3auth || !web3auth.provider) {
+      if (!provider || !isConnected) {
         await handleConnect(); // wait until it's ready
         return;
       }
@@ -382,7 +383,7 @@ const App = () => {
 
       if (isGrant) {
         setKycStatus("success");
-        setInitialLoading(false);
+        //setInitialLoading(false);
       } else {
         launchKYCWidget("MeID");
       }
@@ -393,7 +394,7 @@ const App = () => {
       );
     }
   };
-
+  /*
   const handleLevel2Verification = async () => {
     if (!web3auth || !web3auth.provider) {
       await handleConnect(); // wait until it's ready
@@ -407,6 +408,7 @@ const App = () => {
 
     launchKYCWidget("zkKYC");
   };
+  */
 
   const launchKYCWidget = (level) => {
     if (zkmeWidgetRef.current) {
@@ -463,7 +465,7 @@ const App = () => {
       launchKYCWidget();
     }
   };
-
+  /*
   useEffect(() => {
     if (!web3auth || !web3auth.provider) return;
     const isVerified = localStorage.getItem("kycVerified");
@@ -471,6 +473,7 @@ const App = () => {
       setKycStatus("success");
     }
   }, [web3auth]);
+  */
 
   /*
   useEffect(() => {
@@ -537,9 +540,6 @@ const App = () => {
         canConnect={canConnect}
         logoutInProgress={logoutInProgress}
         initialLoading={initialLoading}
-        web3authReady={web3authReady}
-        web3auth={web3auth}
-        web3authprovider={web3auth.provider}
       />
 
       <div className="p-4">
