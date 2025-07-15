@@ -1,7 +1,7 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { Web3AuthProvider } from "@web3auth/modal/react";
-import { CHAIN_NAMESPACES } from "@web3auth/base";
+import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
 import "./index.css";
 import App from "./App.jsx";
 
@@ -16,6 +16,12 @@ createRoot(document.getElementById("root")).render(
             chainNamespace: CHAIN_NAMESPACES.EIP155,
             chainId: "0x89", // or whatever chain you need, like Sapphire's ID
             rpcTarget: "https://rpc-endpoint.of.sapphire.devnet",
+          },
+        },
+        modalConfig: {
+          [WALLET_ADAPTERS.METAMASK]: {
+            label: "metamask",
+            showOnModal: false,
           },
         },
       }}
