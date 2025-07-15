@@ -44,8 +44,41 @@ const App = () => {
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
 */
 
+  const useEthersProvider = () => {
+    const { provider, isConnected, isInitialized } = useWeb3Auth();
+
+    const getEthersProvider = () => {
+      if (!isInitialized) throw new Error("Web3Auth not initialized");
+      if (!isConnected) throw new Error("Wallet not connected");
+      if (!provider) throw new Error("Web3Auth provider is not ready");
+
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+      return ethersProvider;
+    };
+
+    return getEthersProvider;
+  };
+  const getWalletInfo = async () => {
+    const getEthersProvider = useEthersProvider();
+    const provider = getEthersProvider();
+    const signer = provider.getSigner();
+    const address = await signer.getAddress();
+    const balance = await provider.getBalance(address);
+
+    return {
+      provider,
+      signer,
+      address,
+      balance: ethers.utils.formatEther(balance),
+    };
+  };
+
+  /*
   const getEthersProvider = () => {
-    if (!web3auth?.provider) throw new Error("Web3Auth provider not ready");
+    if (!isInitialized) throw new Error("Web3Auth not initialized");
+    if (!isConnected) throw new Error("Wallet not connected");
+    if (!provider) throw new Error("Web3Auth provider is not ready");
+    if (!web3auth?.provider) throw new Error("provider not ready");
     return new ethers.providers.Web3Provider(web3auth.provider);
   };
 
@@ -61,6 +94,7 @@ const App = () => {
       balance: ethers.utils.formatEther(balance),
     };
   };
+  */
 
   const isMobileDevice = () => {
     const userAgent = navigator.userAgent.toLowerCase();
