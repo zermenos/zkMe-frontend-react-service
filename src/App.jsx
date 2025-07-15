@@ -270,13 +270,17 @@ const App = () => {
 
   const handleLevel1Verification = async () => {
     try {
-      const { address } = await getWalletInfo();
+      const address = walletData.address;
+      //const { address } = await getWalletInfo();
       const { isGrant } = await verifyKycWithZkMeServices(
         mchNo,
         address
         // Optional configurations are detailed in the table below
         //options
       );
+      console.log("walletAddress from localStorage:", address);
+      console.log("mchNo:", mchNo);
+      console.log(isGrant);
 
       if (!web3auth || !web3auth.provider) {
         await handleConnect(); // wait until it's ready
