@@ -214,7 +214,7 @@ const App = () => {
   */
 
   useEffect(() => {
-    if (!initialLoading && provider && !logoutInProgress) {
+    if (!isInitialized && provider && !logoutInProgress) {
       const timeout = setTimeout(() => {
         setCanConnect(true);
       }, 100); // 1-second delay
