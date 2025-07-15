@@ -38,6 +38,7 @@ const App = () => {
   const { provider, isConnected, isInitialized } = useWeb3Auth();
   const { connect, loading: connecting } = useWeb3AuthConnect();
   const { disconnect } = useWeb3AuthDisconnect();
+  const [connectRequested, setConnectRequested] = useState(false);
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
   const mchNo = import.meta.env.VITE_WEB3AUTH_ZKME_ID;
 
@@ -256,19 +257,49 @@ const App = () => {
       console.warn("Web3Auth not initialized yet");
       return;
     }
+    setLoading(true);
 
     try {
-      setLoading(true);
-
       // 🔥 Then trigger the login flow (will show the modal)
       await connect(); // 🔥 always force login
-      //const prov = await web3auth.connect();
-      /*
+      setConnectRequested(true);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const fetchWallet = async () => {
+      if (!connectRequested || !isConnected || !provider) return;
+
+      try {
+        const info = await getWalletInfo();
+        setWalletData(info);
+        setBalance(info.balance);
+        console.log("provider:" + provider);
+        console.log("signer:" + signer);
+        console.log("address:" + address);
+        console.log("balance:" + balance);
+      } catch (err) {
+        setError("Failed to fetch wallet info");
+      } finally {
+        setConnectRequested(false);
+      }
+    };
+
+    fetchWallet();
+  }, [connectRequested, isConnected, provider]);
+
+  //const prov = await web3auth.connect();
+  /*
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       // ✅ Wait for React hook to update
       await waitForProviderReady();
       */
+  /*
       await waitForProvider();
 
       const { provider, signer, address, balance } = await getWalletInfo();
@@ -287,6 +318,7 @@ const App = () => {
       setLoading(false);
     }
   };
+  */
 
   const wasPageReloaded = () => {
     const navEntries = performance.getEntriesByType("navigation");
