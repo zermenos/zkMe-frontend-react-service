@@ -260,10 +260,10 @@ const App = () => {
         const info = await getWalletInfo(provider);
         setWalletData(info);
         setBalance(info.balance);
-        console.log("provider:" + provider);
-        console.log("signer:" + signer);
-        console.log("address:" + address);
-        console.log("balance:" + balance);
+        console.log("provider:" + info.provider);
+        console.log("signer:" + info.signer);
+        console.log("address:" + info.address);
+        console.log("balance:" + info.balance);
       } catch (err) {
         console.error("Fetch wallet error:", err); // 🔍 get actual reason
         setError("Failed to fetch wallet info");
