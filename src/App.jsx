@@ -89,6 +89,19 @@ const App = () => {
 
     return getWalletInfo;
   };
+
+  const waitForProvider = async (timeout = 5000) => {
+    const interval = 100;
+    let waited = 0;
+    while ((!provider || !isConnected) && waited < timeout) {
+      await new Promise((res) => setTimeout(res, interval));
+      waited += interval;
+    }
+
+    if (!provider || !isConnected) {
+      throw new Error("Wallet provider did not initialize in time");
+    }
+  };
   /*
 
   const waitForProviderReady = async (timeout = 5000) => {
@@ -256,6 +269,8 @@ const App = () => {
       // ✅ Wait for React hook to update
       await waitForProviderReady();
       */
+      await waitForProvider();
+
       const { provider, signer, address, balance } = await getWalletInfo();
       console.log("provider:" + provider);
       console.log("signer:" + signer);
