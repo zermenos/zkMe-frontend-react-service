@@ -28,7 +28,7 @@ const App = () => {
   const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
-  const mchNo = import.meta.env.ZKME_APP_ID;
+  const mchNo = import.meta.env.VITE_WEB3AUTH_ZKME_ID;
 
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
