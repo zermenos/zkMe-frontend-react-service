@@ -253,6 +253,7 @@ const App = () => {
     clearSessionOnMobile();
   }, []);
   */
+  /*
   useEffect(() => {
     const fetchWallet = async () => {
       if (!connectRequested || !isConnected || !provider) return;
@@ -274,6 +275,7 @@ const App = () => {
 
     fetchWallet();
   }, [connectRequested, isConnected, provider]);
+  */
 
   const handleConnect = async () => {
     if (!isInitialized) {
