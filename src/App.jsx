@@ -141,12 +141,10 @@ const App = () => {
   const getWalletInfo = useWalletInfo();
 
   useEffect(() => {
-    if (isInitialized && provider && isConnected) {
+    if (isInitialized) {
       setInitialLoading(false);
-    } else {
-      setInitialLoading(true);
     }
-  }, [isInitialized, provider, isConnected]);
+  }, [isInitialized]);
 
   /*
   useEffect(() => {
