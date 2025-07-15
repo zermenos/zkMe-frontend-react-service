@@ -599,7 +599,7 @@ const App = () => {
               {/*
               <h1 className="h1">Conecta tu cartera</h1>
 */}
-              {isInitialized && (
+              {!isInitialized && (
                 <div className="flex flex-col items-center space-y-2">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                   <p className="p text-sm text-gray-600">
