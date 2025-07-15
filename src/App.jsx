@@ -29,6 +29,7 @@ const App = () => {
   const [web3Provider, setWeb3Provider] = useState(null);
   const [web3auth, setWeb3Auth] = useState(null);
   const zkmeWidgetRef = useRef(null); // Ref to store widget instance
+  const widgetEventHandlerRef = useRef(null);
   const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
   const [canConnect, setCanConnect] = useState(false);
@@ -215,7 +216,7 @@ const App = () => {
 
       // 🔥 Then trigger the login flow (will show the modal)
       const prov = await connect(); // 🔥 always force login
-      console.log("provider:" + provider);
+      console.log("provider:" + prov);
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
@@ -379,6 +380,10 @@ const App = () => {
 
   const launchKYCWidget = (level) => {
     if (zkmeWidgetRef.current) {
+      if (widgetEventHandlerRef.current) {
+        zkmeWidgetRef.current.off("kycFinished", widgetEventHandlerRef.current);
+        widgetEventHandlerRef.current = null;
+      }
       zkmeWidgetRef.current.destroy(); // ✅ Clean up previous instance
       zkmeWidgetRef.current = null;
     }
@@ -395,7 +400,8 @@ const App = () => {
       }
     );
 
-    dynamicWidget.on("kycFinished", (result) => {
+    // Define handler once so you can remove it later
+    const handleKycFinished = (result) => {
       const { isGrant, associatedAccount } = result;
       if (
         isGrant &&
@@ -407,10 +413,14 @@ const App = () => {
         setKycStatus("fail");
         localStorage.removeItem("kycVerified");
       }
-    });
+    };
+
+    dynamicWidget.on("kycFinished", handleKycFinished);
+    widgetEventHandlerRef.current = handleKycFinished;
+
+    zkmeWidgetRef.current = dynamicWidget;
 
     dynamicWidget.launch();
-    zkmeWidgetRef.current = dynamicWidget;
   };
 
   const handleVerification = async () => {
