@@ -264,7 +264,6 @@ const App = () => {
       await waitForProviderReady();
       */
       const { provider, signer, address, balance } = await getWalletInfo();
-      console.log("prov:" + prov);
       console.log("provider:" + provider);
       console.log("signer:" + signer);
       console.log("address:" + address);
