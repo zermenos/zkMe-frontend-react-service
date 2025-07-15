@@ -268,7 +268,7 @@ const App = () => {
     },
   };
 
-  userAccount = zkmeProvider.getUserAccounts();
+  const userAccount = zkmeProvider.getUserAccounts();
 
   const handleLevel1Verification = async () => {
     const { isGrant } = await verifyKycWithZkMeServices(
