@@ -7,7 +7,7 @@ const Header = ({
   onConnect,
   onDisconnect,
   loading,
-  canConnect,
+  //canConnect,
   logoutInProgress,
   isInitialized,
 }) => {
@@ -37,8 +37,7 @@ const Header = ({
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const shouldDisable =
-    !isInitialized || loading || logoutInProgress || !canConnect;
+  const shouldDisable = !isInitialized || loading || logoutInProgress;
 
   useEffect(() => {
     let timer;

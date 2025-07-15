@@ -21,7 +21,7 @@ import {
 const App = () => {
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
+  //const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
@@ -33,7 +33,7 @@ const App = () => {
   const widgetEventHandlerRef = useRef(null);
   //const [web3authReady, setWeb3authReady] = useState(false);
   const [logoutInProgress, setLogoutInProgress] = useState(false);
-  const [canConnect, setCanConnect] = useState(false);
+  //const [canConnect, setCanConnect] = useState(false);
   const [delay, setDelay] = useState(false);
   const { provider, isConnected, isInitialized } = useWeb3Auth();
   const { connect, loading: connecting } = useWeb3AuthConnect();
@@ -140,12 +140,6 @@ const App = () => {
   };
   const getWalletInfo = useWalletInfo();
 
-  useEffect(() => {
-    if (isInitialized) {
-      setInitialLoading(false);
-    }
-  }, [isInitialized]);
-
   /*
   useEffect(() => {
     const initWeb3Auth = async () => {
@@ -212,9 +206,9 @@ const App = () => {
     initWeb3Auth();
   }, []);
   */
-
+  /*
   useEffect(() => {
-    if (!isInitialized && provider && !logoutInProgress) {
+    if (!isInitialized && web3auth && !logoutInProgress) {
       const timeout = setTimeout(() => {
         setCanConnect(true);
       }, 100); // 1-second delay
@@ -223,7 +217,8 @@ const App = () => {
       // If conditions aren't met, disable the button
       setCanConnect(false);
     }
-  }, [isInitialized, provider, logoutInProgress]);
+  }, [isInitialized, web3auth, logoutInProgress]);
+  */
   /*
   useEffect(() => {
     const wasPageReloaded = () => {
@@ -244,7 +239,7 @@ const App = () => {
   */
 
   const handleConnect = async () => {
-    if (!isInitialized || !canConnect) {
+    if (!isInitialized) {
       console.warn("Web3Auth not initialized yet");
       return;
     }
@@ -501,7 +496,7 @@ const App = () => {
   ]);
   */
 
-  const shouldDisable = !isInitialized || !canConnect;
+  const shouldDisable = !isInitialized;
   useEffect(() => {
     let timer;
     if (!shouldDisable) {
@@ -514,7 +509,7 @@ const App = () => {
     return () => clearTimeout(timer);
   }, [shouldDisable]);
 
-  if (initialLoading) {
+  if (isInitialized) {
     return (
       <div className="min-h-screen flex items-center justify-center text-gray-600">
         <div className="text-center">
@@ -533,7 +528,7 @@ const App = () => {
         onConnect={handleConnect}
         onDisconnect={handleDisconnect}
         loading={loading}
-        canConnect={canConnect}
+        //canConnect={canConnect}
         logoutInProgress={logoutInProgress}
         isInitialized={isInitialized}
       />
@@ -604,7 +599,7 @@ const App = () => {
               {/*
               <h1 className="h1">Conecta tu cartera</h1>
 */}
-              {initialLoading && (
+              {isInitialized && (
                 <div className="flex flex-col items-center space-y-2">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                   <p className="p text-sm text-gray-600">
