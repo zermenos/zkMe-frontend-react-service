@@ -218,6 +218,10 @@ const App = () => {
       if (!prov) throw new Error("No provider returned after connect");
       setRawProvider(prov);
       const { provider, signer, address, balance } = await getWalletInfo();
+      console.log("provider:" + provider);
+      console.log("signer:" + signer);
+      console.log("address:" + address);
+      console.log("balance:" + balance);
 
       setWeb3Provider(provider);
       setWalletData({ provider, signer, address });
