@@ -647,3 +647,8 @@ const App = () => {
 };
 
 export default App;
+
+//INSERT AT INDEX.HTML
+/*
+<script src="https://cdn.jsdelivr.net/npm/@zkmelabs/widget/dist/zkme-widget.min.js"></script>
+*/
