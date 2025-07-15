@@ -36,10 +36,8 @@ const App = () => {
   const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
   const mchNo = import.meta.env.VITE_WEB3AUTH_ZKME_ID;
 
-  /*
   const [debugLogs, setDebugLogs] = useState([]);
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
-*/
 
   const useWalletInfo = () => {
     const getWalletInfo = async (prov) => {
