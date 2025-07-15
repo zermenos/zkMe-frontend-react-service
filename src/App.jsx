@@ -11,11 +11,10 @@ import {
   useWeb3AuthDisconnect,
 } from "@web3auth/modal/react";
 import { CHAIN_NAMESPACES, WALLET_ADAPTERS } from "@web3auth/base";
-/*
+
 import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 import { MetamaskAdapter } from "@web3auth/metamask-adapter";
 import { Web3Auth } from "@web3auth/modal";
-*/
 
 const App = () => {
   const [walletData, setWalletData] = useState(null);
@@ -91,10 +90,13 @@ const App = () => {
         WALLET_ADAPTERS.METAMASK
       );
       metamaskAdapter?.subscribeAdapterEvents((event) => {
+        log("🦊 MetaMask event received:", event);
         if (event.name === "CONNECTING") {
           if (isMobileDevice()) {
-            const dappUrl = encodeURIComponent(window.location.hostname);
+            log("📱 Is mobile:", isMobile);
+            const dappUrl = window.location.host + window.location.pathname;
             const deeplink = `https://metamask.app.link/dapp/${dappUrl}`;
+            log("🔗 Redirecting to MetaMask Deeplink:", deeplink);
             window.location.href = deeplink;
           }
         }
@@ -576,12 +578,11 @@ const App = () => {
               aquí
             </a>
           </p>
+
           <div className="fixed bottom-0 left-0 bg-white p-2 text-xs w-full max-h-40 overflow-auto border-t">
-            {/*
             {debugLogs.map((line, i) => (
               <div key={i}>{line}</div>
             ))}
-              */}
           </div>
         </div>
       </div>
