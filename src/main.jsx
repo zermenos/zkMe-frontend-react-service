@@ -13,10 +13,14 @@ createRoot(document.getElementById("root")).render(
           clientId: import.meta.env.VITE_WEB3AUTH_CLIENT_ID,
           web3AuthNetwork: "sapphire_devnet",
         },
+        // 💥 Hide MetaMask explicitly
         modalConfig: {
           [WALLET_ADAPTERS.METAMASK]: {
-            label: "metamask",
+            label: "MetaMask",
             showOnModal: false,
+            loginMethods: {},
+            showOnDesktop: false,
+            showOnMobile: false,
           },
         },
       }}
