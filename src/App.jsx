@@ -52,19 +52,19 @@ const App = () => {
   const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
 
   const useWalletInfo = () => {
-    const getWalletInfo = async (prov) => {
+    const getWalletInfo = async () => {
       if (!isInitialized) throw new Error("Web3Auth not initialized");
       if (!isConnected) throw new Error("Wallet not connected");
-      if (!prov) throw new Error("Web3Auth provider is not ready");
+      if (!provider) throw new Error("Web3Auth provider is not ready");
 
-      const ethersProvider = new ethers.providers.Web3Provider(prov);
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
 
       const signer = ethersProvider.getSigner();
       const address = await signer.getAddress();
       const balance = await ethersProvider.getBalance(address);
       console.log("🧠 getWalletInfo: isInitialized", isInitialized);
       console.log("🧠 getWalletInfo: isConnected", isConnected);
-      console.log("🧠 getWalletInfo: provider", prov);
+      console.log("🧠 getWalletInfo: provider", provider);
 
       return {
         provider: ethersProvider,
