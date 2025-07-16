@@ -12,11 +12,6 @@ createRoot(document.getElementById("root")).render(
         web3AuthOptions: {
           clientId: import.meta.env.VITE_WEB3AUTH_CLIENT_ID,
           web3AuthNetwork: "sapphire_devnet",
-          chainConfig: {
-            chainNamespace: CHAIN_NAMESPACES.EIP155,
-            chainId: "0x89", // or whatever chain you need, like Sapphire's ID
-            rpcTarget: "https://rpc-endpoint.of.sapphire.devnet",
-          },
         },
         modalConfig: {
           [WALLET_ADAPTERS.METAMASK]: {

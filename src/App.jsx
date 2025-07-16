@@ -19,6 +19,7 @@ import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
 */
 const App = () => {
+  console.log("🔍 WALLET_ADAPTERS.METAMASK:", WALLET_ADAPTERS.METAMASK);
   const { provider, isConnected, isInitialized } = useWeb3Auth();
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
