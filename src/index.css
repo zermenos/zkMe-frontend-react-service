@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-/** {
-  background-color: #f1f0f0;
-}*/
-
 h1 {
   font-family: "Host Grotesk", sans-serif;
   color: #282828;
@@ -37,4 +33,11 @@ div {
   font-family: "Host Grotesk", sans-serif;
   font-weight: 400;
   color: #282828;
+}
+
+.center-logo-container {
+  visibility: hidden; /* Keep it hidden */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }

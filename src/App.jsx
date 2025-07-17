@@ -1,100 +1,175 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ethers } from "ethers";
-import { Wallet, AlertCircle, RefreshCw, LogOut } from "lucide-react";
-import { ZkMeWidget } from "@zkmelabs/widget";
+import { AlertCircle } from "lucide-react";
+import { ZkMeWidget, verifyKycWithZkMeServices } from "@zkmelabs/widget";
 import "@zkmelabs/widget/dist/style.css";
 import Header from "./components/Header";
 import "./index.css";
+import {
+  useWeb3Auth,
+  useWeb3AuthConnect,
+  useWeb3AuthDisconnect,
+} from "@web3auth/modal/react";
+import { WALLET_ADAPTERS } from "@web3auth/base";
+import { MetamaskAdapter } from "@web3auth/metamask-adapter";
+import { Web3Auth, WEB3AUTH_NETWORK } from "@web3auth/modal";
+/*
+import { OpenloginAdapter } from "@web3auth/openlogin-adapter";
 
+
+*/
 const App = () => {
+  console.log("🔍 WALLET_ADAPTERS.METAMASK:", WALLET_ADAPTERS.METAMASK);
+  const { provider, isConnected, isInitialized } = useWeb3Auth();
   const [walletData, setWalletData] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [initialLoading, setInitialLoading] = useState(true);
   const [error, setError] = useState("");
   const [balance, setBalance] = useState(null);
   const [kycStatus, setKycStatus] = useState(null);
-  const [showMetaMaskDialog, setShowMetaMaskDialog] = useState(false);
-  const [downloadUrl, setDownloadUrl] = useState(
-    "https://metamask.io/download/"
-  );
-  const [isMobile, setIsMobile] = useState(false);
-  const [isMetaMaskBrowser, setIsMetaMaskBrowser] = useState(false);
   const [verificationLevel, setVerificationLevel] = useState("");
+  const [rawProvider, setRawProvider] = useState(null); // You'll need this too
+  const [web3Provider, setWeb3Provider] = useState(null);
+  const zkmeWidgetRef = useRef(null); // Ref to store widget instance
+  const widgetEventHandlerRef = useRef(null);
+  const [logoutInProgress, setLogoutInProgress] = useState(false);
+  const [delay, setDelay] = useState(false);
 
-  useEffect(() => {
-    // Detect if user is on mobile
-    const checkMobile = () => {
-      const userAgent = navigator.userAgent.toLowerCase();
-      const isMobileDevice =
-        /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
-          userAgent
-        );
-      setIsMobile(isMobileDevice);
+  const { connect, loading: connecting } = useWeb3AuthConnect();
+  const { disconnect } = useWeb3AuthDisconnect();
+  const [connectRequested, setConnectRequested] = useState(false);
+  const clientId = import.meta.env.VITE_WEB3AUTH_CLIENT_ID;
+  const mchNo = import.meta.env.VITE_WEB3AUTH_ZKME_ID;
+  /*
+  const web3auth = new Web3Auth({
+    clientId, // Get your Client ID from Web3Auth Dashboard
+    web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET, // or WEB3AUTH_NETWORK.SAPPHIRE_DEVNET
+  });
+  console.log("🧪 web3auth in App:", web3auth);
+  console.log("🧪 isInitialized:", isInitialized);
+  */
 
-      // Check if we're in MetaMask's browser
-      const isMetaMask = userAgent.includes("metamask");
-      setIsMetaMaskBrowser(isMetaMask);
+  const [debugLogs, setDebugLogs] = useState([]);
+  const log = (msg) => setDebugLogs((prev) => [...prev, msg]);
+
+  const useWalletInfo = () => {
+    const getWalletInfo = async () => {
+      if (!isInitialized) throw new Error("Web3Auth not initialized");
+      if (!isConnected) throw new Error("Wallet not connected");
+      if (!provider) throw new Error("Web3Auth provider is not ready");
+
+      const ethersProvider = new ethers.providers.Web3Provider(provider);
+
+      const signer = ethersProvider.getSigner();
+      const address = await signer.getAddress();
+      const balance = await ethersProvider.getBalance(address);
+      console.log("🧠 getWalletInfo: isInitialized", isInitialized);
+      console.log("🧠 getWalletInfo: isConnected", isConnected);
+      console.log("🧠 getWalletInfo: provider", provider);
+
+      return {
+        provider: ethersProvider,
+        signer,
+        address,
+        balance: ethers.utils.formatEther(balance),
+      };
     };
-    checkMobile();
 
-    // Detect browser and set appropriate download URL
+    return getWalletInfo;
+  };
+
+  console.log("Web3Auth state:");
+  console.log("  isInitialized:", isInitialized);
+  console.log("  isConnected:", isConnected);
+  console.log("  provider:", provider);
+
+  const isMobileDevice = () => {
     const userAgent = navigator.userAgent.toLowerCase();
-    let url = "https://metamask.io/download/";
+    return /android|webos|iphone|ipad|ipod|blackberry|iemobile|opera mini/i.test(
+      userAgent
+    );
+  };
+  const getWalletInfo = useWalletInfo();
 
-    if (userAgent.includes("chrome")) {
-      url =
-        "https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn";
-    } else if (userAgent.includes("firefox")) {
-      url = "https://addons.mozilla.org/en-US/firefox/addon/ether-metamask/";
-    } else if (userAgent.includes("edge")) {
-      url =
-        "https://microsoftedge.microsoft.com/addons/detail/metamask/ejbalbakoplchlghecdalmeeeajnimhm";
-    } else if (userAgent.includes("safari")) {
-      url =
-        "https://apps.apple.com/us/app/metamask-blockchain-wallet/id1438144202";
-    }
-
-    setDownloadUrl(url);
-  }, []);
-
-  const handleConnect = async () => {
-    if (!window.ethereum) {
-      if (isMobile) {
-        // Use production URL for MetaMask deep link
-        // Use Universal Links format for better cross-platform support
-        const dappUrl = "https://app.everimx.com";
-        // For Android, we need to use a different format
-        if (/android/i.test(navigator.userAgent)) {
-          window.location.href = `intent://app.everimx.com#Intent;scheme=https;package=io.metamask;end`;
-        } else {
-          // For iOS and other platforms
-          window.location.href = `https://metamask.app.link/dapp/${dappUrl}`;
-        }
-        // Redirect to MetaMask app browser
-
-        return;
-      }
-      setShowMetaMaskDialog(true);
+  /////////////METHOD TO LISTEN TO METAMASK CONNECTION///////////
+  /*
+  useEffect(() => {
+    if (!web3auth || !isInitialized) {
+      console.log("❌ web3auth or isInitialized not ready yet");
       return;
     }
+    const metamaskAdapter = new MetamaskAdapter({
+      clientId,
+      web3AuthNetwork: "mainnet",
+    });
 
+    if (!metamaskAdapter) {
+      console.log("❌ MetaMask adapter is not available");
+      log("❌ MetaMask adapter is not available");
+      return;
+    }
+    web3auth.configureAdapter(metamaskAdapter);
+
+    const listener = (event) => {
+      const eventName = event?.name ?? "Unknown";
+      const adapter = event?.adapter;
+
+      console.log("🌐 Web3Auth global event:", event);
+      log(`🌐 Web3Auth global event: ${eventName} from ${adapter}`);
+
+      if (eventName === "CONNECTING" && adapter === WALLET_ADAPTERS.METAMASK) {
+        if (isMobileDevice()) {
+          const dappUrl = window.location.host + window.location.pathname;
+          const deeplink = `https://metamask.app.link/dapp/${dappUrl}`;
+          console.log("🔗 Redirecting to MetaMask Deeplink:", deeplink);
+          log("🔗 Redirecting to MetaMask Deeplink: " + deeplink);
+          window.location.href = deeplink;
+        }
+      }
+    };
+
+    web3auth.on("CONNECTING", listener);
+
+    return () => {
+      web3auth.off("CONNECTING", listener);
+    };
+  }, [web3auth, isInitialized]);
+*/
+  ///////////////////////////////////////////////////////
+
+  useEffect(() => {
+    const fetchWallet = async () => {
+      if (!connectRequested || !isConnected || !provider) return;
+
+      try {
+        const info = await getWalletInfo(provider);
+        setWalletData(info);
+        setBalance(info.balance);
+        console.log("provider:" + info.provider);
+        console.log("signer:" + info.signer);
+        console.log("address:" + info.address);
+        console.log("balance:" + info.balance);
+      } catch (err) {
+        console.error("Fetch wallet error:", err); // 🔍 get actual reason
+        setError("Failed to fetch wallet info");
+      } finally {
+        setConnectRequested(false);
+      }
+    };
+
+    fetchWallet();
+  }, [connectRequested, isConnected, provider]);
+
+  const handleConnect = async () => {
+    if (!isInitialized) {
+      console.warn("Web3Auth not initialized yet");
+      return;
+    }
     setLoading(true);
-    setError("");
 
     try {
-      const provider = new ethers.providers.Web3Provider(window.ethereum);
-      await window.ethereum.request({
-        method: "wallet_requestPermissions",
-        params: [{ eth_accounts: {} }],
-      });
-      const signer = provider.getSigner();
-      const address = await signer.getAddress();
-
-      const balance = await provider.getBalance(address);
-      setBalance(ethers.utils.formatEther(balance));
-
-      setWalletData({ provider, signer, address });
-      localStorage.setItem("walletAddress", address);
+      // 🔥 Then trigger the login flow (will show the modal)
+      await connect(); // 🔥 always force login
+      setConnectRequested(true);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -102,73 +177,158 @@ const App = () => {
     }
   };
 
-  const handleDisconnect = () => {
-    setWalletData(null);
-    setBalance(null);
-    setKycStatus(null);
-    localStorage.removeItem("walletAddress");
-    localStorage.removeItem("kycVerified");
+  const wasPageReloaded = () => {
+    const navEntries = performance.getEntriesByType("navigation");
+    return navEntries.length > 0 && navEntries[0].type === "reload";
+  };
 
-    // Force "reconnection" by reloading the page and clearing provider cache
-    if (window.ethereum && window.ethereum._metamask) {
-      // This just disables auto reloading on chain changes temporarily
-      window.ethereum.autoRefreshOnNetworkChange = false;
+  const safeLogout = async () => {
+    if (!isConnected) {
+      console.warn("Web3Auth not initialized, cannot logout");
+      return;
+    }
+
+    try {
+      setLogoutInProgress(true); // ✅ Begin tracking logout
+      console.log("Initiating safeLogout");
+      await disconnect();
+
+      // Optional: Wait a bit to ensure state is fully reset
+      //await new Promise((resolve) => setTimeout(resolve, 200));
+
+      if (isMobileDevice() && wasPageReloaded()) {
+        localStorage.removeItem("walletAddress");
+        localStorage.removeItem("kycVerified");
+        localStorage.setItem("forceLogout", "true");
+      }
+
+      // Optional but recommended: clear local storage
+      localStorage.removeItem("walletAddress");
+      //localStorage.removeItem("kycVerified");
+
+      // Optional: reset any local app state here too
+      setWalletData(null);
+      setBalance(null);
+      setKycStatus(null);
+      setWeb3Provider(null);
+      setRawProvider(null);
+      setError("");
+
+      // Destroy ZKMe widget if active
+      if (zkmeWidgetRef.current) {
+        zkmeWidgetRef.current.destroy();
+        zkmeWidgetRef.current = null;
+      }
+    } catch (err) {
+      console.error("safeLogout error:", err);
+    } finally {
+      setLogoutInProgress(false); // ✅ Done with logout
     }
   };
 
-  const provider = {
+  const handleDisconnect = async () => {
+    try {
+      await safeLogout();
+    } catch (err) {
+      console.error("Error during disconnect:", err);
+    }
+  };
+
+  const zkmeProvider = {
     async getAccessToken() {
       const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const json = await res.json();
       return json.data.accessToken;
     },
     async getUserAccounts() {
-      const accounts = await window.ethereum.request({
-        method: "eth_requestAccounts",
-      });
-      return accounts;
+      const { address } = await getWalletInfo();
+      return [address];
     },
     async delegateTransaction(tx) {
-      const web3Provider = new ethers.providers.Web3Provider(window.ethereum);
-      const signer = web3Provider.getSigner();
-      const txResponse = await signer.sendTransaction(tx);
-      return txResponse.hash;
+      const { signer } = await getWalletInfo();
+      const res = await signer.sendTransaction(tx);
+      return res.hash;
     },
   };
 
   const handleLevel1Verification = async () => {
-    if (!walletData) {
-      await handleConnect();
-    }
-    if (walletData) {
-      launchKYCWidget("MeID"); // 🔥 pass it here
-    }
-  };
+    try {
+      if (!provider || !isConnected) {
+        await handleConnect(); // wait until it's ready
+        return;
+      }
 
-  const handleLevel2Verification = async () => {
-    if (!walletData) {
-      await handleConnect();
-    }
-    if (walletData) {
-      launchKYCWidget("zkKYC"); // 🔥 pass it here
+      if (!walletData) {
+        await handleConnect();
+        return;
+      }
+
+      const address = walletData.address;
+      console.log("walletAddress from localStorage:", address);
+      console.log("mchNo:", mchNo);
+      //const { address } = await getWalletInfo();
+      const { isGrant } = await verifyKycWithZkMeServices(
+        mchNo,
+        address
+        // Optional configurations are detailed in the table below
+        //options
+      );
+
+      console.log(isGrant);
+
+      if (isGrant) {
+        setKycStatus("success");
+        //setInitialLoading(false);
+      } else {
+        launchKYCWidget("MeID");
+      }
+    } catch (err) {
+      console.error("Error in handleLevel1Verification:", err);
+      setError(
+        err?.message || "Ocurrió un error durante la verificación de identidad."
+      );
     }
   };
+  /*
+  const handleLevel2Verification = async () => {
+    if (!web3auth || !web3auth.provider) {
+      await handleConnect(); // wait until it's ready
+      return;
+    }
+
+    if (!walletData) {
+      await handleConnect();
+      return;
+    }
+
+    launchKYCWidget("zkKYC");
+  };
+  */
 
   const launchKYCWidget = (level) => {
+    if (zkmeWidgetRef.current) {
+      if (widgetEventHandlerRef.current) {
+        zkmeWidgetRef.current.off("kycFinished", widgetEventHandlerRef.current);
+        widgetEventHandlerRef.current = null;
+      }
+      zkmeWidgetRef.current.destroy(); // ✅ Clean up previous instance
+      zkmeWidgetRef.current = null;
+    }
     const dynamicWidget = new ZkMeWidget(
-      "M2025012255531684563023546877743",
+      mchNo,
       "zKMe KYC",
       "137", // Polygon Mainnet
-      provider,
+      zkmeProvider,
       {
         lv: level, // 🔥 directly use passed value instead of waiting for setState
-        programNo: "202504070001",
+        programNo: "202505220002",
         theme: "light",
         locale: "en",
       }
     );
 
-    dynamicWidget.on("kycFinished", (result) => {
+    // Define handler once so you can remove it later
+    const handleKycFinished = (result) => {
       const { isGrant, associatedAccount } = result;
       if (
         isGrant &&
@@ -180,7 +340,12 @@ const App = () => {
         setKycStatus("fail");
         localStorage.removeItem("kycVerified");
       }
-    });
+    };
+
+    dynamicWidget.on("kycFinished", handleKycFinished);
+    widgetEventHandlerRef.current = handleKycFinished;
+
+    zkmeWidgetRef.current = dynamicWidget;
 
     dynamicWidget.launch();
   };
@@ -196,111 +361,65 @@ const App = () => {
     }
   };
 
+  /*
   useEffect(() => {
-    const isVerified = localStorage.getItem("kycVerified");
-    if (isVerified === "true") {
-      setKycStatus("success");
-    }
-  }, []);
+    log("Initial loading: " + initialLoading);
+    log("canConnect: " + canConnect);
+    log("web3authReady: " + web3authReady);
+    log("logoutInProgress: " + logoutInProgress);
+    log("loading: " + loading);
+    log("Wallet: " + (walletData?.address ?? "Not connected"));
+    log("web3auth: " + web3auth);
+    //log("web3auth.provider: " + web3auth?.provider);
+  }, [
+    initialLoading,
+    walletData,
+    logoutInProgress,
+    loading,
+    canConnect,
+    web3authReady,
+    web3auth,
+    web3auth?.provider,
+  ]);
+  */
+
+  const shouldDisable = !isInitialized;
   useEffect(() => {
-    const savedAddress = localStorage.getItem("walletAddress");
-    const isVerified = localStorage.getItem("kycVerified") === "true";
-    if (isVerified) setKycStatus("success");
-
-    if (savedAddress && window.ethereum) {
-      const autoConnect = async () => {
-        try {
-          const provider = new ethers.providers.Web3Provider(window.ethereum);
-          const signer = provider.getSigner();
-          const currentAddress = await signer.getAddress();
-
-          if (currentAddress.toLowerCase() === savedAddress.toLowerCase()) {
-            const balance = await provider.getBalance(currentAddress);
-            setBalance(ethers.utils.formatEther(balance));
-            setWalletData({ provider, signer, address: currentAddress });
-          } else {
-            localStorage.removeItem("walletAddress");
-          }
-        } catch {
-          localStorage.removeItem("walletAddress");
-        }
-        setInitialLoading(false);
-      };
-
-      autoConnect();
+    let timer;
+    if (!shouldDisable) {
+      timer = setTimeout(() => {
+        setDelay(false);
+      }, 1000); // Delay for 1 second
     } else {
-      setInitialLoading(false);
+      setDelay(true); // Reset if conditions become invalid again
     }
-  }, []);
+    return () => clearTimeout(timer);
+  }, [shouldDisable]);
 
-  useEffect(() => {
-    if (window.ethereum) {
-      window.ethereum.on("accountsChanged", (accounts) => {
-        if (accounts.length === 0) {
-          handleDisconnect();
-        } else {
-          handleConnect();
-        }
-      });
-      window.ethereum.on("chainChanged", () => {
-        window.location.reload();
-      });
-    }
-  }, []);
-
-  const MetaMaskDialog = () => (
-    <div className="fixed inset-0 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-[#edffee] rounded-xl shadow-lg p-6 max-w-md w-full mx-4 border-2 border-green-500">
-        <div className="flex items-center space-x-3 mb-4">
-          <Wallet className="w-6 h-6 text-[#8fef56]" />
-          <h3 className="text-lg font-semibold text-gray-800">
-            MetaMask Not Found
-          </h3>
-        </div>
-        <p className="text-gray-600 mb-6">
-          {isMobile
-            ? "To use this application, please open it in MetaMask's in-app browser."
-            : "To use this application, you need to install MetaMask, a cryptocurrency wallet for your browser."}
-        </p>
-        <div className="flex space-x-3">
-          {isMobile ? (
-            <a
-              href="https://metamask.app.link/dapp/zk-me.vercel.app"
-              className="flex-1 bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg transition-colors text-center"
-            >
-              Open in MetaMask
-            </a>
-          ) : (
-            <a
-              href={downloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="flex-1 bg-[#8fef56] hover:bg-[#7edf45] text-white font-bold py-3 px-4 rounded-lg transition-colors text-center"
-            >
-              Install MetaMask
-            </a>
-          )}
-          <button
-            onClick={() => setShowMetaMaskDialog(false)}
-            className="flex-1 bg-white hover:bg-gray-100 text-gray-800 font-medium py-3 px-4 rounded-lg transition-colors border border-gray-300"
-          >
-            Cancel
-          </button>
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-gray-600">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-green-600 mx-auto mb-4" />
+          <p className="text-lg font-medium">Cargando...</p>
         </div>
       </div>
-    </div>
-  );
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#F1F0F0]">
-      {showMetaMaskDialog && <MetaMaskDialog />}
+    <div className="min-h-screen bg-[#F0F0F0]">
       <Header
         walletData={walletData}
-        balance={balance}
+        //balance={balance}
         onConnect={handleConnect}
         onDisconnect={handleDisconnect}
         loading={loading}
+        //canConnect={canConnect}
+        logoutInProgress={logoutInProgress}
+        isInitialized={isInitialized}
       />
+
       <div className="p-4">
         <div className="max-w-[1000px] mx-auto space-y-6">
           <div className="space-y-4 mt-8">
@@ -314,8 +433,9 @@ const App = () => {
               Passing both verifications is necessary to anchor your Proof of Uniqueness credential to the Verax attestation registry, making you eligible to participate in the LXP drop.
             </p> */}
           </div>
-
+          {/*
           {!walletData && !initialLoading && (
+            
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">
                 Es necesario tener una cuenta en MetaMask, si aún no la tienes
@@ -324,7 +444,10 @@ const App = () => {
                 <br></br>
               </p>
             </div>
+            
           )}
+            */}
+          {/*
           {walletData && (
             <div className="flex flex-col items-center space-y-2">
               <p className="p text-sm text-gray-600">
@@ -332,6 +455,8 @@ const App = () => {
               </p>
             </div>
           )}
+            */}
+          {/* 
           <div className="flex flex-col items-center space-y-2">
             <p className="p text-sm text-gray-600"></p>
           </div>
@@ -346,20 +471,22 @@ const App = () => {
             <p className="p text-white text-sm">
               {String.fromCodePoint(0x24d8)} NOTA<br></br>MetaMask es una
               cartera de criptomonedas que te permite interactuar con
-              aplicaciones Web3 y certificados blockchain como tokens o NFTs{" "}
+              aplicaciones Web3 y certificados blockchain como tokens o NFTs.
             </p>
           </div>
+*/}
           <div className="flex flex-col md:flex-row gap-6">
-            <div className="flex-1 bg-[#F1F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#188F5E]">
+            <div className="flex-1 bg-[#F0F0F0] rounded-xl shadow-lg p-6 space-y-6 border-2 border-[#168E5D]">
               {error && (
                 <div className="bg-red-100 border border-red-600 rounded-lg p-4 text-red-800 flex items-start space-x-2">
                   <AlertCircle className="w-5 h-5 mt-0.5" />
                   <span className="text-sm">{error}</span>
                 </div>
               )}
-              <h1 className="h1">Reclama esta credencial</h1>
-
-              {initialLoading && (
+              {/*
+              <h1 className="h1">Conecta tu cartera</h1>
+*/}
+              {!isInitialized && (
                 <div className="flex flex-col items-center space-y-2">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500"></div>
                   <p className="p text-sm text-gray-600">
@@ -370,24 +497,32 @@ const App = () => {
 
               <div className="bg-white border border-gray-300 rounded-lg p-4 space-y-2">
                 <div className="flex items-center space-x-2">
-                  <div className="w-3 h-3 bg-[#F1ED76] rounded-full animate-pulse" />
-                  <span className="span text-sm font-medium">
-                    Prueba de individualidad
-                  </span>
+                  <div className="w-3 h-3 bg-[#F5F86E] rounded-full animate-pulse" />
+                  <span className="span text-sm font-medium">Soy humano</span>
                 </div>
                 <p className="p text-xs text-gray-400">Escaneo facial</p>
               </div>
 
               <div className="space-y-4">
+                {/*
                 <p className="p text-sm text-gray-600">
                   Una solución de identidad que prueba que eres humano sin
                   revelar información privada.
-                </p>
+                </p>*/}
                 {kycStatus !== "success" && (
                   <button
                     onClick={handleLevel1Verification}
-                    disabled={loading}
-                    className="button bg-[#188F5E] hover:bg-[#168658] py-3 px-4 rounded-lg"
+                    style={{
+                      //opacity: delay ? 0.5 : 1,
+                      pointerEvents: delay ? "none" : "auto", // disables interaction
+                      //visibility: delay ? "hidden" : "visible", // OR hide it fully
+                      //disabled={loading}
+                    }}
+                    className={`button bg-[#168E5D] hover:bg-[#127b50] py-3 px-4 rounded-lg ${
+                      delay
+                        ? "opacity-70 cursor-not-allowed pointer-events-none"
+                        : "bg-[#168E5D] hover:bg-[#127b50]"
+                    }`}
                   >
                     Verificar
                   </button>
@@ -474,6 +609,13 @@ const App = () => {
               aquí
             </a>
           </p>
+          {/*
+          <div className="fixed bottom-0 left-0 bg-white p-2 text-xs w-full max-h-40 overflow-auto border-t">
+            {debugLogs.map((line, i) => (
+              <div key={i}>{line}</div>
+            ))}
+          </div>
+*/}
         </div>
       </div>
     </div>
@@ -481,3 +623,8 @@ const App = () => {
 };
 
 export default App;
+
+//INSERT AT INDEX.HTML
+/*
+<script src="https://cdn.jsdelivr.net/npm/@zkmelabs/widget/dist/zkme-widget.min.js"></script>
+*/
