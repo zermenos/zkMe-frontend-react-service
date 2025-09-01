@@ -236,9 +236,7 @@ const App = () => {
 
   const zkmeProvider = {
     async getAccessToken() {
-      const res = await fetch("https://backend.everimx.com/api/zkme/token", {
-        mode: "no-cors",
-      });
+      const res = await fetch("https://backend.everimx.com/api/zkme/token");
       const json = await res.json();
       return json.data.accessToken;
     },
