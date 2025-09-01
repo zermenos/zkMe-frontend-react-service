@@ -236,7 +236,9 @@ const App = () => {
 
   const zkmeProvider = {
     async getAccessToken() {
-      const res = await fetch("https://backend.everimx.com/api/zkme/token");
+      const res = await fetch("https://backend.everimx.com/api/zkme/token", {
+        mode: "no-cors",
+      });
       const json = await res.json();
       return json.data.accessToken;
     },
@@ -307,10 +309,12 @@ const App = () => {
 
   const launchKYCWidget = (level) => {
     if (zkmeWidgetRef.current) {
+      /*
       if (widgetEventHandlerRef.current) {
         zkmeWidgetRef.current.off("kycFinished", widgetEventHandlerRef.current);
         widgetEventHandlerRef.current = null;
       }
+        */
       zkmeWidgetRef.current.destroy(); // ✅ Clean up previous instance
       zkmeWidgetRef.current = null;
     }
